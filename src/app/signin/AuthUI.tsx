@@ -7,6 +7,9 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 
 export default function AuthUI() {
     const { client } = useAuth();
+
+    console.log(getURL());
+
     return (
         <div className="flex flex-col space-y-4">
             <Auth
