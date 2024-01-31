@@ -5,18 +5,14 @@ import { getURL } from "@/lib/utils";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 
-export default function AuthUI({ redirect }: { redirect: string }) {
+export default function AuthUI() {
     const { client } = useAuth();
-
-    console.log(getURL());
-    console.log(redirect);
-
     return (
         <div className="flex flex-col space-y-4">
             <Auth
                 supabaseClient={client}
                 providers={["discord"]}
-                redirectTo={redirect}
+                redirectTo={`${getURL()}/auth/callback`}
                 appearance={{ theme: ThemeSupa }}
                 theme="dark"
             />

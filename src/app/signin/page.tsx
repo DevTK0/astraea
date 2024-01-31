@@ -2,7 +2,6 @@ import { getSession } from "@/lib/supabase/server";
 import AuthUI from "./AuthUI";
 import { redirect } from "next/navigation";
 import Logo from "@/components/ui/logo";
-import { getURL } from "@/lib/utils";
 
 export default async function SignIn() {
     const session = await getSession();
@@ -10,10 +9,6 @@ export default async function SignIn() {
     if (session) {
         return redirect("/games"); // must be client side rendered page
     }
-
-    const callback = `${getURL()}auth/callback`;
-
-    console.log(callback);
 
     return (
         <>
@@ -24,7 +19,7 @@ export default async function SignIn() {
                 </div>
                 <div className="lg:p-8">
                     <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-                        <AuthUI redirect={callback} />
+                        <AuthUI />
                     </div>
                 </div>
             </div>
