@@ -48,9 +48,7 @@ export async function UserNav({ user }: { user: User | undefined }) {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <DropdownMenuItem onSelect={() => console.log("profile!")}>
-                        Profile
-                    </DropdownMenuItem>
+                    <DropdownMenuItem>Profile</DropdownMenuItem>
                     <DropdownMenuItem>Settings</DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />

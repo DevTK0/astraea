@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { Sidebar } from "./components/sidebar";
 import { gamelist } from "./games/gamelist";
 
-export default async function RootLayout({
+export default async function TypeFLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;

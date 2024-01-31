@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { gamelist } from "./gamelist";
 
-export default async function RootLayout({
+export default function GamesLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
