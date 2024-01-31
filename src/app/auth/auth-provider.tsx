@@ -22,7 +22,7 @@ export default function AuthProvider({
         const {
             data: { subscription },
         } = client.auth.onAuthStateChange((event: string) => {
-            if (event === "SIGNED_IN") router.push("/games");
+            // if (event === "SIGNED_IN") console.log("signed in");
             if (event === "SIGNED_OUT") router.push("/signin");
         });
 

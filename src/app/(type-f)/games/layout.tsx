@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { gamelist } from "./gamelist";
+import { useEffect } from "react";
 
 export default function GamesLayout({
     children,
