@@ -22,7 +22,7 @@ export default function AuthProvider({
         const {
             data: { subscription },
         } = client.auth.onAuthStateChange((event: string) => {
-            if (event === "SIGNED_IN") router.refresh();
+            if (event === "SIGNED_IN") router.refresh(); // Necessary for redirection after successful email login.
             if (event === "SIGNED_OUT") router.push("/signin");
         });
 

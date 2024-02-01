@@ -54,6 +54,16 @@ const defaultValues: Partial<FormValues> = {
 
 type FormValues = z.infer<typeof schema>;
 
+function whitelistIP() {
+    fetch("/games/palworld/api/whitelistIP", {
+        method: "POST",
+    })
+        .then((res) => res.json())
+        .then((res) => {
+            console.log(res);
+        });
+}
+
 export default function Palworld() {
     const [ip, setIp] = useState("searching...");
     const form = useForm<FormValues>({
@@ -162,6 +172,7 @@ export default function Palworld() {
                                     size="sm"
                                     className="w-[80px]"
                                     disabled={!accessControl.whitelist}
+                                    onClick={whitelistIP}
                                 >
                                     <svg
                                         width="15"

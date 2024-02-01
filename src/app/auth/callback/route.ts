@@ -10,9 +10,16 @@ export async function GET(request: NextRequest) {
 
     if (code) {
         const supabase = createClient(cookieStore);
-        await supabase.auth.exchangeCodeForSession(code);
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+        if (!error) {
+            // change this to wherever you want to redirect the user after authentication completes
+            return NextResponse.redirect(requestUrl.origin);
+        }
+
+        console.log("error", error);
     }
 
-    // URL to redirect to after sign in process completes
-    return NextResponse.redirect(requestUrl.origin);
+    // return the user to an error page with instructions
+    // return NextResponse.redirect('/auth/error')
 }

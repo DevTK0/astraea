@@ -4,9 +4,11 @@ import { useAuth } from "@/app/auth/auth-provider";
 import { getURL } from "@/lib/utils";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
+import { get } from "http";
 
 export default function AuthUI() {
     const { client } = useAuth();
+
     return (
         <div className="flex flex-col space-y-4">
             <Auth
