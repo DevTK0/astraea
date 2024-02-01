@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
     if (user) {
         await client
-            .from("server_community")
+            .from("server_communities")
             .upsert({ server_id: 1, user_id: user.id });
 
         await client
