@@ -1,6 +1,6 @@
 import Navbar from "./components/navbar";
 import { cookies } from "next/headers";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/clients/server";
 import { redirect } from "next/navigation";
 import { Sidebar } from "./components/sidebar";
 import { gamelist } from "./games/gamelist";

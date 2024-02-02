@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/actions";
+import { createClient } from "@/lib/supabase/clients/actions";
 import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 

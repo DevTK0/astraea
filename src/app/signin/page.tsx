@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/supabase/server";
+import { getSession } from "@/lib/supabase/clients/server";
 import AuthUI from "./AuthUI";
 import { redirect } from "next/navigation";
 import Logo from "@/components/ui/logo";

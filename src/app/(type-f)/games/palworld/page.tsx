@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { toast } from "@/components/ui/use-toast";
+import { toast, useToast } from "@/components/ui/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
@@ -54,16 +54,6 @@ const defaultValues: Partial<FormValues> = {
 
 type FormValues = z.infer<typeof schema>;
 
-function whitelistIP() {
-    fetch("/games/palworld/api/whitelistIP", {
-        method: "POST",
-    })
-        .then((res) => res.json())
-        .then((res) => {
-            console.log(res);
-        });
-}
-
 export default function Palworld() {
     const [ip, setIp] = useState("searching...");
     const form = useForm<FormValues>({
@@ -82,6 +72,34 @@ export default function Palworld() {
             ),
         });
     }
+
+    function whitelistIP() {
+        fetch("/games/palworld/api/whitelistIP", {
+            method: "POST",
+        })
+            .then(async (res) => {
+                if (res.ok) return res.json();
+                else {
+                    const error = await res.json();
+                    throw new Error(error.message, { cause: error });
+                }
+            })
+            .then((res) => {
+                toast({
+                    title: "Success",
+                    description: res.message,
+                });
+            })
+            .catch((err) => {
+                console.log(err);
+                toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: err.message,
+                });
+            });
+    }
+
     const accessControl = {
         whitelist: true,
         restore_save: false,

@@ -11,7 +11,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/clients/client";
 import { User } from "@supabase/auth-js/src/lib/types";
 
 export async function UserNav({ user }: { user: User | undefined }) {

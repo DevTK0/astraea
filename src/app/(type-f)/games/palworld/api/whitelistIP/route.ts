@@ -1,6 +1,6 @@
-import { createClient } from "@/lib/supabase/actions";
+import { createClient } from "@/lib/supabase/clients/actions";
 import { cookies } from "next/headers";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import {
     EC2Client,
@@ -9,12 +9,20 @@ import {
     DescribeSecurityGroupRulesCommand,
 } from "@aws-sdk/client-ec2";
 
+import { execute_query } from "@/lib/supabase/queries/execute_query";
+import { joinServer } from "@/lib/supabase/queries/join_server";
+import { updateIPAddress } from "@/lib/supabase/queries/update_ip_address";
+import {
+    ServerCommunity,
+    getServerCommunity,
+} from "@/lib/supabase/queries/get_server_community";
+
 export async function POST(req: NextRequest) {
     let ip = req.ip || req.headers.get("X-Forwarded-For");
 
+    // For localhost testing
     if (ip === "::1") ip = "127.0.0.1";
 
-    // store ip in supabase
     const cookieStore = cookies();
     const client = createClient(cookieStore);
 
@@ -23,27 +31,16 @@ export async function POST(req: NextRequest) {
     } = await client.auth.getUser();
 
     if (user) {
-        await client
-            .from("server_communities")
-            .upsert({ server_id: 1, user_id: user.id });
+        try {
+            await execute_query(joinServer)(1, user.id);
+            await execute_query(updateIPAddress)(ip, user.id);
 
-        await client
-            .from("users")
-            .update({ ip_address: ip })
-            .eq("user_id", user.id);
+            const data: ServerCommunity = await execute_query(
+                getServerCommunity
+            )(1);
+            const ip_list = [];
 
-        const { data, error } = await client.from("server_communities").select(`
-            server_id,
-            user_id,
-            users (
-                user_id,
-                ip_address
-            )
-        `);
-
-        const ip_list = [];
-
-        if (!error) {
+            // extract ip address from each user that has joined the seerver
             for (const row of data) {
                 if (row.users?.ip_address !== "") {
                     const ipRange = {
@@ -54,8 +51,7 @@ export async function POST(req: NextRequest) {
                 }
             }
 
-            console.log(ip_list);
-
+            // add ips to security group
             if (ip_list.length > 0) {
                 const aws = new EC2Client({ region: "ap-southeast-1" });
 
@@ -78,8 +74,6 @@ export async function POST(req: NextRequest) {
                     }
                 );
 
-                console.log(toRemove);
-
                 if (toRemove && toRemove.length > 0) {
                     const removed = await aws.send(
                         new RevokeSecurityGroupIngressCommand({
@@ -91,8 +85,6 @@ export async function POST(req: NextRequest) {
                             ),
                         })
                     );
-
-                    console.log(removed);
                 }
 
                 const newIpList = await aws.send(
@@ -108,12 +100,29 @@ export async function POST(req: NextRequest) {
                         ],
                     })
                 );
-                console.log(newIpList);
+            }
+        } catch (error) {
+            if (typeof error === "string") {
+                console.log(error);
+                return new Response(JSON.stringify({ message: error }), {
+                    status: 500,
+                });
+            } else if (error instanceof Error) {
+                console.log(error.message);
+                return new Response(
+                    JSON.stringify({ message: error.message }),
+                    {
+                        status: 500,
+                    }
+                );
             }
         }
-
-        console.log(data, error);
     }
 
-    return Response.json(ip);
+    return new NextResponse(
+        JSON.stringify({ message: `${ip} added to server whitelist.` }),
+        {
+            status: 200,
+        }
+    );
 }

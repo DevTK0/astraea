@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@/app/auth/auth-provider";
+import { useAuth } from "@/app/auth/auth_provider";
 import { getURL } from "@/lib/utils";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";

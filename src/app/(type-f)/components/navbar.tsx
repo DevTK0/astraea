@@ -1,7 +1,7 @@
 import Logo from "@/components/ui/logo";
 import { MainNav } from "./main-nav";
 import { UserNav } from "./user-nav";
-import { createClient, getSession } from "@/lib/supabase/server";
+import { createClient, getSession } from "@/lib/supabase/clients/server";
 
 export default async function Navbar() {
     const session = await getSession();
