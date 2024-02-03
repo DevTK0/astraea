@@ -22,7 +22,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { ScrollBar } from "@/components/ui/scroll-area";
 
 export function BackupRestore() {
-    // Backup Restore
     const [comboBoxOpen, setComboBoxOpen] = useState(false);
     const [comboBoxValue, setComboBoxValue] = useState("");
     const [backupList, setBackupList] = useState([{ value: "", lower: "" }]);
@@ -41,7 +40,6 @@ export function BackupRestore() {
                 res.backupList.forEach((savfile: string) => {
                     list.push({ lower: savfile.toLowerCase(), value: savfile });
                 });
-                console.log(list);
                 setBackupList(list);
             })
             .catch((err) => {
