@@ -25,12 +25,15 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
         })
     );
 
-    const fileList: Set<string> = new Set<string>();
+    const backupSet: Set<string> = new Set<string>();
 
     response.Contents?.forEach((content) => {
         const filename = content.Key?.split("/")[3];
-        if (filename) fileList.add(filename);
+        if (filename) backupSet.add(filename);
     });
 
-    return Response.json({ backupList: Array.from(fileList) });
+    return Response.json({
+        saveFilename: sav_filename,
+        backupList: Array.from(backupSet),
+    });
 });

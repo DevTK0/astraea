@@ -19,11 +19,13 @@ import { Button } from "@/components/ui/button";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { toast } from "@/components/ui/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { set } from "zod";
 
 export function BackupRestore() {
     const [comboBoxOpen, setComboBoxOpen] = useState(false);
     const [comboBoxValue, setComboBoxValue] = useState("");
     const [backupList, setBackupList] = useState<string[]>([]);
+    const [savFilename, setSavFilename] = useState<string>("");
     const [loadingBackupList, setLoadingBackupList] = useState(false);
     const [loadingSave, setLoadingSave] = useState(false);
 
@@ -40,6 +42,8 @@ export function BackupRestore() {
                 }
             })
             .then((res) => {
+                console.log(res.saveFilename);
+                setSavFilename(res.saveFilename);
                 setBackupList(res.backupList);
                 setLoadingBackupList(false);
             })
@@ -60,7 +64,10 @@ export function BackupRestore() {
 
         fetch("/games/palworld/api/restoreSave", {
             method: "POST",
-            body: JSON.stringify({ savfile: comboBoxValue }),
+            body: JSON.stringify({
+                savFilename: savFilename,
+                backupFile: comboBoxValue,
+            }),
         })
             .then(async (res) => {
                 if (res.ok) return res.json();
