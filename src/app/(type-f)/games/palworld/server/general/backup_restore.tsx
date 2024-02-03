@@ -42,7 +42,6 @@ export function BackupRestore() {
                 }
             })
             .then((res) => {
-                console.log(res.saveFilename);
                 setSavFilename(res.saveFilename);
                 setBackupList(res.backupList);
                 setLoadingBackupList(false);

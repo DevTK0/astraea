@@ -12,6 +12,24 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
     const instanceFilePath =
         "/home/palworld/Palworld/Pal/Saved/SaveGames/0/CE82E9C7575744E9B6708A9BFDBA8265/Players";
 
+    if (!filename) {
+        return new NextResponse(
+            JSON.stringify({ message: `Invalid backup file name.` }),
+            {
+                status: 400,
+            }
+        );
+    }
+
+    if (!savFilename) {
+        return new NextResponse(
+            JSON.stringify({ message: `Invalid save file name.` }),
+            {
+                status: 400,
+            }
+        );
+    }
+
     // fetch instance / check instance is running
     const ec2 = new EC2Client({ region: "ap-southeast-1" });
     const ssm = new SSMClient({ region: "ap-southeast-1" });
@@ -67,7 +85,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
                 console.log(res);
 
                 return new NextResponse(
-                    JSON.stringify({ message: `Restored ${body.backupFile}.` }),
+                    JSON.stringify({ message: `Restored ${body.backupFile}` }),
                     {
                         status: 200,
                     }
