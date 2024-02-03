@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
             const data: ServerCommunity = await execute_query(
                 getServerCommunity
             )(1);
-            const ip_list = [];
+            const ip_list = new Set<{ CidrIp: string; Description: string }>();
 
             // extract ip address from each user that has joined the seerver
             for (const row of data) {
@@ -47,12 +47,12 @@ export async function POST(req: NextRequest) {
                         CidrIp: row.users?.ip_address + "/32",
                         Description: "IP Whitelist",
                     };
-                    ip_list.push(ipRange);
+                    ip_list.add(ipRange);
                 }
             }
 
             // add ips to security group
-            if (ip_list.length > 0) {
+            if (ip_list.size > 0) {
                 const aws = new EC2Client({ region: "ap-southeast-1" });
 
                 const securityGroupRules = await aws.send(
@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
                                 FromPort: 8211,
                                 ToPort: 8211,
                                 IpProtocol: "udp",
-                                IpRanges: ip_list,
+                                IpRanges: Array.from(ip_list),
                             },
                         ],
                     })

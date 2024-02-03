@@ -19,6 +19,7 @@ export function WhitelistIp({ disabled = true }) {
     }, []);
 
     function whitelistIP() {
+        if (loading) return;
         setLoading(true);
         fetch("/games/palworld/api/whitelistIP", {
             method: "POST",
