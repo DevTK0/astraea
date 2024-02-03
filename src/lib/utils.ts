@@ -16,3 +16,30 @@ export const getURL = () => {
     url = url.charAt(url.length - 1) === "/" ? url : `${url}/`;
     return url;
 };
+
+import { NextRequest } from "next/server";
+
+export function withErrorHandling(
+    handler: (req: NextRequest) => Promise<Response>
+) {
+    return async function (req: NextRequest) {
+        try {
+            return await handler(req);
+        } catch (error) {
+            if (typeof error === "string") {
+                console.log(error);
+                return new Response(JSON.stringify({ message: error }), {
+                    status: 500,
+                });
+            } else if (error instanceof Error) {
+                console.log(error.message);
+                return new Response(
+                    JSON.stringify({ message: error.message }),
+                    {
+                        status: 500,
+                    }
+                );
+            }
+        }
+    };
+}
