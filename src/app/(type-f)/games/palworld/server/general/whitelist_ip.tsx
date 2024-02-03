@@ -5,11 +5,11 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
 import { useEffect, useState } from "react";
 
-export default function WhitelistIp({ disabled = true }) {
+export function WhitelistIp({ disabled = true }) {
     const [ip, setIp] = useState("searching...");
 
     useEffect(() => {
-        fetch("/games/palworld/api/getIP")
+        fetch("/users/getIP")
             .then((res) => res.json())
             .then((res) => {
                 setIp(res);
@@ -61,7 +61,7 @@ export default function WhitelistIp({ disabled = true }) {
                 size="sm"
                 className="w-[80px]"
                 disabled={disabled}
-                // onClick={whitelistIP}
+                onClick={whitelistIP}
             >
                 <svg
                     width="15"

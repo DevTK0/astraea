@@ -41,7 +41,7 @@ const frameworks = [
     },
 ];
 
-export default function BackupRestore() {
+export function BackupRestore() {
     // Backup Restore
     const [comboBoxOpen, setComboBoxOpen] = useState(false);
     const [comboBoxValue, setComboBoxValue] = useState("");
