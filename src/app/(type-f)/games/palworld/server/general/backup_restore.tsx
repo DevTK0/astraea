@@ -25,8 +25,13 @@ export function BackupRestore() {
     const [comboBoxOpen, setComboBoxOpen] = useState(false);
     const [comboBoxValue, setComboBoxValue] = useState("");
     const [backupList, setBackupList] = useState([{ value: "", lower: "" }]);
+    const [loadingBackupList, setLoadingBackupList] = useState(false);
+    const [loadingSave, setLoadingSave] = useState(false);
 
     function getBackupList() {
+        if (loadingBackupList) return;
+        setLoadingBackupList(true);
+
         fetch("/games/palworld/api/getBackupList")
             .then(async (res) => {
                 if (res.ok) return res.json();
@@ -41,6 +46,7 @@ export function BackupRestore() {
                     list.push({ lower: savfile.toLowerCase(), value: savfile });
                 });
                 setBackupList(list);
+                setLoadingBackupList(false);
             })
             .catch((err) => {
                 console.log(err);
@@ -49,6 +55,7 @@ export function BackupRestore() {
                     title: "Error",
                     description: err.message,
                 });
+                setLoadingBackupList(false);
             });
     }
 
@@ -96,34 +103,37 @@ export function BackupRestore() {
                             />
                             <CommandEmpty>No sav files found.</CommandEmpty>
                             <CommandGroup>
-                                <ScrollArea>
-                                    {backupList.map((savfile) => (
-                                        <CommandItem
-                                            key={savfile.value}
-                                            value={savfile.lower}
-                                            onSelect={(currentValue) => {
-                                                setComboBoxValue(
-                                                    currentValue ===
-                                                        comboBoxValue
-                                                        ? ""
-                                                        : currentValue
-                                                );
-                                                setComboBoxOpen(false);
-                                            }}
-                                        >
-                                            {savfile.value}
-                                            <CheckIcon
-                                                className={cn(
-                                                    "ml-auto h-4 w-4",
-                                                    comboBoxValue ===
-                                                        savfile.lower
-                                                        ? "opacity-100"
-                                                        : "opacity-0"
-                                                )}
-                                            />
-                                        </CommandItem>
-                                    ))}
-                                    <ScrollBar orientation="horizontal" />
+                                <ScrollArea className="max-h-[200px]">
+                                    {loadingBackupList ? (
+                                        <div className="ml-2">Loading...</div>
+                                    ) : (
+                                        backupList.map((savfile) => (
+                                            <CommandItem
+                                                key={savfile.value}
+                                                value={savfile.lower}
+                                                onSelect={(currentValue) => {
+                                                    setComboBoxValue(
+                                                        currentValue ===
+                                                            comboBoxValue
+                                                            ? ""
+                                                            : currentValue
+                                                    );
+                                                    setComboBoxOpen(false);
+                                                }}
+                                            >
+                                                {savfile.value}
+                                                <CheckIcon
+                                                    className={cn(
+                                                        "ml-auto h-4 w-4",
+                                                        comboBoxValue ===
+                                                            savfile.lower
+                                                            ? "opacity-100"
+                                                            : "opacity-0"
+                                                    )}
+                                                />
+                                            </CommandItem>
+                                        ))
+                                    )}
                                 </ScrollArea>
                             </CommandGroup>
                         </Command>
