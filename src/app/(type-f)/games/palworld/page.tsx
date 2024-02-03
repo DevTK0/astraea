@@ -31,8 +31,10 @@ import {
 } from "@/components/ui/select";
 import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { CollapsibleContent } from "@radix-ui/react-collapsible";
-import { CaretSortIcon } from "@radix-ui/react-icons";
 import { Input } from "@/components/ui/input";
+import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
+import BackupRestore from "./components/backup_restore";
+import WhitelistIp from "./components/whitelist_ip";
 
 const schema = z.object({
     type: z.enum(["all", "mentions", "none"], {
@@ -55,7 +57,6 @@ const defaultValues: Partial<FormValues> = {
 type FormValues = z.infer<typeof schema>;
 
 export default function Palworld() {
-    const [ip, setIp] = useState("searching...");
     const form = useForm<FormValues>({
         resolver: zodResolver(schema),
         defaultValues,
@@ -73,32 +74,9 @@ export default function Palworld() {
         });
     }
 
-    function whitelistIP() {
-        fetch("/games/palworld/api/whitelistIP", {
-            method: "POST",
-        })
-            .then(async (res) => {
-                if (res.ok) return res.json();
-                else {
-                    const error = await res.json();
-                    throw new Error(error.message, { cause: error });
-                }
-            })
-            .then((res) => {
-                toast({
-                    title: "Success",
-                    description: res.message,
-                });
-            })
-            .catch((err) => {
-                console.log(err);
-                toast({
-                    variant: "destructive",
-                    title: "Error",
-                    description: err.message,
-                });
-            });
-    }
+    // function RconTest() {
+    //     fetch("/games/palworld/api/rcon");
+    // }
 
     const accessControl = {
         whitelist: true,
@@ -118,14 +96,6 @@ export default function Palworld() {
         exp_rate: false,
         difficulty: false,
     };
-
-    useEffect(() => {
-        fetch("/games/palworld/api/getIP")
-            .then((res) => res.json())
-            .then((res) => {
-                setIp(res);
-            });
-    }, []);
 
     return (
         <Tabs defaultValue="notice" className="h-full space-y-6">
@@ -172,73 +142,8 @@ export default function Palworld() {
                     </h3>
                     <CollapsibleContent>
                         <div className="space-y-4">
-                            <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                <div className="space-y-0.5">
-                                    <Label className="text-base">
-                                        Whitelist
-                                        <span className="text-sm text-muted-foreground pl-2">
-                                            {ip}
-                                        </span>
-                                    </Label>
-                                    <div className="text-sm text-muted-foreground">
-                                        Adds your IP address to the list of
-                                        allowed IPs.
-                                    </div>
-                                </div>
-                                <Button
-                                    variant="default"
-                                    size="sm"
-                                    className="w-[80px]"
-                                    disabled={!accessControl.whitelist}
-                                    onClick={whitelistIP}
-                                >
-                                    <svg
-                                        width="15"
-                                        height="15"
-                                        viewBox="0 0 15 15"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path
-                                            d="M8 2.75C8 2.47386 7.77614 2.25 7.5 2.25C7.22386 2.25 7 2.47386 7 2.75V7H2.75C2.47386 7 2.25 7.22386 2.25 7.5C2.25 7.77614 2.47386 8 2.75 8H7V12.25C7 12.5261 7.22386 12.75 7.5 12.75C7.77614 12.75 8 12.5261 8 12.25V8H12.25C12.5261 8 12.75 7.77614 12.75 7.5C12.75 7.22386 12.5261 7 12.25 7H8V2.75Z"
-                                            fill="currentColor"
-                                            fillRule="evenodd"
-                                            clipRule="evenodd"
-                                        ></path>
-                                    </svg>
-                                </Button>
-                            </div>
-                            <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                <div className="space-y-0.5">
-                                    <Label className="text-base">
-                                        Restore Save
-                                    </Label>
-                                    <div className="text-sm text-muted-foreground">
-                                        Replaces your current save with a
-                                        backup.
-                                    </div>
-                                </div>
-                                {/* <Button
-                                    variant="secondary"
-                                    size="sm"
-                                    className="w-[80px]"
-                                >
-                                    <svg
-                                        width="15"
-                                        height="15"
-                                        viewBox="0 0 15 15"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path
-                                            d="M5 7.50003C5 8.32845 4.32843 9.00003 3.5 9.00003C2.67157 9.00003 2 8.32845 2 7.50003C2 6.6716 2.67157 6.00003 3.5 6.00003C4.32843 6.00003 5 6.6716 5 7.50003ZM5.71313 8.66388C5.29445 9.45838 4.46048 10 3.5 10C2.11929 10 1 8.88074 1 7.50003C1 6.11931 2.11929 5.00003 3.5 5.00003C4.46048 5.00003 5.29445 5.54167 5.71313 6.33616L9.10424 4.21671C9.03643 3.98968 9 3.74911 9 3.50003C9 2.11932 10.1193 1.00003 11.5 1.00003C12.8807 1.00003 14 2.11932 14 3.50003C14 4.88074 12.8807 6.00003 11.5 6.00003C10.6915 6.00003 9.97264 5.61624 9.51566 5.0209L5.9853 7.22738C5.99502 7.31692 6 7.40789 6 7.50003C6 7.59216 5.99502 7.68312 5.9853 7.77267L9.51567 9.97915C9.97265 9.38382 10.6915 9.00003 11.5 9.00003C12.8807 9.00003 14 10.1193 14 11.5C14 12.8807 12.8807 14 11.5 14C10.1193 14 9 12.8807 9 11.5C9 11.2509 9.03643 11.0104 9.10425 10.7833L5.71313 8.66388ZM11.5 5.00003C12.3284 5.00003 13 4.32846 13 3.50003C13 2.6716 12.3284 2.00003 11.5 2.00003C10.6716 2.00003 10 2.6716 10 3.50003C10 4.32846 10.6716 5.00003 11.5 5.00003ZM13 11.5C13 12.3285 12.3284 13 11.5 13C10.6716 13 10 12.3285 10 11.5C10 10.6716 10.6716 10 11.5 10C12.3284 10 13 10.6716 13 11.5Z"
-                                            fill="currentColor"
-                                            fillRule="evenodd"
-                                            clipRule="evenodd"
-                                        ></path>
-                                    </svg>
-                                </Button> */}
-                            </div>
+                            <WhitelistIp disabled={!accessControl.whitelist} />
+                            <BackupRestore />
                         </div>
                     </CollapsibleContent>
                 </Collapsible>
