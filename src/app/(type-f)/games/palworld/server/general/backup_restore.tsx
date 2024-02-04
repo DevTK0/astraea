@@ -135,7 +135,8 @@ export function BackupRestore() {
                             <CommandEmpty>No sav files found.</CommandEmpty>
                             <CommandGroup>
                                 <ScrollArea className="max-h-[200px]">
-                                    {loadingBackupList ? (
+                                    {loadingBackupList &&
+                                    backupList.length == 0 ? (
                                         <div className="ml-2">Loading...</div>
                                     ) : (
                                         backupList.map((savfile) => (

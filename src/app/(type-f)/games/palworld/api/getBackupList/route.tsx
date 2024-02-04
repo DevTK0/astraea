@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 
 import { S3Client, ListObjectsV2Command } from "@aws-sdk/client-s3";
 
-import { withErrorHandling } from "@/lib/utils";
+import { HTTPError, withErrorHandling } from "@/lib/utils";
 import { execute_query } from "@/lib/supabase/queries/execute_query";
 import { getSavFilename } from "@/lib/supabase/queries/get_sav_filename";
 import { cookies } from "next/headers";
@@ -17,6 +17,11 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
     } = await client.auth.getUser();
 
     const { sav_filename } = await execute_query(getSavFilename)(user?.id);
+
+    if (sav_filename === null) {
+        throw HTTPError("sav_filename is not linked", 404);
+    }
+
     const aws = new S3Client({ region: "ap-southeast-1" });
     const response = await aws.send(
         new ListObjectsV2Command({

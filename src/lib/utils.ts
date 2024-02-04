@@ -26,7 +26,16 @@ export function withErrorHandling(
         try {
             return await handler(req);
         } catch (error) {
-            if (typeof error === "string") {
+            if (error instanceof HTTPError) {
+                const httpError = error as HTTPError;
+                console.log(httpError.message);
+                return new Response(
+                    JSON.stringify({ message: httpError.message }),
+                    {
+                        status: httpError.status,
+                    }
+                );
+            } else if (typeof error === "string") {
                 console.log(error);
                 return new Response(JSON.stringify({ message: error }), {
                     status: 500,
@@ -42,4 +51,30 @@ export function withErrorHandling(
             }
         }
     };
+}
+
+export interface HTTPError extends Error {
+    status: number;
+    cause: unknown;
+}
+
+export function HTTPError(
+    message: string,
+    statusCode: number,
+    error?: Error
+): HTTPError {
+    const httpError = new Error(message) as HTTPError;
+
+    httpError.status = statusCode;
+
+    if (error) {
+        if (error instanceof Error) {
+            httpError.stack = error.stack;
+        }
+        if ("cause" in error) {
+            httpError.cause = error.cause;
+        }
+    }
+
+    return httpError;
 }
