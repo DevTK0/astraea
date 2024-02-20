@@ -65,8 +65,6 @@ export const whitelistIp = action(
 
         z.string().array().nonempty().parse(ipList);
 
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-
         // add ips to security group
         const ec2 = new EC2Client({ region: aws.region });
 
