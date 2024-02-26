@@ -3,8 +3,8 @@ import Link from "next/link";
 
 const pages = [
     { name: "Games", href: "#", current: false },
-    { name: "Palworld", href: "#", current: false },
-    { name: "Palworld Server 1", href: "#", current: true },
+    { name: "Game Name", href: "#", current: false },
+    { name: "Game Server 1", href: "#", current: true },
 ];
 
 export default function Breadcrumb() {

@@ -1,13 +1,5 @@
-import {
-    Collapsible,
-    CollapsibleTrigger,
-    CollapsibleContent,
-} from "@/components/ui/collapsible";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Icons } from "@/components/ui/icons";
+import { ServerStatus } from "../../../../[game]/servers/[serverId]/(components)/display/server-status";
 import { PlayerList } from "./display/player-list";
-import { ServerStatus } from "./display/server-status";
 
 export default function Overview() {
     return (

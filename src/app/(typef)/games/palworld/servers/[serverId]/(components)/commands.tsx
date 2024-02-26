@@ -3,11 +3,9 @@ import {
     CollapsibleTrigger,
     CollapsibleContent,
 } from "@/components/ui/collapsible";
+
 import { RestoreSave } from "./commands/restore-save/restore-save";
 import { WhitelistIp } from "./commands/whitelist/whitelist-ip";
-import { StartServer } from "./commands/start-server";
-import { StopServer } from "./commands/stop-server";
-import { RestartServer } from "./commands/restart-server";
 import { ShutdownClient } from "./commands/shutdown-client";
 import { KickAll } from "./commands/kick-all";
 import { UnbanPlayer } from "./commands/unban-player";
@@ -15,8 +13,11 @@ import { BanPlayer } from "./commands/ban-player";
 import { Broadcast } from "./commands/broadcast";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { ServerSettings } from "./configs/server-settings";
 import { Icons } from "@/components/ui/icons";
+
+import { StartServer } from "../../../../[game]/servers/[serverId]/(components)/commands/start-server/start-server";
+import { StopServer } from "../../../../[game]/servers/[serverId]/(components)/commands/stop-server/stop-server";
+import { RestartServer } from "../../../../[game]/servers/[serverId]/(components)/commands/restart-server/restart-server";
 
 export default function Commands() {
     const accessControl = {
@@ -49,7 +50,7 @@ export default function Commands() {
                     <div className="space-y-4">
                         <WhitelistIp />
                         <RestoreSave />
-                        <StartServer disabled={!accessControl.start} />
+                        <StartServer />
                         <StopServer disabled={!accessControl.stop} />
                         <RestartServer disabled={!accessControl.restart} />
                     </div>
