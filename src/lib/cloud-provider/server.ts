@@ -7,17 +7,6 @@ export type ServerStatus =
     | "Stopped"
     | "Archived";
 
-export function getServerStatus(
-    game: string,
-    serverId: number
-): {
-    status: ServerStatus;
-    ipAddress?: string;
-    instanceType?: string;
-} {
-    return {
-        status: "Starting",
-        instanceType: "test",
-    };
-    // return getInstanceState(game, serverId);
+export function getServerStatus(game: string, serverId: number) {
+    return getInstanceState(game, serverId);
 }

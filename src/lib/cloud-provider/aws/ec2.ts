@@ -43,52 +43,58 @@ export async function getInstanceState(
     ipAddress?: string;
     instanceType?: string;
 }> {
-    const isStarting = await checkIfServerIsStarting(game, serverId);
+    const ec2 = new EC2Client("ap-southeast-1");
 
-    if (isStarting)
-        return {
-            status: "Starting",
-            instanceType: isStarting.instanceType,
-        };
+    return {
+        status: "Starting",
+        instanceType: "test",
+    };
+    // const isStarting = await checkIfServerIsStarting(game, serverId);
 
-    const isRunning = await checkIfServerIsRunning(game, serverId);
+    // if (isStarting)
+    //     return {
+    //         status: "Starting",
+    //         instanceType: isStarting.instanceType,
+    //     };
 
-    if (isRunning)
-        return {
-            status: "Running",
-            ipAddress: isRunning.ipAddress,
-            instanceType: isRunning.instanceType,
-        };
+    // const isRunning = await checkIfServerIsRunning(game, serverId);
 
-    const isStopping = await checkIfServerIsStopping(game, serverId);
+    // if (isRunning)
+    //     return {
+    //         status: "Running",
+    //         ipAddress: isRunning.ipAddress,
+    //         instanceType: isRunning.instanceType,
+    //     };
 
-    if (isStopping)
-        return {
-            status: "Stopping",
-        };
+    // const isStopping = await checkIfServerIsStopping(game, serverId);
 
-    const isBackingUpVolume = await checkIfBackingUpVolume(game, serverId);
+    // if (isStopping)
+    //     return {
+    //         status: "Stopping",
+    //     };
 
-    if (isBackingUpVolume)
-        return {
-            status: "Stopping",
-        };
+    // const isBackingUpVolume = await checkIfBackingUpVolume(game, serverId);
 
-    const isBackupComplete = await checkIfImageExists(game, serverId);
+    // if (isBackingUpVolume)
+    //     return {
+    //         status: "Stopping",
+    //     };
 
-    if (isBackupComplete)
-        return {
-            status: "Stopped",
-        };
+    // const isBackupComplete = await checkIfImageExists(game, serverId);
 
-    const isArchived = await checkIfArchived(game, serverId);
+    // if (isBackupComplete)
+    //     return {
+    //         status: "Stopped",
+    //     };
 
-    if (isArchived)
-        return {
-            status: "Archived",
-        };
+    // const isArchived = await checkIfArchived(game, serverId);
 
-    throw new AWSError("Unknown state.");
+    // if (isArchived)
+    //     return {
+    //         status: "Archived",
+    //     };
+
+    // throw new AWSError("Unknown state.");
 }
 
 const instanceState = [
