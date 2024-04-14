@@ -32,7 +32,6 @@ export function ServerStatus(props: ClassAttributes<HTMLDivElement>) {
                 <div className="flex flex-row items-start justify-between w-full">
                     <div className="space-y-2">
                         <h1 className="text-xl font-semibold">Status</h1>
-                        {/* {status} */}
                         <RenderStatus
                             isPending={isPending}
                             isError={isError}

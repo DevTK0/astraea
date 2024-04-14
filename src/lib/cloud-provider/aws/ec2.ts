@@ -1,4 +1,3 @@
-import { aws as configs } from "@/configs/aws";
 import {
     DescribeImagesCommand,
     DescribeInstancesCommand,
