@@ -167,7 +167,7 @@ export function RestoreSave() {
                     {restoreSaveAction.status === "executing" ? (
                         <Icons.spinner className="h-4 w-4 animate-spin" />
                     ) : (
-                        <Icons.paper_plane />
+                        <Icons.upload />
                     )}
                 </Button>
             </div>

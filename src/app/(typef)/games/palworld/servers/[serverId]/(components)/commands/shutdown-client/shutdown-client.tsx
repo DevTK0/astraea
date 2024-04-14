@@ -7,19 +7,19 @@ import { toast, useToast } from "@/components/ui/use-toast";
 import { Icons } from "@/components/ui/icons";
 
 import { useMutation } from "@tanstack/react-query";
-import { updateServerAction } from "./update-server.action";
+import { shutdownClientAction } from "./shutdown-client.action";
 
-export function UpdateServer() {
+export function ShutdownClient() {
     const game = "Palworld";
     const serverId = 1;
     const { toast } = useToast();
 
     const { isError, isPending, mutate, error } = useMutation({
-        mutationFn: updateServerAction,
+        mutationFn: shutdownClientAction,
         onSuccess: (response) => {
             toast({
                 title: "Success",
-                description: `Server Updated. ${response}`,
+                description: `Server is shutting down...`,
             });
         },
     });
@@ -32,14 +32,14 @@ export function UpdateServer() {
                 description: error.message,
             });
         }
-    }, [isError]);
+    }, [isError, error?.message, toast]);
 
     return (
         <div className="flex flex-row items-center justify-between rounded-lg border p-4">
             <div className="space-y-0.5">
-                <Label className="text-base">Update</Label>
+                <Label className="text-base">Shutdown</Label>
                 <div className="text-sm text-muted-foreground">
-                    Updates the server.
+                    Shuts down the Palworld client on the server.
                 </div>
             </div>
             <Button
@@ -51,7 +51,7 @@ export function UpdateServer() {
                 {isPending ? (
                     <Icons.spinner className="h-4 w-4 animate-spin" />
                 ) : (
-                    <Icons.update />
+                    <Icons.value_none />
                 )}
             </Button>
         </div>

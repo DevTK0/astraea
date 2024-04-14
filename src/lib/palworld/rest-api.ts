@@ -38,7 +38,6 @@ export async function getServerSettings(address: string) {
             },
         }
     );
-    n;
 }
 
 export async function getServerMetrics(address: string) {

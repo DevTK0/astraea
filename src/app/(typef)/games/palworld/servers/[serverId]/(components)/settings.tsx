@@ -3,13 +3,7 @@ import {
     CollapsibleTrigger,
     CollapsibleContent,
 } from "@/components/ui/collapsible";
-import { ShutdownClient } from "./commands/shutdown-client";
-import { KickAll } from "./commands/kick-all";
-import { UnbanPlayer } from "./commands/unban-player";
-import { BanPlayer } from "./commands/ban-player";
-import { Broadcast } from "./commands/broadcast";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { ServerSettings } from "./configs/server-settings";
 import { Icons } from "@/components/ui/icons";
 

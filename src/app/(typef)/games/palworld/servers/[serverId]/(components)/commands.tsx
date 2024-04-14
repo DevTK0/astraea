@@ -6,11 +6,10 @@ import {
 
 import { RestoreSave } from "./commands/restore-save/restore-save";
 import { WhitelistIp } from "./commands/whitelist/whitelist-ip";
-import { ShutdownClient } from "./commands/shutdown-client";
 import { KickAll } from "./commands/kick-all";
 import { UnbanPlayer } from "./commands/unban-player";
 import { BanPlayer } from "./commands/ban-player";
-import { Broadcast } from "./commands/broadcast";
+
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Icons } from "@/components/ui/icons";
@@ -18,7 +17,9 @@ import { Icons } from "@/components/ui/icons";
 import { StartServer } from "../../../../[game]/servers/[serverId]/(components)/commands/start-server/start-server";
 import { StopServer } from "../../../../[game]/servers/[serverId]/(components)/commands/stop-server/stop-server";
 import { RestartServer } from "../../../../[game]/servers/[serverId]/(components)/commands/restart-server/restart-server";
-import { UpdateServer } from "./commands/update-server/update";
+import { UpdateClient } from "./commands/update-client/update-client";
+import { ShutdownClient } from "./commands/shutdown-client/shutdown-client";
+import { Broadcast } from "./commands/broadcast/broadcast";
 
 export default function Commands() {
     const accessControl = {
@@ -70,12 +71,14 @@ export default function Commands() {
                 </h3>
                 <CollapsibleContent>
                     <div className="space-y-4">
-                        <UpdateServer />
-                        {/* <ShutdownClient />
+                        <Broadcast />
+                        <ShutdownClient />
+                        <UpdateClient />
+                        {/* 
                         <KickAll />
                         <BanPlayer />
                         <UnbanPlayer />
-                        <Broadcast /> */}
+                         */}
                     </div>
                 </CollapsibleContent>
             </Collapsible>

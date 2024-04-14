@@ -26,7 +26,7 @@ export function ServerStatus(props: ClassAttributes<HTMLDivElement>) {
             }),
     });
 
-    const status = renderStatus(isPending, isError, server, error);
+    // const status = renderStatus(isPending, isError, server, error);
 
     return (
         <div {...props}>
@@ -34,7 +34,13 @@ export function ServerStatus(props: ClassAttributes<HTMLDivElement>) {
                 <div className="flex flex-row items-start justify-between w-full">
                     <div className="space-y-2">
                         <h1 className="text-xl font-semibold">Status</h1>
-                        {status}
+                        {/* {status} */}
+                        <RenderStatus
+                            isPending={isPending}
+                            isError={isError}
+                            server={server}
+                            error={error}
+                        />
                     </div>
                     <div
                         className={cn(
@@ -48,18 +54,119 @@ export function ServerStatus(props: ClassAttributes<HTMLDivElement>) {
     );
 }
 
-function renderStatus(
-    isPending: boolean,
-    isError: boolean,
+// function renderStatus(
+//     isPending: boolean,
+//     isError: boolean,
+//     server:
+//         | {
+//               status: ServerStatus;
+//               instanceType?: string | undefined;
+//               ipAddress?: string | undefined;
+//           }
+//         | undefined,
+//     error: { message: string } | null
+// ) {
+//     const { toast } = useToast();
+
+//     if (isPending) {
+//         return (
+//             <div className="flex items-center space-x-1">
+//                 <div className="rounded-full border w-3 h-3"></div>
+//                 <div className="text-sm font-medium">Fetching...</div>
+//             </div>
+//         );
+//     }
+
+//     if (isError) {
+//         return (
+//             <div className="flex items-center space-x-1">
+//                 <div className="rounded-full border w-3 h-3 bg-red-500"></div>
+//                 <div className="text-sm font-medium text-red-500">
+//                     Error - {error?.message}
+//                 </div>
+//             </div>
+//         );
+//     }
+
+//     if (server?.status === "Running") {
+//         return (
+//             <>
+//                 <div className="flex items-center space-x-1">
+//                     <div className="rounded-full border w-3 h-3 bg-green-500"></div>
+//                     <div className="text-sm font-medium text-green-500">
+//                         {server?.status}
+//                     </div>
+//                 </div>
+//                 <div>
+//                     <div className="text-m text-muted-foreground">
+//                         {server?.instanceType}
+//                     </div>
+//                     <div className="flex items-center space-x-1">
+//                         <p className="text-sm">
+//                             {`${server.ipAddress}`}
+//                             <span className="font-bold">:8211 </span>
+//                         </p>
+//                         <Button
+//                             variant="ghost"
+//                             size="icon"
+//                             onClick={() => {
+//                                 if (server.ipAddress === undefined) return;
+//                                 navigator.clipboard.writeText(
+//                                     `${server.ipAddress}:8211`
+//                                 );
+//                                 toast({
+//                                     description: "Copied to clipboard.",
+//                                 });
+//                             }}
+//                         >
+//                             <Icons.copy />
+//                         </Button>
+//                     </div>
+//                 </div>
+//             </>
+//         );
+//     }
+
+//     if (server?.status === "Stopped" || server?.status === "Archived") {
+//         return (
+//             <div className="flex items-center space-x-1">
+//                 <div className="rounded-full border w-3 h-3 bg-gray-500"></div>
+//                 <div className="text-sm font-medium text-gray-500">
+//                     {server?.status}
+//                 </div>
+//             </div>
+//         );
+//     }
+
+//     if (server?.status === "Starting" || server?.status === "Stopping") {
+//         return (
+//             <div className="flex items-center space-x-1">
+//                 <div className="rounded-full border w-3 h-3 bg-yellow-300"></div>
+//                 <div className="text-sm font-medium text-yellow-300">
+//                     {server?.status}
+//                 </div>
+//             </div>
+//         );
+//     }
+// }
+
+const RenderStatus = ({
+    isPending,
+    isError,
+    server,
+    error,
+}: {
+    isPending: boolean;
+    isError: boolean;
     server:
         | {
               status: ServerStatus;
               instanceType?: string | undefined;
               ipAddress?: string | undefined;
           }
-        | undefined,
-    error: { message: string } | null
-) {
+        | undefined;
+    error: { message: string } | null;
+}) => {
     const { toast } = useToast();
 
     if (isPending) {
@@ -142,4 +249,4 @@ function renderStatus(
             </div>
         );
     }
-}
+};
