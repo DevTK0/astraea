@@ -15,6 +15,8 @@ import { z } from "zod";
 import { AWSError } from "@/lib/error-handling/aws";
 import { ServerStatus, getServerStatus } from "../server";
 
+// const ec2 = new EC2Client(configs.region);
+
 /**
  * Flow:
  * Pending > Running > Shutting Down > Terminated > Lambda: Backup Volume into snapshot >
@@ -43,19 +45,19 @@ export async function getInstanceState(
     ipAddress?: string;
     instanceType?: string;
 }> {
-    const ec2 = new EC2Client("ap-southeast-1");
+    const isStarting = await checkIfServerIsStarting(game, serverId);
+
+    if (isStarting)
+        return {
+            status: "Starting",
+            instanceType: isStarting.instanceType,
+        };
 
     return {
-        status: "Starting",
+        status: "Running",
         instanceType: "test",
+        ipAddress: "1.1.1.1",
     };
-    // const isStarting = await checkIfServerIsStarting(game, serverId);
-
-    // if (isStarting)
-    //     return {
-    //         status: "Starting",
-    //         instanceType: isStarting.instanceType,
-    //     };
 
     // const isRunning = await checkIfServerIsRunning(game, serverId);
 
