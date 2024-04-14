@@ -1,7 +1,7 @@
 "use server";
 
 import { aws } from "@/configs/aws";
-import { palworld } from "@/configs/games/palworld";
+import { configs } from "@/configs/games/palworld";
 import { action } from "@/lib/server-actions/next-safe-action";
 import { DescribeInstancesCommand, EC2Client } from "@aws-sdk/client-ec2";
 import { SSMClient, SendCommandCommand } from "@aws-sdk/client-ssm";
@@ -17,7 +17,7 @@ export const restoreSave = action(
     restoreSaveSchema,
     async ({ serverId, saveFile, saveId }) => {
         const s3FilePath = `s3://astraea-typef/${serverId}/backups`;
-        const saveFilePath = palworld.saveFilePath;
+        const saveFilePath = configs.saveFilePath;
 
         const ec2 = new EC2Client({ region: aws.region });
         const ssm = new SSMClient({ region: aws.region });

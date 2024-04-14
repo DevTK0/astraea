@@ -19,7 +19,7 @@ export function UpdateServer() {
         onSuccess: (response) => {
             toast({
                 title: "Success",
-                description: `Server Updated.`,
+                description: `Server Updated. ${response}`,
             });
         },
     });

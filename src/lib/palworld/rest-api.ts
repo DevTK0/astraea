@@ -1,43 +1,163 @@
-export function getServerInfo() {
-    // TODO: Implement this function
+import { configs } from "@/configs/games/palworld";
+import { fetchWithErrorHandling } from "../http/fetch";
+
+export async function getServerInfo(address: string) {
+    return await fetchWithErrorHandling(
+        `http://${address}:${configs.apiPort}/v1/api/info`,
+        {
+            method: "GET",
+            headers: {
+                contentType: "application/json",
+                Authorization: `Basic ${process.env.PALWORLD_API_AUTH_HEADER}`,
+            },
+        }
+    );
 }
 
-export function getPlayerList() {
-    // TODO: Implement this function
+export async function getPlayerList(address: string) {
+    return await fetchWithErrorHandling(
+        `http://${address}:${configs.apiPort}/v1/api/players`,
+        {
+            method: "GET",
+            headers: {
+                contentType: "application/json",
+                Authorization: `Basic ${process.env.PALWORLD_API_AUTH_HEADER}`,
+            },
+        }
+    );
 }
 
-export function getServerSettings() {
-    // TODO: Implement this function
+export async function getServerSettings(address: string) {
+    return await fetchWithErrorHandling(
+        `http://${address}:${configs.apiPort}/v1/api/settings`,
+        {
+            method: "GET",
+            headers: {
+                contentType: "application/json",
+                Authorization: `Basic ${process.env.PALWORLD_API_AUTH_HEADER}`,
+            },
+        }
+    );
+    n;
 }
 
-export function getServerMetrics() {
-    // TODO: Implement this function
+export async function getServerMetrics(address: string) {
+    return await fetchWithErrorHandling(
+        `http://${address}:${configs.apiPort}/v1/api/metrics`,
+        {
+            method: "GET",
+            headers: {
+                contentType: "application/json",
+                Authorization: `Basic ${process.env.PALWORLD_API_AUTH_HEADER}`,
+            },
+        }
+    );
 }
 
-export function announceMessage() {
-    // TODO: Implement this function
+export async function announceMessage(address: string, message: string) {
+    return await fetchWithErrorHandling(
+        `http://${address}:${configs.apiPort}/v1/api/announce`,
+        {
+            method: "POST",
+            headers: {
+                contentType: "application/json",
+                Authorization: `Basic ${process.env.PALWORLD_API_AUTH_HEADER}`,
+            },
+            body: JSON.stringify({ message: message }),
+        }
+    );
 }
 
-export function kickPlayer() {
-    // TODO: Implement this function
+export async function kickPlayer(
+    address: string,
+    userId: string,
+    message: string
+) {
+    return await fetchWithErrorHandling(
+        `http://${address}:${configs.apiPort}/v1/api/kick`,
+        {
+            method: "POST",
+            headers: {
+                contentType: "application/json",
+                Authorization: `Basic ${process.env.PALWORLD_API_AUTH_HEADER}`,
+            },
+            body: JSON.stringify({ userId: userId, message: message }),
+        }
+    );
 }
 
-export function banPlayer() {
-    // TODO: Implement this function
+export async function banPlayer(
+    address: string,
+    userId: string,
+    reason: string
+) {
+    return await fetchWithErrorHandling(
+        `http://${address}:${configs.apiPort}/v1/api/ban`,
+        {
+            method: "POST",
+            headers: {
+                contentType: "application/json",
+                Authorization: `Basic ${process.env.PALWORLD_API_AUTH_HEADER}`,
+                body: JSON.stringify({ userid: userId, message: reason }),
+            },
+        }
+    );
 }
 
-export function unbanPlayer() {
-    // TODO: Implement this function
+export async function unbanPlayer(
+    address: string,
+    userId: string,
+    reason: string
+) {
+    return await fetchWithErrorHandling(
+        `http://${address}:${configs.apiPort}/v1/api/unban`,
+        {
+            method: "POST",
+            headers: {
+                contentType: "application/json",
+                Authorization: `Basic ${process.env.PALWORLD_API_AUTH_HEADER}`,
+                body: JSON.stringify({ userId: userId, message: reason }),
+            },
+        }
+    );
 }
 
-export function save() {
-    // TODO: Implement this function
+export async function save(address: string) {
+    return await fetchWithErrorHandling(
+        `http://${address}:${configs.apiPort}/v1/api/save`,
+        {
+            method: "POST",
+            headers: {
+                contentType: "application/json",
+                Authorization: `Basic ${process.env.PALWORLD_API_AUTH_HEADER}`,
+            },
+        }
+    );
 }
 
-export function shutdown() {
-    // TODO: Implement this function
+export async function shutdown(address: string, wait: number, message: string) {
+    return await fetchWithErrorHandling(
+        `http://${address}:${configs.apiPort}/v1/api/shutdown`,
+        {
+            method: "POST",
+            headers: {
+                contentType: "application/json",
+                Authorization: `Basic ${process.env.PALWORLD_API_AUTH_HEADER}`,
+            },
+            body: JSON.stringify({ waitTime: wait, message: message }),
+        }
+    );
 }
 
-export function forceStop() {
-    // TODO: Implement this function
+export async function forceStop(address: string) {
+    return await fetchWithErrorHandling(
+        `http://${address}:${configs.apiPort}/v1/api/stop`,
+        {
+            method: "POST",
+            headers: {
+                contentType: "application/json",
+                Authorization: `Basic ${process.env.PALWORLD_API_AUTH_HEADER}`,
+            },
+        }
+    );
 }
