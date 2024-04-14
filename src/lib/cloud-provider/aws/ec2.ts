@@ -15,7 +15,7 @@ import { z } from "zod";
 import { AWSError } from "@/lib/error-handling/aws";
 import { ServerStatus, getServerStatus } from "../server";
 
-// const ec2 = new EC2Client(configs.region);
+const ec2 = new EC2Client();
 
 /**
  * Flow:
@@ -53,50 +53,44 @@ export async function getInstanceState(
             instanceType: isStarting.instanceType,
         };
 
-    return {
-        status: "Running",
-        instanceType: "test",
-        ipAddress: "1.1.1.1",
-    };
+    const isRunning = await checkIfServerIsRunning(game, serverId);
 
-    // const isRunning = await checkIfServerIsRunning(game, serverId);
+    if (isRunning)
+        return {
+            status: "Running",
+            ipAddress: isRunning.ipAddress,
+            instanceType: isRunning.instanceType,
+        };
 
-    // if (isRunning)
-    //     return {
-    //         status: "Running",
-    //         ipAddress: isRunning.ipAddress,
-    //         instanceType: isRunning.instanceType,
-    //     };
+    const isStopping = await checkIfServerIsStopping(game, serverId);
 
-    // const isStopping = await checkIfServerIsStopping(game, serverId);
+    if (isStopping)
+        return {
+            status: "Stopping",
+        };
 
-    // if (isStopping)
-    //     return {
-    //         status: "Stopping",
-    //     };
+    const isBackingUpVolume = await checkIfBackingUpVolume(game, serverId);
 
-    // const isBackingUpVolume = await checkIfBackingUpVolume(game, serverId);
+    if (isBackingUpVolume)
+        return {
+            status: "Stopping",
+        };
 
-    // if (isBackingUpVolume)
-    //     return {
-    //         status: "Stopping",
-    //     };
+    const isBackupComplete = await checkIfImageExists(game, serverId);
 
-    // const isBackupComplete = await checkIfImageExists(game, serverId);
+    if (isBackupComplete)
+        return {
+            status: "Stopped",
+        };
 
-    // if (isBackupComplete)
-    //     return {
-    //         status: "Stopped",
-    //     };
+    const isArchived = await checkIfArchived(game, serverId);
 
-    // const isArchived = await checkIfArchived(game, serverId);
+    if (isArchived)
+        return {
+            status: "Archived",
+        };
 
-    // if (isArchived)
-    //     return {
-    //         status: "Archived",
-    //     };
-
-    // throw new AWSError("Unknown state.");
+    throw new AWSError("Unknown state.");
 }
 
 const instanceState = [
@@ -109,7 +103,6 @@ const instanceState = [
 ] as const;
 
 export async function checkIfServerIsStarting(game: string, serverId: number) {
-    const ec2 = new EC2Client("ap-southeast-1");
     const response = await ec2.send(
         new DescribeInstancesCommand({
             Filters: [
@@ -166,7 +159,6 @@ export async function checkIfServerIsStarting(game: string, serverId: number) {
 }
 
 export async function checkIfServerIsRunning(game: string, serverId: number) {
-    const ec2 = new EC2Client("ap-southeast-1");
     const response = await ec2.send(
         new DescribeInstancesCommand({
             Filters: [
@@ -218,7 +210,6 @@ export async function checkIfServerIsRunning(game: string, serverId: number) {
 }
 
 export async function checkIfServerIsStopping(game: string, serverId: number) {
-    const ec2 = new EC2Client("ap-southeast-1");
     const response = await ec2.send(
         new DescribeInstancesCommand({
             Filters: [
@@ -266,7 +257,6 @@ export async function checkIfServerIsStopping(game: string, serverId: number) {
 }
 
 export async function checkIfBackingUpVolume(game: string, serverId: number) {
-    const ec2 = new EC2Client("ap-southeast-1");
     const response = await ec2.send(
         new DescribeVolumesCommand({
             Filters: [
@@ -318,7 +308,6 @@ export async function checkIfBackingUpVolume(game: string, serverId: number) {
 }
 
 export async function checkIfImageExists(game: string, serverId: number) {
-    const ec2 = new EC2Client("ap-southeast-1");
     const response = await ec2.send(
         new DescribeImagesCommand({
             Filters: [
@@ -355,7 +344,6 @@ export async function checkIfImageExists(game: string, serverId: number) {
 }
 
 export async function checkIfArchived(game: string, serverId: number) {
-    const ec2 = new EC2Client("ap-southeast-1");
     const response = await ec2.send(
         new DescribeSnapshotsCommand({
             Filters: [
@@ -410,7 +398,6 @@ export async function startServer(
     serverId: number,
     options: { volumeSize: number; instanceType: instanceTypes }
 ) {
-    const ec2 = new EC2Client("ap-southeast-1");
     const image = await checkIfImageExists(game, serverId);
 
     if (!image) throw new AWSError("AMI not found");
@@ -440,7 +427,6 @@ export async function startServer(
 }
 
 export async function waitForServerIp(game: string, serverId: number) {
-    const ec2 = new EC2Client("ap-southeast-1");
     await waitUntilInstanceRunning(
         {
             client: ec2,
@@ -475,7 +461,6 @@ export async function waitForServerIp(game: string, serverId: number) {
 }
 
 async function getLaunchTemplateId(game: string, serverId: number) {
-    const ec2 = new EC2Client("ap-southeast-1");
     const response = await ec2.send(
         new DescribeLaunchTemplatesCommand({
             Filters: [
@@ -507,7 +492,6 @@ async function getLaunchTemplateId(game: string, serverId: number) {
 }
 
 export async function stopServer(game: string, serverId: number) {
-    const ec2 = new EC2Client("ap-southeast-1");
     // get server instance id
     const instance = await checkIfServerIsRunning(game, serverId);
 
@@ -524,7 +508,6 @@ export async function stopServer(game: string, serverId: number) {
 const WaiterState = ["SUCCESS"] as const;
 
 export async function waitForInstanceStop(game: string, serverId: number) {
-    const ec2 = new EC2Client("ap-southeast-1");
     const response = await waitUntilInstanceStopped(
         {
             client: ec2,
