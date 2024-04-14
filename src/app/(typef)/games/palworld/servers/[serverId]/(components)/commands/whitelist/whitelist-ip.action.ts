@@ -66,7 +66,7 @@ export const whitelistIp = action(
         z.string().array().nonempty().parse(ipList);
 
         // add ips to security group
-        const ec2 = new EC2Client({ region: aws.region });
+        const ec2 = new EC2Client();
 
         const securityGroupRules = await ec2.send(
             new DescribeSecurityGroupRulesCommand({

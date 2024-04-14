@@ -19,8 +19,8 @@ export const restoreSave = action(
         const s3FilePath = `s3://astraea-typef/${serverId}/backups`;
         const saveFilePath = configs.saveFilePath;
 
-        const ec2 = new EC2Client({ region: aws.region });
-        const ssm = new SSMClient({ region: aws.region });
+        const ec2 = new EC2Client();
+        const ssm = new SSMClient();
 
         const response = await ec2.send(
             new DescribeInstancesCommand({
