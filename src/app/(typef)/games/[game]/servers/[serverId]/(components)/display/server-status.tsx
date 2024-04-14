@@ -96,13 +96,18 @@ function renderStatus(
                         {server?.instanceType}
                     </div>
                     <div className="flex items-center space-x-1">
-                        <p className="text-sm">{server.ipAddress}</p>
+                        <p className="text-sm">
+                            {`${server.ipAddress}`}
+                            <span className="font-bold">:8211 </span>
+                        </p>
                         <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => {
                                 if (server.ipAddress === undefined) return;
-                                navigator.clipboard.writeText(server.ipAddress);
+                                navigator.clipboard.writeText(
+                                    `${server.ipAddress}:8211`
+                                );
                                 toast({
                                     description: "Copied to clipboard.",
                                 });

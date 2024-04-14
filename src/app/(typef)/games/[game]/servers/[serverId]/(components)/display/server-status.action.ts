@@ -4,7 +4,7 @@ import { getServerStatus } from "@/lib/cloud-provider/server";
 import { action } from "@/lib/server-actions/next-safe-action";
 import { z } from "zod";
 
-import { gamelist } from "@/configs/games/gamelist";
+import { gamelist } from "@/meta/gamedata";
 import { withErrorHandling } from "@/lib/error-handling/next-safe-action";
 
 const getServerStatusSchema = z.object({

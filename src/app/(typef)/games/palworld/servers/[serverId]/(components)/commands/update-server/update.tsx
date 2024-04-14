@@ -1,22 +1,25 @@
-import { Button } from "@/components/ui/button";
-import { Icons } from "@/components/ui/icons";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/components/ui/use-toast";
-import { stopServerAction } from "./stop-server.action";
-import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
+"use client";
 
-export function StopServer() {
+import { useEffect, useState } from "react";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { toast, useToast } from "@/components/ui/use-toast";
+import { Icons } from "@/components/ui/icons";
+
+import { useMutation } from "@tanstack/react-query";
+import { updateServerAction } from "./update-server.action";
+
+export function UpdateServer() {
     const game = "Palworld";
     const serverId = 1;
     const { toast } = useToast();
 
     const { isError, isPending, mutate, error } = useMutation({
-        mutationFn: stopServerAction,
+        mutationFn: updateServerAction,
         onSuccess: (response) => {
             toast({
                 title: "Success",
-                description: `Server Stopping...`,
+                description: `Server Updated.`,
             });
         },
     });
@@ -34,9 +37,9 @@ export function StopServer() {
     return (
         <div className="flex flex-row items-center justify-between rounded-lg border p-4">
             <div className="space-y-0.5">
-                <Label className="text-base">Stop</Label>
+                <Label className="text-base">Update</Label>
                 <div className="text-sm text-muted-foreground">
-                    Stops the server.
+                    Updates the server.
                 </div>
             </div>
             <Button
@@ -48,7 +51,7 @@ export function StopServer() {
                 {isPending ? (
                     <Icons.spinner className="h-4 w-4 animate-spin" />
                 ) : (
-                    <Icons.stop />
+                    <Icons.update />
                 )}
             </Button>
         </div>

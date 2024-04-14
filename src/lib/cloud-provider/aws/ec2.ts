@@ -7,10 +7,14 @@ import {
     DescribeVolumesCommand,
     EC2Client,
     RunInstancesCommand,
+    TerminateInstancesCommand,
+    waitForInstanceStopped,
+    waitUntilInstanceRunning,
+    waitUntilInstanceStopped,
 } from "@aws-sdk/client-ec2";
 import { z } from "zod";
 import { AWSError } from "@/lib/error-handling/aws";
-import { ServerStatus } from "../server";
+import { ServerStatus, getServerStatus } from "../server";
 
 const ec2 = new EC2Client(configs.region);
 
@@ -173,7 +177,7 @@ export async function checkIfServerIsRunning(game: string, serverId: number) {
                 },
                 {
                     Name: "instance-state-name",
-                    Values: ["pending", "running"],
+                    Values: ["running"],
                 },
             ],
         })
@@ -423,6 +427,40 @@ export async function startServer(
     );
 }
 
+export async function waitForServerIp(game: string, serverId: number) {
+    await waitUntilInstanceRunning(
+        {
+            client: ec2,
+            maxWaitTime: 10,
+            maxDelay: 2,
+            minDelay: 1,
+        },
+        {
+            Filters: [
+                {
+                    Name: "tag:Game",
+                    Values: [game],
+                },
+                {
+                    Name: "tag:ServerId",
+                    Values: [String(serverId)],
+                },
+                {
+                    Name: "tag:InstanceType",
+                    Values: ["GAME_SERVER"],
+                },
+
+                {
+                    Name: "instance-state-name",
+                    Values: ["running"],
+                },
+            ],
+        }
+    );
+
+    return checkIfServerIsRunning(game, serverId);
+}
+
 async function getLaunchTemplateId(game: string, serverId: number) {
     const response = await ec2.send(
         new DescribeLaunchTemplatesCommand({
@@ -452,4 +490,47 @@ async function getLaunchTemplateId(game: string, serverId: number) {
         .parse(response.LaunchTemplates);
 
     return launchTemplates[0].LaunchTemplateId;
+}
+
+export async function stopServer(game: string, serverId: number) {
+    // get server instance id
+    const instance = await checkIfServerIsRunning(game, serverId);
+
+    const instanceId = z.string().parse(instance?.instanceId);
+
+    // terminate instance
+    const response = await ec2.send(
+        new TerminateInstancesCommand({
+            InstanceIds: [instanceId],
+        })
+    );
+}
+
+const WaiterState = ["SUCCESS"] as const;
+
+export async function waitForInstanceStop(game: string, serverId: number) {
+    const response = await waitUntilInstanceStopped(
+        {
+            client: ec2,
+            maxWaitTime: 10,
+            maxDelay: 2,
+            minDelay: 1,
+        },
+        {
+            Filters: [
+                {
+                    Name: "tag:Game",
+                    Values: [game],
+                },
+                {
+                    Name: "tag:ServerId",
+                    Values: [String(serverId)],
+                },
+                {
+                    Name: "tag:InstanceType",
+                    Values: ["GAME_SERVER"],
+                },
+            ],
+        }
+    );
 }

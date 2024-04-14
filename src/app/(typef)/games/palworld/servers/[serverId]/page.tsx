@@ -6,7 +6,7 @@ import Commands from "./(components)/commands";
 import Settings from "./(components)/settings";
 import Overview from "./(components)/overview";
 
-export default function Palworld() {
+export default function Server() {
     return (
         <Tabs defaultValue="overview" className="h-full space-y-6">
             <div className="space-between flex items-center">

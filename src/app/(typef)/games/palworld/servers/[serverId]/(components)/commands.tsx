@@ -18,6 +18,7 @@ import { Icons } from "@/components/ui/icons";
 import { StartServer } from "../../../../[game]/servers/[serverId]/(components)/commands/start-server/start-server";
 import { StopServer } from "../../../../[game]/servers/[serverId]/(components)/commands/stop-server/stop-server";
 import { RestartServer } from "../../../../[game]/servers/[serverId]/(components)/commands/restart-server/restart-server";
+import { UpdateServer } from "./commands/update-server/update";
 
 export default function Commands() {
     const accessControl = {
@@ -51,8 +52,8 @@ export default function Commands() {
                         <WhitelistIp />
                         <RestoreSave />
                         <StartServer />
-                        <StopServer disabled={!accessControl.stop} />
-                        <RestartServer disabled={!accessControl.restart} />
+                        <StopServer />
+                        {/* <RestartServer disabled={!accessControl.restart} /> */}
                     </div>
                 </CollapsibleContent>
             </Collapsible>
@@ -69,11 +70,12 @@ export default function Commands() {
                 </h3>
                 <CollapsibleContent>
                     <div className="space-y-4">
-                        <ShutdownClient />
+                        <UpdateServer />
+                        {/* <ShutdownClient />
                         <KickAll />
                         <BanPlayer />
                         <UnbanPlayer />
-                        <Broadcast />
+                        <Broadcast /> */}
                     </div>
                 </CollapsibleContent>
             </Collapsible>

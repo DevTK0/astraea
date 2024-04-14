@@ -2,7 +2,7 @@
 
 import { aws } from "@/configs/aws";
 import { Database } from "@/lib/database/actions";
-import { DBError } from "@/lib/error-handling/database";
+import { SupabaseDBError } from "@/lib/error-handling/database";
 import { action } from "@/lib/server-actions/next-safe-action";
 import {
     AuthorizeSecurityGroupIngressCommand,
@@ -28,7 +28,7 @@ export const whitelistIp = action(
             .update({ ip_address: ipAddress })
             .eq("user_id", userId);
 
-        if (updateIp.error) throw new DBError(updateIp.error);
+        if (updateIp.error) throw new SupabaseDBError(updateIp.error);
 
         const getIpList = await db
             .from("users")
@@ -43,7 +43,7 @@ export const whitelistIp = action(
             )
             .eq("server_communities.server_id", serverId);
 
-        if (getIpList.error) throw new DBError(getIpList.error);
+        if (getIpList.error) throw new SupabaseDBError(getIpList.error);
 
         const ipList: string[] = [];
         const ipRanges = [];

@@ -1,7 +1,7 @@
 "use server";
 
 import { Database } from "@/lib/database/actions";
-import { DBError } from "@/lib/error-handling/database";
+import { SupabaseDBError } from "@/lib/error-handling/database";
 import { action } from "@/lib/server-actions/next-safe-action";
 import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 import { z } from "zod";
@@ -28,7 +28,7 @@ export const getSaves = action(getSavesSchema, async ({ userId, serverId }) => {
         .eq("server_id", serverId)
         .single();
 
-    if (error) throw new DBError(error);
+    if (error) throw new SupabaseDBError(error);
 
     const saveId = z.string().length(32).parse(data?.save_id);
 

@@ -41,8 +41,8 @@ export default function Commands() {
                 <CollapsibleContent>
                     <div className="space-y-4">
                         <StartServer />
-                        <StopServer disabled={!accessControl.stop} />
-                        <RestartServer disabled={!accessControl.restart} />
+                        <StopServer />
+                        {/* <RestartServer/> */}
                     </div>
                 </CollapsibleContent>
             </Collapsible>

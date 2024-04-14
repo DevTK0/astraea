@@ -17,9 +17,8 @@ export default function GamesLayout({
     };
 
     return (
-        <div className="h-full px-4 py-6 space-y-4 lg:px-8">
-            <Breadcrumb />
-            <h1 className="text-5xl">{game.name}</h1>
+        <>
+            {/* <h1 className="text-5xl">{game.name}</h1> */}
             {/* <Image
                 src={game.banner}
                 alt={game.name}
@@ -28,6 +27,6 @@ export default function GamesLayout({
                 className="rounded-lg mb-5 w-auto h-auto"
             /> */}
             {children}
-        </div>
+        </>
     );
 }

@@ -1,20 +1,38 @@
+"use client";
+
 import { Icons } from "@/components/ui/icons";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-const pages = [
-    { name: "Games", href: "#", current: false },
-    { name: "Game Name", href: "#", current: false },
-    { name: "Game Server 1", href: "#", current: true },
-];
+type Page = {
+    name: string;
+    href: string;
+    current: boolean;
+};
 
 export default function Breadcrumb() {
+    const path = usePathname();
+
+    const sublinks = path.split("/").filter((x) => x !== "");
+
+    const pages: Page[] = [];
+
+    sublinks.reduce((prev, curr, index) => {
+        pages.push({
+            name: curr,
+            href: prev + "/" + curr,
+            current: index === sublinks.length,
+        });
+        return prev + "/" + curr;
+    }, "");
+
     return (
         <nav className="flex" aria-label="Breadcrumb">
             <ol role="list" className="flex items-center space-x-4">
                 <li>
                     <div>
                         <a
-                            href="#"
+                            href="/home"
                             className="text-gray-400 hover:text-gray-500"
                         >
                             <Icons.home
@@ -34,7 +52,7 @@ export default function Breadcrumb() {
                             />
                             <Link
                                 href={page.href}
-                                className="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+                                className="ml-4 text-sm font-medium capitalize text-gray-500 hover:text-gray-700"
                                 aria-current={page.current ? "page" : undefined}
                             >
                                 {page.name}
