@@ -11,86 +11,8 @@ import {
     waitUntilInstanceStopped,
 } from "@aws-sdk/client-ec2";
 import { z } from "zod";
-import { AWSError } from "@/lib/error-handling/aws";
-import { ServerStatus, getServerStatus } from "../server";
 
 const ec2 = new EC2Client();
-
-/**
- * Flow:
- * Pending > Running > Shutting Down > Terminated > Lambda: Backup Volume into snapshot >
- * Lambda: Create AMI from snapshot > Lambda: Delete volume
- *
- * Server Status based on flow:
- * - Starting: Instance is pending
- * - Running: Instance is running
- * - Stopping: Instance is shutting-down / terminated / volume still exists
- * - Stopped: AMI exists (after volume is deleted)
- * - Archived: Archived snapshot exists
- * * Note: Why use multiple calls to determine state?
- * If we ease the filter rules, we can essentially use a single call to determine the state.
- * However, this will result in multiple results being returned, which complicates the evaluation logic.
- * How do you know if the server is running or stopped if 2 instances are returned?
- *
- * @param game
- * @param serverId
- * @returns
- */
-export async function getInstanceState(
-    game: string,
-    serverId: number
-): Promise<{
-    status: ServerStatus;
-    ipAddress?: string;
-    instanceType?: string;
-}> {
-    const isStarting = await checkIfServerIsStarting(game, serverId);
-
-    if (isStarting)
-        return {
-            status: "Starting",
-            instanceType: isStarting.instanceType,
-        };
-
-    const isRunning = await checkIfServerIsRunning(game, serverId);
-
-    if (isRunning)
-        return {
-            status: "Running",
-            ipAddress: isRunning.ipAddress,
-            instanceType: isRunning.instanceType,
-        };
-
-    const isStopping = await checkIfServerIsStopping(game, serverId);
-
-    if (isStopping)
-        return {
-            status: "Stopping",
-        };
-
-    const isBackingUpVolume = await checkIfBackingUpVolume(game, serverId);
-
-    if (isBackingUpVolume)
-        return {
-            status: "Stopping",
-        };
-
-    const isBackupComplete = await checkIfImageExists(game, serverId);
-
-    if (isBackupComplete)
-        return {
-            status: "Stopped",
-        };
-
-    const isArchived = await checkIfArchived(game, serverId);
-
-    if (isArchived)
-        return {
-            status: "Archived",
-        };
-
-    throw new AWSError("Unknown state.");
-}
 
 const instanceState = [
     "pending",
@@ -385,45 +307,12 @@ export async function checkIfArchived(game: string, serverId: number) {
     };
 }
 
-export type instanceTypes =
+export type InstanceType =
     | "t2.small"
     | "t2.medium"
     | "c5a.large"
     | "r5a.large"
     | "r6a.large";
-
-export async function startServer(
-    game: string,
-    serverId: number,
-    options: { volumeSize: number; instanceType: instanceTypes }
-) {
-    const image = await checkIfImageExists(game, serverId);
-
-    if (!image) throw new AWSError("AMI not found");
-
-    const templateId = await getLaunchTemplateId(game, serverId);
-    const instances = await ec2.send(
-        new RunInstancesCommand({
-            LaunchTemplate: {
-                LaunchTemplateId: templateId,
-            },
-            BlockDeviceMappings: [
-                {
-                    DeviceName: "/dev/sda1",
-                    Ebs: {
-                        DeleteOnTermination: false,
-                        VolumeSize: options.volumeSize,
-                        VolumeType: "gp2",
-                    },
-                },
-            ],
-            InstanceType: options.instanceType,
-            ImageId: image.imageId,
-            MinCount: 1,
-            MaxCount: 1,
-        })
-    );
-}
 
 export async function waitForServerIp(game: string, serverId: number) {
     await waitUntilInstanceRunning(
@@ -459,7 +348,7 @@ export async function waitForServerIp(game: string, serverId: number) {
     return checkIfServerIsRunning(game, serverId);
 }
 
-async function getLaunchTemplateId(game: string, serverId: number) {
+export async function getLaunchTemplateId(game: string, serverId: number) {
     const response = await ec2.send(
         new DescribeLaunchTemplatesCommand({
             Filters: [
@@ -490,14 +379,37 @@ async function getLaunchTemplateId(game: string, serverId: number) {
     return launchTemplates[0].LaunchTemplateId;
 }
 
-export async function stopServer(game: string, serverId: number) {
-    // get server instance id
-    const instance = await checkIfServerIsRunning(game, serverId);
+export async function runInstance(
+    templateId: string,
+    imageId: string,
+    volumeSize: number,
+    instanceType: InstanceType
+) {
+    await ec2.send(
+        new RunInstancesCommand({
+            LaunchTemplate: {
+                LaunchTemplateId: templateId,
+            },
+            BlockDeviceMappings: [
+                {
+                    DeviceName: "/dev/sda1",
+                    Ebs: {
+                        DeleteOnTermination: false,
+                        VolumeSize: volumeSize,
+                        VolumeType: "gp2",
+                    },
+                },
+            ],
+            InstanceType: instanceType,
+            ImageId: imageId,
+            MinCount: 1,
+            MaxCount: 1,
+        })
+    );
+}
 
-    const instanceId = z.string().parse(instance?.instanceId);
-
-    // terminate instance
-    const response = await ec2.send(
+export async function terminateInstance(instanceId: string) {
+    await ec2.send(
         new TerminateInstancesCommand({
             InstanceIds: [instanceId],
         })

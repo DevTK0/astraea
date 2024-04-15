@@ -1,19 +1,11 @@
 "use server";
 import { gamelist } from "@/meta/gamedata";
-import {
-    checkIfServerIsRunning,
-    getInstanceState,
-    startServer,
-    waitForServerIp,
-} from "@/lib/cloud-provider/aws/ec2";
 import { Database } from "@/lib/database/actions";
 import { SupabaseDBError } from "@/lib/error-handling/database";
-import {
-    ServerError,
-    withErrorHandling,
-} from "@/lib/error-handling/next-safe-action";
+import { withErrorHandling } from "@/lib/error-handling/next-safe-action";
 import { action } from "@/lib/server-actions/next-safe-action";
 import { z } from "zod";
+import { startServer } from "@/lib/cloud-provider/server";
 
 const startServerSchema = z.object({
     game: z.enum(gamelist),
@@ -22,17 +14,6 @@ const startServerSchema = z.object({
 
 export const startServerAction = withErrorHandling(
     action(startServerSchema, async ({ game, serverId }) => {
-        const instance = await getInstanceState(game, serverId);
-
-        if (instance.status === "Running")
-            throw new ServerError("Server is already running");
-        if (instance.status === "Starting")
-            throw new ServerError("Server is already starting");
-        if (instance.status === "Stopping")
-            throw new ServerError("Server is stopping");
-        if (instance.status === "Archived")
-            throw new ServerError("Server is archived");
-
         const db = Database();
         const { data: configs, error } = await db
             .from("server_configs")
@@ -57,7 +38,5 @@ export const startServerAction = withErrorHandling(
             volumeSize: configs.volume_size,
             instanceType: configs.instance_type,
         });
-
-        return await waitForServerIp(game, serverId);
     })
 );

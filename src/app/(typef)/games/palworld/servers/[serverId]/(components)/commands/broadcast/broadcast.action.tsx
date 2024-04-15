@@ -6,6 +6,7 @@ import { z } from "zod";
 import { gamelist } from "@/meta/gamedata";
 import { withErrorHandling } from "@/lib/error-handling/next-safe-action";
 import { announceMessage } from "@/lib/palworld/rest-api";
+import { getServerAddress } from "@/lib/cloud-provider/server";
 
 const broadcastSchema = z.object({
     game: z.enum(gamelist),
@@ -15,8 +16,8 @@ const broadcastSchema = z.object({
 
 export const broadcastAction = withErrorHandling(
     action(broadcastSchema, async ({ game, serverId, message }) => {
-        // get server address
-        // const serverAddress = "";
-        // await announceMessage(serverAddress, message);
+        const serverAddress = await getServerAddress(game, serverId);
+
+        await announceMessage(serverAddress, message);
     })
 );

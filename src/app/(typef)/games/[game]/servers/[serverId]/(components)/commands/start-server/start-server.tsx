@@ -18,7 +18,7 @@ export function StartServer() {
         onSuccess: (response) => {
             toast({
                 title: "Success",
-                description: `Server started ${response?.ipAddress}.`,
+                description: `Server starting...`,
             });
         },
     });
