@@ -4,14 +4,19 @@ import { action } from "@/lib/server-actions/next-safe-action";
 import { z } from "zod";
 
 import { gamelist } from "@/meta/gamedata";
-import { withErrorHandling } from "@/lib/error-handling/next-safe-action";
+import {
+    ServerError,
+    withErrorHandling,
+} from "@/lib/error-handling/next-safe-action";
 import {
     announceMessage,
     getPlayerList,
     banPlayer,
     unbanPlayer,
     save,
+    getServerInfo,
 } from "@/lib/palworld/rest-api";
+import { getServerAddress } from "@/lib/cloud-provider/server";
 
 const updateClientSchema = z.object({
     game: z.enum(gamelist),
@@ -20,15 +25,15 @@ const updateClientSchema = z.object({
 
 export const updateClientAction = withErrorHandling(
     action(updateClientSchema, async ({ game, serverId }) => {
-        // const res = await banPlayer(
-        //     "52.77.219.87",
-        //     "steam_76561198973252083",
-        //     "test ban api"
-        // );
-        const res = await getPlayerList("52.77.219.87");
-        console.log(res);
-        // get server address
-        // shutdown server using api
+        const serverAddress = await getServerAddress(game, serverId);
+
+        const response = await getServerInfo(serverAddress);
+
+        if (response)
+            throw new ServerError(
+                "Client must be shutdown before performing updates."
+            );
+
         // run update script using aws server manager
     })
 );

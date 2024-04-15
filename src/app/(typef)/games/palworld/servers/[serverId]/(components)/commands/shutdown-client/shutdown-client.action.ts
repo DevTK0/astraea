@@ -6,6 +6,7 @@ import { z } from "zod";
 import { gamelist } from "@/meta/gamedata";
 import { withErrorHandling } from "@/lib/error-handling/next-safe-action";
 import { shutdown } from "@/lib/palworld/rest-api";
+import { getServerAddress } from "@/lib/cloud-provider/server";
 
 const shutdownClientSchema = z.object({
     game: z.enum(gamelist),
@@ -14,9 +15,8 @@ const shutdownClientSchema = z.object({
 
 export const shutdownClientAction = withErrorHandling(
     action(shutdownClientSchema, async ({ game, serverId }) => {
-        // get server address
-        const serverAddress = "";
+        const serverAddress = await getServerAddress(game, serverId);
 
-        await shutdown(serverAddress, 30, "Server will shutdown in 30s.");
+        await shutdown(serverAddress, 10, "Server will shutdown in 10s.");
     })
 );
