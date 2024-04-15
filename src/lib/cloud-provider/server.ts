@@ -42,7 +42,14 @@ export type ServerStatus =
  * @param serverId
  * @returns
  */
-export async function getServerStatus(game: string, serverId: number) {
+export const getServerStatus = async (
+    game: string,
+    serverId: number
+): Promise<{
+    status: ServerStatus;
+    ipAddress?: string;
+    instanceType?: string;
+}> => {
     const isStarting = await checkIfServerIsStarting(game, serverId);
 
     if (isStarting)
@@ -89,7 +96,7 @@ export async function getServerStatus(game: string, serverId: number) {
         };
 
     throw new ServerError("Unknown state.");
-}
+};
 
 export async function getServerAddress(game: string, serverId: number) {
     const isRunning = await checkIfServerIsRunning(game, serverId);
