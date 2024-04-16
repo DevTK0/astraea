@@ -1,5 +1,6 @@
 import { configs } from "@/configs/servers/palworld";
 import { fetchWithErrorHandling } from "../http/fetch";
+import { z } from "zod";
 
 export async function checkIfClientIsRunning(address: string) {
     try {
@@ -42,20 +43,22 @@ export type Player = {
 };
 
 export async function getPlayerList(address: string): Promise<Player[]> {
-    return await fetchWithErrorHandling(
-        `http://${address}:${configs.apiPort}/v1/api/players`,
-        {
-            method: "GET",
-            headers: {
-                contentType: "application/json",
-                Authorization: `Basic ${process.env.PALWORLD_API_AUTH_HEADER}`,
-            },
-        }
-    );
+    return (
+        await fetchWithErrorHandling(
+            `http://${address}:${configs.apiPort}/v1/api/players`,
+            {
+                method: "GET",
+                headers: {
+                    contentType: "application/json",
+                    Authorization: `Basic ${process.env.PALWORLD_API_AUTH_HEADER}`,
+                },
+            }
+        )
+    ).players;
 }
 
 export async function getServerSettings(address: string) {
-    return await fetchWithErrorHandling(
+    const response = await fetchWithErrorHandling(
         `http://${address}:${configs.apiPort}/v1/api/settings`,
         {
             method: "GET",
@@ -65,10 +68,96 @@ export async function getServerSettings(address: string) {
             },
         }
     );
+
+    const serverSettings = z.object({
+        Difficulty: z.string(),
+        DayTimeSpeedRate: z.number(),
+        NightTimeSpeedRate: z.number(),
+        ExpRate: z.number(),
+        PalCaptureRate: z.number(),
+        PalSpawnNumRate: z.number(),
+        PalDamageRateAttack: z.number(),
+        PalDamageRateDefense: z.number(),
+        PlayerDamageRateAttack: z.number(),
+        PlayerDamageRateDefense: z.number(),
+        PlayerStomachDecreaceRate: z.number(),
+        PlayerStaminaDecreaceRate: z.number(),
+        PlayerAutoHPRegeneRate: z.number(),
+        PlayerAutoHpRegeneRateInSleep: z.number(),
+        PalStomachDecreaceRate: z.number(),
+        PalStaminaDecreaceRate: z.number(),
+        PalAutoHPRegeneRate: z.number(),
+        PalAutoHpRegeneRateInSleep: z.number(),
+        BuildObjectDamageRate: z.number(),
+        BuildObjectDeteriorationDamageRate: z.number(),
+        CollectionDropRate: z.number(),
+        CollectionObjectHpRate: z.number(),
+        CollectionObjectRespawnSpeedRate: z.number(),
+        EnemyDropItemRate: z.number(),
+        DeathPenalty: z.string(),
+        bEnablePlayerToPlayerDamage: z.boolean(),
+        bEnableFriendlyFire: z.boolean(),
+        bEnableInvaderEnemy: z.boolean(),
+        bActiveUNKO: z.boolean(),
+        bEnableAimAssistPad: z.boolean(),
+        bEnableAimAssistKeyboard: z.boolean(),
+        DropItemMaxNum: z.number(),
+        DropItemMaxNum_UNKO: z.number(),
+        BaseCampMaxNum: z.number(),
+        BaseCampWorkerMaxNum: z.number(),
+        DropItemAliveMaxHours: z.number(),
+        bAutoResetGuildNoOnlinePlayers: z.boolean(),
+        AutoResetGuildTimeNoOnlinePlayers: z.number(),
+        GuildPlayerMaxNum: z.number(),
+        PalEggDefaultHatchingTime: z.number(),
+        WorkSpeedRate: z.number(),
+        bIsMultiplay: z.boolean(),
+        bIsPvP: z.boolean(),
+        bCanPickupOtherGuildDeathPenaltyDrop: z.boolean(),
+        bEnableNonLoginPenalty: z.boolean(),
+        bEnableFastTravel: z.boolean(),
+        bIsStartLocationSelectByMap: z.boolean(),
+        bExistPlayerAfterLogout: z.boolean(),
+        bEnableDefenseOtherGuildPlayer: z.boolean(),
+        CoopPlayerMaxNum: z.number(),
+        ServerPlayerMaxNum: z.number(),
+        ServerName: z.string(),
+        ServerDescription: z.string(),
+        PublicPort: z.number(),
+        PublicIP: z.string(),
+        RCONEnabled: z.boolean(),
+        RCONPort: z.number(),
+        Region: z.string(),
+        bUseAuth: z.boolean(),
+        BanListURL: z.string(),
+        RESTAPIEnabled: z.boolean(),
+        RESTAPIPort: z.number(),
+        bShowPlayerList: z.boolean(),
+        AllowConnectPlatform: z.string(),
+        bIsUseBackupSaveData: z.boolean(),
+        LogFormatType: z.string(),
+    });
+
+    return serverSettings
+        .omit({
+            PublicIP: true,
+            PublicPort: true,
+            RCONEnabled: true,
+            RCONPort: true,
+            bUseAuth: true,
+            BanListURL: true,
+            RESTAPIEnabled: true,
+            RESTAPIPort: true,
+            bShowPlayerList: true,
+            AllowConnectPlatform: true,
+            bIsUseBackupSaveData: true,
+            LogFormatType: true,
+        })
+        .parse(JSON.parse(response));
 }
 
 export async function getServerMetrics(address: string) {
-    return await fetchWithErrorHandling(
+    const response = await fetchWithErrorHandling(
         `http://${address}:${configs.apiPort}/v1/api/metrics`,
         {
             method: "GET",
@@ -78,6 +167,16 @@ export async function getServerMetrics(address: string) {
             },
         }
     );
+
+    return z
+        .object({
+            currentplayernum: z.number(),
+            serverfps: z.number(),
+            serverframetime: z.number(),
+            maxplayernum: z.number(),
+            uptime: z.number(),
+        })
+        .parse(response);
 }
 
 export async function announceMessage(address: string, message: string) {
