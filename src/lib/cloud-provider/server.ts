@@ -9,6 +9,7 @@ import {
     getLaunchTemplateId,
     InstanceType,
     runInstance,
+    runUnixCommands,
     terminateInstance,
 } from "./aws/ec2";
 import { RunInstancesCommand } from "@aws-sdk/client-ec2";
@@ -146,4 +147,16 @@ export async function stopServer(game: string, serverId: number) {
     const instanceId = z.string().parse(instance?.instanceId);
 
     await terminateInstance(instanceId);
+}
+
+export async function updatePalworld() {
+    const response = await checkIfServerIsRunning("Palworld", 1);
+
+    const updateCommand = [
+        `runuser -l palworld -c '/home/palworld/Palworld/update.sh'`,
+    ];
+
+    const instanceId = z.string().parse(response?.instanceId);
+
+    await runUnixCommands(instanceId, updateCommand);
 }

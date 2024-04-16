@@ -10,9 +10,11 @@ import {
     waitUntilInstanceRunning,
     waitUntilInstanceStopped,
 } from "@aws-sdk/client-ec2";
+import { SSMClient, SendCommandCommand } from "@aws-sdk/client-ssm";
 import { z } from "zod";
 
 const ec2 = new EC2Client();
+const ssm = new SSMClient();
 
 const instanceState = [
     "pending",
@@ -442,5 +444,17 @@ export async function waitForInstanceStop(game: string, serverId: number) {
                 },
             ],
         }
+    );
+}
+
+export async function runUnixCommands(instanceId: string, commands: string[]) {
+    const res = await ssm.send(
+        new SendCommandCommand({
+            InstanceIds: [instanceId],
+            DocumentName: "AWS-RunShellScript",
+            Parameters: {
+                commands: commands,
+            },
+        })
     );
 }

@@ -1,6 +1,22 @@
 import { configs } from "@/configs/games/palworld";
 import { fetchWithErrorHandling } from "../http/fetch";
 
+export async function checkIfClientIsRunning(address: string) {
+    try {
+        await getServerInfo(address);
+    } catch (error) {
+        if (
+            error instanceof TypeError &&
+            error.cause instanceof Error &&
+            error.cause.message.includes("ECONNREFUSED")
+        ) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 export async function getServerInfo(address: string) {
     return await fetchWithErrorHandling(
         `http://${address}:${configs.apiPort}/v1/api/info`,

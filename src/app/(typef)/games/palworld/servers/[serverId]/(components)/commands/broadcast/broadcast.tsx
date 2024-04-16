@@ -4,13 +4,14 @@ import { Label } from "@/components/ui/label";
 import { broadcastAction } from "./broadcast.action";
 import { useToast } from "@/components/ui/use-toast";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Icons } from "@/components/ui/icons";
 
 export function Broadcast() {
     const game = "Palworld";
     const serverId = 1;
     const { toast } = useToast();
+    const [message, setMessage] = useState("");
 
     const { isError, isPending, mutate, error } = useMutation({
         mutationFn: broadcastAction,
@@ -41,13 +42,21 @@ export function Broadcast() {
                 </div>
             </div>
             <div className="flex flex-row items-center justify-between ">
-                <Input className="w-[300px]" />
+                <Input
+                    className="w-[300px]"
+                    onChange={(e) => setMessage(e.target.value)}
+                    value={message}
+                />
                 <Button
                     variant="outline"
                     size="icon"
                     className="ml-2"
                     onClick={() =>
-                        mutate({ game: game, serverId: serverId, message: "" })
+                        mutate({
+                            game: game,
+                            serverId: serverId,
+                            message: message,
+                        })
                     }
                 >
                     {isPending ? (

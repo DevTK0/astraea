@@ -15,8 +15,9 @@ import {
     unbanPlayer,
     save,
     getServerInfo,
+    checkIfClientIsRunning,
 } from "@/lib/palworld/rest-api";
-import { getServerAddress } from "@/lib/cloud-provider/server";
+import { getServerAddress, updatePalworld } from "@/lib/cloud-provider/server";
 
 const updateClientSchema = z.object({
     game: z.enum(gamelist),
@@ -27,13 +28,13 @@ export const updateClientAction = withErrorHandling(
     action(updateClientSchema, async ({ game, serverId }) => {
         const serverAddress = await getServerAddress(game, serverId);
 
-        const response = await getServerInfo(serverAddress);
+        const response = await checkIfClientIsRunning(serverAddress);
 
         if (response)
             throw new ServerError(
                 "Client must be shutdown before performing updates."
             );
 
-        // run update script using aws server manager
+        await updatePalworld();
     })
 );

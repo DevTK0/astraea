@@ -19,7 +19,7 @@ export function ShutdownClient() {
         onSuccess: (response) => {
             toast({
                 title: "Success",
-                description: `Server is shutting down...`,
+                description: `Palworld client is shutting down...`,
             });
         },
     });
