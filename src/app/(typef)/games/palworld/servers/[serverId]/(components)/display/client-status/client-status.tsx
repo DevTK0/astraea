@@ -32,6 +32,10 @@ export function ClientStatus(
         );
     }
 
+    if (!clientSettings?.isServerRunning) {
+        return <div {...props}></div>;
+    }
+
     return (
         <div {...props}>
             <div className="flex flex-col items-start justify-start rounded-lg border p-4 space-y-2">
