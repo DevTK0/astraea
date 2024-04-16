@@ -1,6 +1,6 @@
 "use server";
 
-import { aws } from "@/configs/aws";
+import { configs } from "@/configs/servers/palworld";
 import { Database } from "@/lib/database/actions";
 import { SupabaseDBError } from "@/lib/error-handling/database";
 import { action } from "@/lib/server-actions/next-safe-action";
@@ -73,7 +73,7 @@ export const whitelistIp = action(
                 Filters: [
                     {
                         Name: "group-id",
-                        Values: [aws.palworld_sg],
+                        Values: [configs.palworld_sg],
                     },
                 ],
             })
@@ -89,7 +89,7 @@ export const whitelistIp = action(
         if (toRemove && toRemove.length > 0) {
             const removed = await ec2.send(
                 new RevokeSecurityGroupIngressCommand({
-                    GroupId: aws.palworld_sg,
+                    GroupId: configs.palworld_sg,
                     SecurityGroupRuleIds: toRemove.map((rule) =>
                         rule.SecurityGroupRuleId ? rule.SecurityGroupRuleId : ""
                     ),
@@ -99,7 +99,7 @@ export const whitelistIp = action(
 
         const newIpList = await ec2.send(
             new AuthorizeSecurityGroupIngressCommand({
-                GroupId: aws.palworld_sg,
+                GroupId: configs.palworld_sg,
                 IpPermissions: [
                     {
                         FromPort: 8211,

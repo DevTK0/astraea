@@ -1,7 +1,6 @@
 "use server";
 
-import { aws } from "@/configs/aws";
-import { configs } from "@/configs/games/palworld";
+import { configs } from "@/configs/servers/palworld";
 import { action } from "@/lib/server-actions/next-safe-action";
 import { DescribeInstancesCommand, EC2Client } from "@aws-sdk/client-ec2";
 import { SSMClient, SendCommandCommand } from "@aws-sdk/client-ssm";

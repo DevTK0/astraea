@@ -1,4 +1,4 @@
-import { configs } from "@/configs/games/palworld";
+import { configs } from "@/configs/servers/palworld";
 import { fetchWithErrorHandling } from "../http/fetch";
 
 export async function checkIfClientIsRunning(address: string) {
@@ -30,7 +30,18 @@ export async function getServerInfo(address: string) {
     );
 }
 
-export async function getPlayerList(address: string) {
+export type Player = {
+    name: string;
+    playerid: string;
+    userid: string;
+    ip: string;
+    ping: number;
+    location_x: number;
+    location_y: number;
+    level: number;
+};
+
+export async function getPlayerList(address: string): Promise<Player[]> {
     return await fetchWithErrorHandling(
         `http://${address}:${configs.apiPort}/v1/api/players`,
         {
