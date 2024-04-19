@@ -4,7 +4,7 @@ import {
     CollapsibleContent,
 } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
-import { ServerSettings } from "./configs/server-settings";
+import { ClientSettings } from "./client-settings/client-settings";
 import { Icons } from "@/components/ui/icons";
 
 export default function Settings() {
@@ -12,7 +12,7 @@ export default function Settings() {
         <>
             <Collapsible defaultOpen>
                 <h3 className="mb-4 text-lg font-semibold">
-                    Server Settings
+                    Settings
                     <CollapsibleTrigger asChild>
                         <Button variant="ghost" size="sm">
                             <Icons.caret_sort className="h-4 w-4" />
@@ -21,7 +21,7 @@ export default function Settings() {
                     </CollapsibleTrigger>
                 </h3>
                 <CollapsibleContent>
-                    <ServerSettings />
+                    <ClientSettings />
                 </CollapsibleContent>
             </Collapsible>
         </>

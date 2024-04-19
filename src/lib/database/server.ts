@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import { Database } from "./types";
+import { Database as Schemas } from "./types";
 
 /**
  * Can only be used in server-side after cookies have been initialised.
@@ -8,7 +8,7 @@ import { Database } from "./types";
  */
 export function Database() {
     const cookieStore = cookies();
-    return createServerClient<Database>(
+    return createServerClient<Schemas>(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
         {

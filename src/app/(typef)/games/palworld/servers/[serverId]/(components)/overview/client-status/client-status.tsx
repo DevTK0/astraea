@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { JSX, ClassAttributes, HTMLAttributes } from "react";
-import { getClientSettingsAction } from "./client-status.action";
+import { getClientStatusAction } from "./client-status.action";
 
 export function ClientStatus(
     props: JSX.IntrinsicAttributes &
@@ -14,7 +14,8 @@ export function ClientStatus(
         error,
     } = useQuery({
         queryKey: ["palworld", "client-settings"],
-        queryFn: () => getClientSettingsAction({}),
+        queryFn: () => getClientStatusAction({}),
+        refetchInterval: 5000,
     });
 
     if (isPending) {
@@ -49,7 +50,7 @@ export function ClientStatus(
 const RenderClientStatus = ({
     clientSettings,
 }: {
-    clientSettings: Awaited<ReturnType<typeof getClientSettingsAction>>;
+    clientSettings: Awaited<ReturnType<typeof getClientStatusAction>>;
 }) => {
     if (!clientSettings?.isClientRunning) {
         return (
@@ -77,7 +78,7 @@ const RenderClientStatus = ({
 const RenderClientSettings = ({
     clientSettings,
 }: {
-    clientSettings: Awaited<ReturnType<typeof getClientSettingsAction>>;
+    clientSettings: Awaited<ReturnType<typeof getClientStatusAction>>;
 }) => {
     const settings = clientSettings?.clientSettings;
     console.log(settings);
@@ -102,7 +103,7 @@ const RenderClientSettings = ({
 const RenderClientMetrics = ({
     clientSettings,
 }: {
-    clientSettings: Awaited<ReturnType<typeof getClientSettingsAction>>;
+    clientSettings: Awaited<ReturnType<typeof getClientStatusAction>>;
 }) => {
     const metrics = clientSettings?.clientMetrics;
 

@@ -2,9 +2,9 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 
-import Commands from "./(components)/commands";
+import Commands from "./(components)/commands/commands";
 // import Settings from "./(components)/settings";
-import Overview from "./(components)/overview";
+import Overview from "./(components)/overview/overview";
 
 export default function Game() {
     return (

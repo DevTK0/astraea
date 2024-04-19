@@ -4,22 +4,19 @@ import {
     CollapsibleContent,
 } from "@/components/ui/collapsible";
 
-import { RestoreSave } from "./commands/restore-save/restore-save";
-import { WhitelistIp } from "./commands/whitelist/whitelist-ip";
-import { KickAll } from "./commands/kick-all";
-import { UnbanPlayer } from "./commands/unban-player";
-import { BanPlayer } from "./commands/ban-player";
+import { RestoreSave } from "./restore-save/restore-save";
+import { WhitelistIp } from "./whitelist/whitelist-ip";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Icons } from "@/components/ui/icons";
 
-import { StartServer } from "../../../../[game]/servers/[serverId]/(components)/commands/start-server/start-server";
-import { StopServer } from "../../../../[game]/servers/[serverId]/(components)/commands/stop-server/stop-server";
-import { RestartServer } from "../../../../[game]/servers/[serverId]/(components)/commands/restart-server/restart-server";
-import { UpdateClient } from "./commands/update-client/update-client";
-import { ShutdownClient } from "./commands/shutdown-client/shutdown-client";
-import { Broadcast } from "./commands/broadcast/broadcast";
+import { StartServer } from "../../../../../[game]/servers/[serverId]/(components)/commands/start-server/start-server";
+import { StopServer } from "../../../../../[game]/servers/[serverId]/(components)/commands/stop-server/stop-server";
+import { RestartServer } from "../../../../../[game]/servers/[serverId]/(components)/commands/restart-server/restart-server";
+import { UpdateClient } from "./update-client/update-client";
+import { ShutdownClient } from "./shutdown-client/shutdown-client";
+import { Broadcast } from "./broadcast/broadcast";
 
 export default function Commands() {
     const accessControl = {
@@ -54,7 +51,7 @@ export default function Commands() {
                         <RestoreSave />
                         <StartServer />
                         <StopServer />
-                        {/* <RestartServer disabled={!accessControl.restart} /> */}
+                        <RestartServer />
                     </div>
                 </CollapsibleContent>
             </Collapsible>

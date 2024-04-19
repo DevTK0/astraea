@@ -1,0 +1,25 @@
+import { serverSettingsSchema } from "@/lib/palworld/rest-api";
+
+export const setClientSettingsSchema = serverSettingsSchema.omit({
+    ExpRate: true,
+    PalCaptureRate: true,
+    PalSpawnNumRate: true,
+    EnemyDropItemRate: true,
+    PalEggDefaultHatchingTime: true,
+    WorkSpeedRate: true,
+    ServerName: true,
+    ServerDescription: true,
+    PublicPort: true,
+    PublicIP: true,
+    RCONEnabled: true,
+    RCONPort: true,
+    Region: true,
+    bUseAuth: true,
+    BanListURL: true,
+    RESTAPIEnabled: true,
+    RESTAPIPort: true,
+    bShowPlayerList: true,
+    AllowConnectPlatform: true,
+    bIsUseBackupSaveData: true,
+    LogFormatType: true,
+});

@@ -7,7 +7,7 @@ import {
     checkIfServerIsStarting,
     checkIfServerIsStopping,
     getLaunchTemplateId,
-    InstanceType,
+    restartInstance,
     runInstance,
     runUnixCommands,
     terminateInstance,
@@ -15,6 +15,9 @@ import {
 import { RunInstancesCommand } from "@aws-sdk/client-ec2";
 import { AWSError } from "../error-handling/aws";
 import { z } from "zod";
+import { serverSettingsSchema } from "../palworld/rest-api";
+import { setClientSettingsSchema } from "@/app/(typef)/games/palworld/servers/[serverId]/(components)/settings/client-settings/client-settings.schema";
+import { configs } from "@/configs/servers/palworld";
 
 export type ServerStatus =
     | "Starting"
@@ -112,7 +115,7 @@ export async function getServerAddress(game: string, serverId: number) {
 export async function startServer(
     game: string,
     serverId: number,
-    options: { volumeSize: number; instanceType: InstanceType }
+    options: { volumeSize: number; instanceType: string }
 ) {
     const instance = await getServerStatus(game, serverId);
 
@@ -149,6 +152,13 @@ export async function stopServer(game: string, serverId: number) {
     await terminateInstance(instanceId);
 }
 
+export async function restartServer(game: string, serverId: number) {
+    const instance = await checkIfServerIsRunning(game, serverId);
+    if (!instance) throw new ServerError("Server is not running");
+    const instanceId = z.string().parse(instance?.instanceId);
+    await restartInstance(instanceId);
+}
+
 export async function updatePalworld() {
     const response = await checkIfServerIsRunning("Palworld", 1);
 
@@ -159,4 +169,152 @@ export async function updatePalworld() {
     const instanceId = z.string().parse(response?.instanceId);
 
     await runUnixCommands(instanceId, updateCommand);
+}
+
+export async function startPalworld() {
+    const response = await checkIfServerIsRunning("Palworld", 1);
+
+    const updateCommand = [
+        `runuser -l palworld -c '/home/palworld/Palworld/start.sh'`,
+    ];
+
+    const instanceId = z.string().parse(response?.instanceId);
+
+    await runUnixCommands(instanceId, updateCommand);
+}
+
+export async function updatePalworldSettings(
+    settings: z.output<typeof setClientSettingsSchema>
+) {
+    const response = await checkIfServerIsRunning("Palworld", 1);
+
+    const instanceId = z.string().parse(response?.instanceId);
+
+    const rates = {
+        ExpRate: 1,
+        PalCaptureRate: 1,
+        PalSpawnNumRate: 1,
+        EnemyDropItemRate: 1,
+        PalDefaultHatchingTime: 10,
+        WorkSpeedRate: 1,
+    };
+
+    const fileContents = parsePalworldSettings(settings, rates);
+
+    const commands = [
+        String.raw`runuser -l palworld -c 'echo [/Script/Pal.PalGameWorldSettings] > ${configs.settingsFilePath}/PalWorldSettings.ini'`,
+        String.raw`runuser -l palworld -c 'echo -e ${fileContents} >> ${configs.settingsFilePath}/PalWorldSettings.ini'`,
+    ];
+
+    await runUnixCommands(instanceId, commands);
+}
+
+function Boolean(bool: boolean) {
+    return bool ? "True" : "False";
+}
+
+const RatesSchema = z.object({
+    ExpRate: z.number(),
+    PalCaptureRate: z.number(),
+    PalSpawnNumRate: z.number(),
+    EnemyDropItemRate: z.number(),
+    PalDefaultHatchingTime: z.number(),
+    WorkSpeedRate: z.number(),
+});
+
+function parsePalworldSettings(
+    settings: z.output<typeof setClientSettingsSchema>,
+    rates: z.output<typeof RatesSchema>
+) {
+    // convert data to appropriate string format.
+    const Difficulty = settings.Difficulty;
+    const DayTimeSpeedRate = settings.DayTimeSpeedRate.toFixed(6);
+    const NightTimeSpeedRate = settings.NightTimeSpeedRate.toFixed(6);
+    const PalDamageRateAttack = settings.PalDamageRateAttack.toFixed(6);
+    const PalDamageRateDefense = settings.PalDamageRateDefense.toFixed(6);
+    const PlayerDamageRateAttack = settings.PlayerDamageRateAttack.toFixed(6);
+    const PlayerDamageRateDefense = settings.PlayerDamageRateDefense.toFixed(6);
+    const PlayerStomachDecreaceRate =
+        settings.PlayerStomachDecreaceRate.toFixed(6);
+    const PlayerStaminaDecreaceRate =
+        settings.PlayerStaminaDecreaceRate.toFixed(6);
+    const PlayerAutoHPRegeneRate = settings.PlayerAutoHPRegeneRate.toFixed(6);
+    const PlayerAutoHpRegeneRateInSleep =
+        settings.PlayerAutoHpRegeneRateInSleep.toFixed(6);
+    const PalStomachDecreaceRate = settings.PalStomachDecreaceRate.toFixed(6);
+    const PalStaminaDecreaceRate = settings.PalStaminaDecreaceRate.toFixed(6);
+    const PalAutoHPRegeneRate = settings.PalAutoHPRegeneRate.toFixed(6);
+    const PalAutoHpRegeneRateInSleep =
+        settings.PalAutoHpRegeneRateInSleep.toFixed(6);
+    const BuildObjectDamageRate = settings.BuildObjectDamageRate.toFixed(6);
+    const BuildObjectDeteriorationDamageRate =
+        settings.BuildObjectDeteriorationDamageRate.toFixed(6);
+    const CollectionDropRate = settings.CollectionDropRate.toFixed(6);
+    const CollectionObjectHpRate = settings.CollectionObjectHpRate.toFixed(6);
+    const CollectionObjectRespawnSpeedRate =
+        settings.CollectionObjectRespawnSpeedRate.toFixed(6);
+    const DeathPenalty = settings.DeathPenalty;
+    const bEnablePlayerToPlayerDamage = Boolean(
+        settings.bEnablePlayerToPlayerDamage
+    );
+    const bEnableFriendlyFire = Boolean(settings.bEnableFriendlyFire);
+    const bEnableInvaderEnemy = Boolean(settings.bEnableInvaderEnemy);
+    const bActiveUNKO = Boolean(settings.bActiveUNKO);
+    const bEnableAimAssistPad = Boolean(settings.bEnableAimAssistPad);
+    const bEnableAimAssistKeyboard = Boolean(settings.bEnableAimAssistKeyboard);
+    const DropItemMaxNum = settings.DropItemMaxNum.toFixed(0);
+    const DropItemMaxNum_UNKO = settings.DropItemMaxNum_UNKO.toFixed(0);
+    const BaseCampMaxNum = settings.BaseCampMaxNum.toFixed(0);
+    const BaseCampWorkerMaxNum = settings.BaseCampWorkerMaxNum.toFixed(0);
+    const DropItemAliveMaxHours = settings.DropItemAliveMaxHours.toFixed(6);
+    const bAutoResetGuildNoOnlinePlayers = Boolean(
+        settings.bAutoResetGuildNoOnlinePlayers
+    );
+    const AutoResetGuildTimeNoOnlinePlayers =
+        settings.AutoResetGuildTimeNoOnlinePlayers.toFixed(6);
+    const GuildPlayerMaxNum = settings.GuildPlayerMaxNum.toFixed(0);
+    const bIsMultiplay = Boolean(settings.bIsMultiplay);
+    const bIsPvP = Boolean(settings.bIsPvP);
+    const bCanPickupOtherGuildDeathPenaltyDrop = Boolean(
+        settings.bCanPickupOtherGuildDeathPenaltyDrop
+    );
+    const bEnableNonLoginPenalty = Boolean(settings.bEnableNonLoginPenalty);
+    const bEnableFastTravel = Boolean(settings.bEnableFastTravel);
+    const bIsStartLocationSelectByMap = Boolean(
+        settings.bIsStartLocationSelectByMap
+    );
+    const bExistPlayerAfterLogout = Boolean(settings.bExistPlayerAfterLogout);
+    const bEnableDefenseOtherGuildPlayer = Boolean(
+        settings.bEnableDefenseOtherGuildPlayer
+    );
+    const CoopPlayerMaxNum = settings.CoopPlayerMaxNum.toFixed(0);
+    const ServerPlayerMaxNum = settings.ServerPlayerMaxNum.toFixed(0);
+
+    const ExpRate = rates.ExpRate.toFixed(6);
+    const PalCaptureRate = rates.PalCaptureRate.toFixed(6);
+    const PalSpawnNumRate = rates.PalSpawnNumRate.toFixed(6);
+    const EnemyDropItemRate = rates.EnemyDropItemRate.toFixed(6);
+    const PalEggDefaultHatchingTime = rates.PalDefaultHatchingTime.toFixed(6);
+    const WorkSpeedRate = rates.WorkSpeedRate.toFixed(6);
+
+    const ServerName = String.raw`\"Default Palworld Server\"`;
+    const ServerDescription = String.raw`\"\"`;
+    const AdminPassword = String.raw`\"${process.env.PALWORLD_ADMIN_PASSWORD}\"`;
+    const ServerPassword = String.raw`\"${process.env.PALWORLD_SERVER_PASSWORD}\"`;
+    const PublicPort = 8211;
+    const PublicIP = String.raw`\"\"`;
+    const RCONEnabled = Boolean(true);
+    const RCONPort = 25575;
+    const Region = String.raw`\"\"`;
+    const bUseAuth = Boolean(true);
+    const BanListURL = String.raw`\"https://api.palworldgame.com/api/banlist.txt\"`;
+    const RESTAPIEnabled = Boolean(true);
+    const RESTAPIPort = 8212;
+    const bShowPlayerList = Boolean(true);
+    const AllowConnectPlatform = `Steam`;
+    const bIsUseBackupSaveData = Boolean(true);
+
+    const fileContents = String.raw`OptionSettings=\(Difficulty=${Difficulty},DayTimeSpeedRate=${DayTimeSpeedRate},NightTimeSpeedRate=${NightTimeSpeedRate},ExpRate=${ExpRate},PalCaptureRate=${PalCaptureRate},PalSpawnNumRate=${PalSpawnNumRate},PalDamageRateAttack=${PalDamageRateAttack},PalDamageRateDefense=${PalDamageRateDefense},PlayerDamageRateAttack=${PlayerDamageRateAttack},PlayerDamageRateDefense=${PlayerDamageRateDefense},PlayerStomachDecreaceRate=${PlayerStomachDecreaceRate},PlayerStaminaDecreaceRate=${PlayerStaminaDecreaceRate},PlayerAutoHPRegeneRate=${PlayerAutoHPRegeneRate},PlayerAutoHpRegeneRateInSleep=${PlayerAutoHpRegeneRateInSleep},PalStomachDecreaceRate=${PalStomachDecreaceRate},PalStaminaDecreaceRate=${PalStaminaDecreaceRate},PalAutoHPRegeneRate=${PalAutoHPRegeneRate},PalAutoHpRegeneRateInSleep=${PalAutoHpRegeneRateInSleep},BuildObjectDamageRate=${BuildObjectDamageRate},BuildObjectDeteriorationDamageRate=${BuildObjectDeteriorationDamageRate},CollectionDropRate=${CollectionDropRate},CollectionObjectHpRate=${CollectionObjectHpRate},CollectionObjectRespawnSpeedRate=${CollectionObjectRespawnSpeedRate},EnemyDropItemRate=${EnemyDropItemRate},DeathPenalty=${DeathPenalty},bEnablePlayerToPlayerDamage=${bEnablePlayerToPlayerDamage},bEnableFriendlyFire=${bEnableFriendlyFire},bEnableInvaderEnemy=${bEnableInvaderEnemy},bActiveUNKO=${bActiveUNKO},bEnableAimAssistPad=${bEnableAimAssistPad},bEnableAimAssistKeyboard=${bEnableAimAssistKeyboard},DropItemMaxNum=${DropItemMaxNum},DropItemMaxNum_UNKO=${DropItemMaxNum_UNKO},BaseCampMaxNum=${BaseCampMaxNum},BaseCampWorkerMaxNum=${BaseCampWorkerMaxNum},DropItemAliveMaxHours=${DropItemAliveMaxHours},bAutoResetGuildNoOnlinePlayers=${bAutoResetGuildNoOnlinePlayers},AutoResetGuildTimeNoOnlinePlayers=${AutoResetGuildTimeNoOnlinePlayers},GuildPlayerMaxNum=${GuildPlayerMaxNum},PalEggDefaultHatchingTime=${PalEggDefaultHatchingTime},WorkSpeedRate=${WorkSpeedRate},bIsMultiplay=${bIsMultiplay},bIsPvP=${bIsPvP},bCanPickupOtherGuildDeathPenaltyDrop=${bCanPickupOtherGuildDeathPenaltyDrop},bEnableNonLoginPenalty=${bEnableNonLoginPenalty},bEnableFastTravel=${bEnableFastTravel},bIsStartLocationSelectByMap=${bIsStartLocationSelectByMap},bExistPlayerAfterLogout=${bExistPlayerAfterLogout},bEnableDefenseOtherGuildPlayer=${bEnableDefenseOtherGuildPlayer},CoopPlayerMaxNum=${CoopPlayerMaxNum},ServerPlayerMaxNum=${ServerPlayerMaxNum},ServerName=${ServerName},ServerDescription=${ServerDescription},AdminPassword=${AdminPassword},ServerPassword=${ServerPassword},PublicPort=${PublicPort},PublicIP=${PublicIP},RCONEnabled=${RCONEnabled},RCONPort=${RCONPort},Region=${Region},bUseAuth=${bUseAuth},BanListURL=${BanListURL},RESTAPIEnabled=${RESTAPIEnabled},RESTAPIPort=${RESTAPIPort},bShowPlayerList=${bShowPlayerList},AllowConnectPlatform=${AllowConnectPlatform},bIsUseBackupSaveData=${bIsUseBackupSaveData}\)`;
+
+    return fileContents;
 }

@@ -7,9 +7,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Icons } from "@/components/ui/icons";
-import { StartServer } from "./commands/start-server/start-server";
-import { StopServer } from "./commands/stop-server/stop-server";
-import { RestartServer } from "./commands/restart-server/restart-server";
+import { StartServer } from "./start-server/start-server";
+import { StopServer } from "./stop-server/stop-server";
+import { RestartServer } from "./restart-server/restart-server";
 
 export default function Commands() {
     const accessControl = {

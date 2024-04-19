@@ -1,6 +1,6 @@
-import { ServerStatus } from "../../../../[game]/servers/[serverId]/(components)/display/server-status";
-import { ClientStatus } from "./display/client-status/client-status";
-import { PlayerList } from "./display/player-list/player-list";
+import { ServerStatus } from "../../../../../[game]/servers/[serverId]/(components)/overview/server-status/server-status";
+import { ClientStatus } from "./client-status/client-status";
+import { PlayerList } from "./player-list/player-list";
 
 export default function Overview() {
     return (

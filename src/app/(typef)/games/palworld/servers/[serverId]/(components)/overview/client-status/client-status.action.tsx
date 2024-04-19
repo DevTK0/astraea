@@ -12,10 +12,10 @@ import {
 import { getServerStatus } from "@/lib/cloud-provider/server";
 import { configs } from "@/configs/servers/palworld";
 
-const getClientSettingsSchema = z.object({});
+const getClientStatusSchema = z.object({});
 
-export const getClientSettingsAction = withErrorHandling(
-    action(getClientSettingsSchema, async ({}) => {
+export const getClientStatusAction = withErrorHandling(
+    action(getClientStatusSchema, async ({}) => {
         const server = await getServerStatus(configs.game, configs.serverId);
 
         if (server.status !== "Running") return { isServerRunning: false };
@@ -23,8 +23,6 @@ export const getClientSettingsAction = withErrorHandling(
         const serverAddress = z.string().ip().parse(server.ipAddress);
 
         const isUp = await checkIfClientIsRunning(serverAddress);
-
-        // const res = await getServerSettings(serverAddress);
 
         if (isUp) {
             return {

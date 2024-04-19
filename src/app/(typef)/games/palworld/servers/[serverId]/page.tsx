@@ -2,9 +2,9 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 
-import Commands from "./(components)/commands";
-import Settings from "./(components)/settings";
-import Overview from "./(components)/overview";
+import Commands from "./(components)/commands/commands";
+import Settings from "./(components)/settings/settings";
+import Overview from "./(components)/overview/overview";
 
 export default function Server() {
     return (

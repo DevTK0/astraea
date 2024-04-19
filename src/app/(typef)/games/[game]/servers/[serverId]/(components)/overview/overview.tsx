@@ -1,4 +1,4 @@
-import { ServerStatus } from "./display/server-status";
+import { ServerStatus } from "./server-status/server-status";
 
 export default function Overview() {
     return (

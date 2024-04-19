@@ -5,6 +5,7 @@ import {
     DescribeSnapshotsCommand,
     DescribeVolumesCommand,
     EC2Client,
+    RebootInstancesCommand,
     RunInstancesCommand,
     TerminateInstancesCommand,
     waitUntilInstanceRunning,
@@ -309,12 +310,13 @@ export async function checkIfArchived(game: string, serverId: number) {
     };
 }
 
-export type InstanceType =
-    | "t2.small"
-    | "t2.medium"
-    | "c5a.large"
-    | "r5a.large"
-    | "r6a.large";
+export const instanceTypes = [
+    "t2.small",
+    "t2.medium",
+    "c5a.large",
+    "r5a.large",
+    "r6a.large",
+] as const;
 
 export async function waitForServerIp(game: string, serverId: number) {
     await waitUntilInstanceRunning(
@@ -385,8 +387,10 @@ export async function runInstance(
     templateId: string,
     imageId: string,
     volumeSize: number,
-    instanceType: InstanceType
+    instanceType: string
 ) {
+    const checkedInstanceType = z.enum(instanceTypes).parse(instanceType);
+
     await ec2.send(
         new RunInstancesCommand({
             LaunchTemplate: {
@@ -402,7 +406,7 @@ export async function runInstance(
                     },
                 },
             ],
-            InstanceType: instanceType,
+            InstanceType: checkedInstanceType,
             ImageId: imageId,
             MinCount: 1,
             MaxCount: 1,
@@ -444,6 +448,14 @@ export async function waitForInstanceStop(game: string, serverId: number) {
                 },
             ],
         }
+    );
+}
+
+export async function restartInstance(instanceId: string) {
+    await ec2.send(
+        new RebootInstancesCommand({
+            InstanceIds: [instanceId],
+        })
     );
 }
 
