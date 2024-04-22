@@ -7,17 +7,61 @@ import {
     ServerError,
     withErrorHandling,
 } from "@/lib/error-handling/next-safe-action";
-import { checkIfClientIsRunning } from "@/lib/palworld/rest-api";
+import {
+    checkIfClientIsRunning,
+    getServerSettings,
+    serverSettingsSchema,
+} from "@/lib/palworld/rest-api";
 import {
     getServerStatus,
     restartServer,
     updatePalworldSettings,
 } from "@/lib/cloud-provider/server";
 import { configs } from "@/configs/servers/palworld";
-import { setClientSettingsSchema } from "./client-settings.schema";
-import { getClientStatusAction } from "../../overview/client-status/client-status.action";
 
-export const getClientSettingsAction = getClientStatusAction;
+const isServerRunningSchema = z.object({});
+
+export const isServerRunningAction = withErrorHandling(
+    action(isServerRunningSchema, async ({}) => {
+        const server = await getServerStatus(configs.game, configs.serverId);
+
+        return server.status === "Running" ? server.ipAddress : undefined;
+    })
+);
+
+const getClientSettingsSchema = z.object({
+    ipAddress: z.string().ip(),
+});
+
+export const getClientSettingsAction = withErrorHandling(
+    action(getClientSettingsSchema, async ({ ipAddress }) => {
+        return await getServerSettings(ipAddress);
+    })
+);
+
+const setClientSettingsSchema = serverSettingsSchema.omit({
+    ExpRate: true,
+    PalCaptureRate: true,
+    PalSpawnNumRate: true,
+    EnemyDropItemRate: true,
+    PalEggDefaultHatchingTime: true,
+    WorkSpeedRate: true,
+    ServerName: true,
+    ServerDescription: true,
+    PublicPort: true,
+    PublicIP: true,
+    RCONEnabled: true,
+    RCONPort: true,
+    Region: true,
+    bUseAuth: true,
+    BanListURL: true,
+    RESTAPIEnabled: true,
+    RESTAPIPort: true,
+    bShowPlayerList: true,
+    AllowConnectPlatform: true,
+    bIsUseBackupSaveData: true,
+    LogFormatType: true,
+});
 
 export const setClientSettingsAction = withErrorHandling(
     action(setClientSettingsSchema, async (clientSettings) => {

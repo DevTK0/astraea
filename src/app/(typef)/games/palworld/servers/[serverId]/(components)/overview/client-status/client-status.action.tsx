@@ -12,31 +12,42 @@ import {
 import { getServerStatus } from "@/lib/cloud-provider/server";
 import { configs } from "@/configs/servers/palworld";
 
-const getClientStatusSchema = z.object({});
+const isServerRunningSchema = z.object({});
 
-export const getClientStatusAction = withErrorHandling(
-    action(getClientStatusSchema, async ({}) => {
+export const isServerRunningAction = withErrorHandling(
+    action(isServerRunningSchema, async ({}) => {
         const server = await getServerStatus(configs.game, configs.serverId);
 
-        if (server.status !== "Running") return { isServerRunning: false };
+        return server.status === "Running" ? server.ipAddress : undefined;
+    })
+);
 
-        const serverAddress = z.string().ip().parse(server.ipAddress);
+const isClientRunningSchema = z.object({ ipAddress: z.string().ip() });
 
-        const isUp = await checkIfClientIsRunning(serverAddress);
+export const isClientRunningAction = withErrorHandling(
+    action(isClientRunningSchema, async ({ ipAddress }) => {
+        const serverAddress = z.string().ip().parse(ipAddress);
 
-        if (isUp) {
-            return {
-                isServerRunning: true,
-                isClientRunning: true,
-                clientSettings: await getServerSettings(serverAddress),
-                clientMetrics: await getServerMetrics(serverAddress),
-            };
-        } else {
-            return {
-                isServerRunning: true,
-                isClientRunning: false,
-                clientSettings: undefined,
-            };
-        }
+        return await checkIfClientIsRunning(serverAddress);
+    })
+);
+
+const getClientSettingsSchema = z.object({
+    ipAddress: z.string().ip(),
+});
+
+export const getClientSettingsAction = withErrorHandling(
+    action(getClientSettingsSchema, async ({ ipAddress }) => {
+        return await getServerSettings(ipAddress);
+    })
+);
+
+const getClientMetricsSchema = z.object({
+    ipAddress: z.string().ip(),
+});
+
+export const getClientMetricsAction = withErrorHandling(
+    action(getClientMetricsSchema, async ({ ipAddress }) => {
+        return await getServerMetrics(ipAddress);
     })
 );

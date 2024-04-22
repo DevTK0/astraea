@@ -21,14 +21,14 @@ export default async function Navbar() {
                     <MainNav className="mx-6" />
                     <div className="ml-auto flex items-center space-x-12">
                         <div className="flex items-center">
-                            <Button
+                            {/* <Button
                                 variant="ghost"
                                 size="icon"
                                 className="rounded-full"
                             >
                                 <Icons.sketch className="h-4 w-4 text-cyan-500" />
                             </Button>
-                            <div className="text-cyan-500"> 500 </div>
+                            <div className="text-cyan-500"> 500 </div> */}
                         </div>
                         <UserNav user={user} />
                     </div>

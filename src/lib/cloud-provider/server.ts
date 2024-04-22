@@ -16,7 +16,6 @@ import { RunInstancesCommand } from "@aws-sdk/client-ec2";
 import { AWSError } from "../error-handling/aws";
 import { z } from "zod";
 import { serverSettingsSchema } from "../palworld/rest-api";
-import { setClientSettingsSchema } from "@/app/(typef)/games/palworld/servers/[serverId]/(components)/settings/client-settings/client-settings.schema";
 import { configs } from "@/configs/servers/palworld";
 
 export type ServerStatus =
@@ -184,7 +183,7 @@ export async function startPalworld() {
 }
 
 export async function updatePalworldSettings(
-    settings: z.output<typeof setClientSettingsSchema>
+    settings: z.output<typeof userSettingsSchema>
 ) {
     const response = await checkIfServerIsRunning("Palworld", 1);
 
@@ -213,7 +212,7 @@ function Boolean(bool: boolean) {
     return bool ? "True" : "False";
 }
 
-const RatesSchema = z.object({
+const serverRatesSchema = z.object({
     ExpRate: z.number(),
     PalCaptureRate: z.number(),
     PalSpawnNumRate: z.number(),
@@ -222,13 +221,61 @@ const RatesSchema = z.object({
     WorkSpeedRate: z.number(),
 });
 
+const userSettingsSchema = serverSettingsSchema.pick({
+    Difficulty: true,
+    DayTimeSpeedRate: true,
+    NightTimeSpeedRate: true,
+    PalDamageRateAttack: true,
+    PalDamageRateDefense: true,
+    PlayerDamageRateAttack: true,
+    PlayerDamageRateDefense: true,
+    PlayerStomachDecreaceRate: true,
+    PlayerStaminaDecreaceRate: true,
+    PlayerAutoHPRegeneRate: true,
+    PlayerAutoHpRegeneRateInSleep: true,
+    PalStomachDecreaceRate: true,
+    PalStaminaDecreaceRate: true,
+    PalAutoHPRegeneRate: true,
+    PalAutoHpRegeneRateInSleep: true,
+    BuildObjectDamageRate: true,
+    BuildObjectDeteriorationDamageRate: true,
+    CollectionDropRate: true,
+    CollectionObjectHpRate: true,
+    CollectionObjectRespawnSpeedRate: true,
+    DeathPenalty: true,
+    bEnablePlayerToPlayerDamage: true,
+    bEnableFriendlyFire: true,
+    bEnableInvaderEnemy: true,
+    bActiveUNKO: true,
+    bEnableAimAssistPad: true,
+    bEnableAimAssistKeyboard: true,
+    DropItemMaxNum: true,
+    DropItemMaxNum_UNKO: true,
+    BaseCampMaxNum: true,
+    BaseCampWorkerMaxNum: true,
+    DropItemAliveMaxHours: true,
+    bAutoResetGuildNoOnlinePlayers: true,
+    AutoResetGuildTimeNoOnlinePlayers: true,
+    GuildPlayerMaxNum: true,
+    bIsMultiplay: true,
+    bIsPvP: true,
+    bCanPickupOtherGuildDeathPenaltyDrop: true,
+    bEnableNonLoginPenalty: true,
+    bEnableFastTravel: true,
+    bIsStartLocationSelectByMap: true,
+    bExistPlayerAfterLogout: true,
+    bEnableDefenseOtherGuildPlayer: true,
+    CoopPlayerMaxNum: true,
+    ServerPlayerMaxNum: true,
+});
+
 function parsePalworldSettings(
-    settings: z.output<typeof setClientSettingsSchema>,
-    rates: z.output<typeof RatesSchema>
+    settings: z.output<typeof userSettingsSchema>,
+    rates: z.output<typeof serverRatesSchema>
 ) {
     // convert data to appropriate string format.
     const Difficulty = settings.Difficulty;
-    const DayTimeSpeedRate = settings.DayTimeSpeedRate.toFixed(6);
+    const DayTimeSpeedRate = settings?.DayTimeSpeedRate.toFixed(6);
     const NightTimeSpeedRate = settings.NightTimeSpeedRate.toFixed(6);
     const PalDamageRateAttack = settings.PalDamageRateAttack.toFixed(6);
     const PalDamageRateDefense = settings.PalDamageRateDefense.toFixed(6);

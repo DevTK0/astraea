@@ -1,6 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { JSX, ClassAttributes, HTMLAttributes } from "react";
-import { getClientStatusAction } from "./client-status.action";
+import {
+    getClientMetricsAction,
+    getClientSettingsAction,
+    isClientRunningAction,
+    isServerRunningAction,
+} from "./client-status.action";
 
 export function ClientStatus(
     props: JSX.IntrinsicAttributes &
@@ -10,11 +15,11 @@ export function ClientStatus(
     const {
         isError,
         isPending,
-        data: clientSettings,
+        data: ipAddress,
         error,
     } = useQuery({
-        queryKey: ["palworld", "client-settings"],
-        queryFn: () => getClientStatusAction({}),
+        queryKey: ["palworld", "serverRunning"],
+        queryFn: () => isServerRunningAction({}),
         refetchInterval: 5000,
     });
 
@@ -33,7 +38,7 @@ export function ClientStatus(
         );
     }
 
-    if (!clientSettings?.isServerRunning) {
+    if (!ipAddress) {
         return <div {...props}></div>;
     }
 
@@ -41,18 +46,27 @@ export function ClientStatus(
         <div {...props}>
             <div className="flex flex-col items-start justify-start rounded-lg border p-4 space-y-2">
                 <h1 className="text-xl font-semibold">Client</h1>
-                <RenderClientStatus clientSettings={clientSettings} />
+                <RenderClientStatus ipAddress={ipAddress} />
             </div>
         </div>
     );
 }
 
-const RenderClientStatus = ({
-    clientSettings,
-}: {
-    clientSettings: Awaited<ReturnType<typeof getClientStatusAction>>;
-}) => {
-    if (!clientSettings?.isClientRunning) {
+const RenderClientStatus = ({ ipAddress }: { ipAddress: string }) => {
+    const {
+        isError,
+        isPending,
+        data: isClientRunning,
+        error,
+    } = useQuery({
+        queryKey: ["palworld", "clientRunning"],
+        queryFn: () => isClientRunningAction({ ipAddress: ipAddress }),
+        refetchInterval: 5000,
+    });
+
+    if (isError) console.log(error.message);
+
+    if (!isClientRunning) {
         return (
             <div className="flex items-center space-x-1">
                 <div className="rounded-full border w-3 h-3 bg-gray-500"></div>
@@ -68,20 +82,25 @@ const RenderClientStatus = ({
                 <div className="text-sm font-medium text-green-500">Online</div>
             </div>
             <div className="grid grid-cols-1 gap-4 w-full md:grid-cols-2 ">
-                <RenderClientSettings clientSettings={clientSettings} />
-                <RenderClientMetrics clientSettings={clientSettings} />
+                <RenderClientSettings ipAddress={ipAddress} />
+                <RenderClientMetrics ipAddress={ipAddress} />
             </div>
         </>
     );
 };
 
-const RenderClientSettings = ({
-    clientSettings,
-}: {
-    clientSettings: Awaited<ReturnType<typeof getClientStatusAction>>;
-}) => {
-    const settings = clientSettings?.clientSettings;
-    console.log(settings);
+const RenderClientSettings = ({ ipAddress }: { ipAddress: string }) => {
+    const {
+        isError,
+        isPending,
+        data: settings,
+        error,
+    } = useQuery({
+        queryKey: ["palworld", "clientSettings"],
+        queryFn: () => getClientSettingsAction({ ipAddress: ipAddress }),
+        refetchInterval: 5000,
+    });
+
     return (
         <div className="rounded-lg border p-4 ">
             <div className="grid grid-cols-2">
@@ -100,14 +119,17 @@ const RenderClientSettings = ({
     );
 };
 
-const RenderClientMetrics = ({
-    clientSettings,
-}: {
-    clientSettings: Awaited<ReturnType<typeof getClientStatusAction>>;
-}) => {
-    const metrics = clientSettings?.clientMetrics;
-
-    console.log(metrics);
+const RenderClientMetrics = ({ ipAddress }: { ipAddress: string }) => {
+    const {
+        isError,
+        isPending,
+        data: metrics,
+        error,
+    } = useQuery({
+        queryKey: ["palworld", "clientMetrics"],
+        queryFn: () => getClientMetricsAction({ ipAddress: ipAddress }),
+        refetchInterval: 5000,
+    });
 
     return (
         <div className="rounded-lg border p-4">
