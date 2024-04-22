@@ -44,6 +44,7 @@ export function WhitelistIp() {
     }
 
     function handleWhitelistIp() {
+        console.log("ip: ", ip);
         execute({ ipAddress: ip, serverId: 1, userId: 1 });
     }
 
