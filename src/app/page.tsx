@@ -1,13 +1,13 @@
 "use client";
 
-import { redirect, usePathname } from "next/navigation";
+import { useAction } from "next-safe-action/hooks";
+import { useEffect } from "react";
+import { getSaves } from "./(typef)/games/palworld/servers/[serverId]/(components)/commands/restore-save/get-saves.action";
+import { redirect } from "next/navigation";
+import { routes } from "@/configs/site";
 
-export default function Home() {
-    const path = usePathname();
-
-    if (path === "/") {
-        redirect("/games");
-    }
+export default function Landing() {
+    redirect(routes.landing);
 
     return <></>;
 }

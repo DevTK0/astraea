@@ -54,7 +54,7 @@ export async function middleware(request: NextRequest) {
         }
     );
 
-    await supabase.auth.getUser();
+    const session = await supabase.auth.getSession();
 
     return response;
 }
@@ -68,6 +68,7 @@ export const config = {
          * - favicon.ico (favicon file)
          * Feel free to modify this pattern to include more paths.
          */
-        "/((?!_next/static|_next/image|favicon.ico).*)",
+        // "/((?!_next/static|_next/image|favicon.ico).*)",
+        "*",
     ],
 };
