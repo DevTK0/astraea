@@ -50,7 +50,11 @@ export const whitelistIp = action(
 
         // extract ip address from each user that has joined the seerver
         for (const row of getIpList.data) {
-            const ip = z.string().ip({ version: "v4" }).parse(row.ip_address);
+            const ip = z
+                .string()
+                .ip({ version: "v4" })
+                .optional()
+                .parse(row.ip_address);
 
             // remove duplicates
             if (ip && !ipList.includes(ip)) {
