@@ -3,15 +3,11 @@ import { MainNav } from "./main-nav";
 import { UserNav } from "./user-nav";
 import { getUser } from "@/lib/auth/server";
 import { redirect } from "next/navigation";
-import { Icons } from "../ui/icons";
-import { Button } from "../ui/button";
+import { Icons } from "../../../../components/ui/icons";
+import { Button } from "../../../../components/ui/button";
 
 export default async function Navbar() {
     const user = await getUser();
-
-    if (!user) {
-        redirect("/auth/signin");
-    }
 
     return (
         <div className="flex-col flex">

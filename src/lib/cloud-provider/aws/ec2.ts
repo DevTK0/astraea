@@ -1,12 +1,17 @@
 import {
+    AuthorizeSecurityGroupIngressCommand,
     DescribeImagesCommand,
     DescribeInstancesCommand,
     DescribeLaunchTemplatesCommand,
+    DescribeSecurityGroupRulesCommand,
     DescribeSnapshotsCommand,
     DescribeVolumesCommand,
     EC2Client,
+    IpRange,
     RebootInstancesCommand,
+    RevokeSecurityGroupIngressCommand,
     RunInstancesCommand,
+    SecurityGroupRule,
     TerminateInstancesCommand,
     waitUntilInstanceRunning,
     waitUntilInstanceStopped,
@@ -467,6 +472,55 @@ export async function runUnixCommands(instanceId: string, commands: string[]) {
             Parameters: {
                 commands: commands,
             },
+        })
+    );
+}
+
+export async function getSecurityGroupRules(groupId: string) {
+    return await ec2.send(
+        new DescribeSecurityGroupRulesCommand({
+            Filters: [
+                {
+                    Name: "group-id",
+                    Values: [groupId],
+                },
+            ],
+        })
+    );
+}
+
+export async function removeSecurityGroupRules(
+    groupId: string,
+    rules: SecurityGroupRule[]
+) {
+    const removed = await ec2.send(
+        new RevokeSecurityGroupIngressCommand({
+            GroupId: groupId,
+            SecurityGroupRuleIds: rules.map((rule) =>
+                rule.SecurityGroupRuleId ? rule.SecurityGroupRuleId : ""
+            ),
+        })
+    );
+}
+
+export async function addSecurityGroupRules(
+    groupId: string,
+    ipRanges: IpRange[],
+    protocol: string,
+    fromPort: number,
+    toPort: number
+) {
+    return await ec2.send(
+        new AuthorizeSecurityGroupIngressCommand({
+            GroupId: groupId,
+            IpPermissions: [
+                {
+                    FromPort: fromPort,
+                    ToPort: toPort,
+                    IpProtocol: protocol,
+                    IpRanges: ipRanges,
+                },
+            ],
         })
     );
 }

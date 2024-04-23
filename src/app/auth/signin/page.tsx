@@ -1,14 +1,16 @@
 import { redirect } from "next/navigation";
 import Logo from "@/components/ui/logo";
-import { getUser } from "@/lib/auth/server";
+import { getSession } from "@/lib/auth/server";
 import Link from "next/link";
 import { UserAuthForm } from "./(components)/user-auth-form";
 import { routes } from "@/configs/site";
 
 export default async function SignIn() {
-    const user = await getUser();
+    const {
+        data: { session },
+    } = await getSession();
 
-    if (user) {
+    if (session) {
         redirect(routes.landing);
     }
 

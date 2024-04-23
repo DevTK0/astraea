@@ -12,21 +12,35 @@ import {
 } from "@aws-sdk/client-ec2";
 import { z } from "zod";
 
+import { fetchWithErrorHandling, getURL } from "@/lib/http/fetch";
+import { withErrorHandling } from "@/lib/error-handling/next-safe-action";
+import { configureAllowedIPs } from "@/lib/cloud-provider/server";
+
+const getIpAddressSchema = z.object({});
+
+export const getIpAddressAction = withErrorHandling(
+    action(getIpAddressSchema, async ({}) => {
+        const response = await fetchWithErrorHandling(`${getURL()}/users/ip`);
+        const ipAddress = z.string().ip().parse(response);
+
+        return ipAddress;
+    })
+);
+
 const whitelistIpSchema = z.object({
     ipAddress: z.string().ip({ version: "v4" }),
-    userId: z.number(),
+    userId: z.string().uuid(),
     serverId: z.number(),
 });
 
-export const whitelistIp = action(
-    whitelistIpSchema,
-    async ({ ipAddress, userId, serverId }) => {
+export const whitelistIp = withErrorHandling(
+    action(whitelistIpSchema, async ({ ipAddress, userId, serverId }) => {
         const db = Database();
 
         const updateIp = await db
             .from("users")
             .update({ ip_address: ipAddress })
-            .eq("user_id", userId);
+            .eq("auth_uid", userId);
 
         if (updateIp.error) throw new SupabaseDBError(updateIp.error);
 
@@ -34,7 +48,7 @@ export const whitelistIp = action(
             .from("users")
             .select(
                 `
-                user_id,
+                auth_uid,
                 ip_address,
                 server_communities (
                     server_id        
@@ -45,75 +59,14 @@ export const whitelistIp = action(
 
         if (getIpList.error) throw new SupabaseDBError(getIpList.error);
 
-        const ipList: string[] = [];
-        const ipRanges = [];
+        const ipAddresses: string[] = [];
 
-        // extract ip address from each user that has joined the seerver
-        for (const row of getIpList.data) {
-            const ip = z
-                .string()
-                .ip({ version: "v4" })
-                .optional()
-                .parse(row.ip_address);
+        getIpList.data.forEach((row) => {
+            ipAddresses.push(row.ip_address ?? "");
+        });
 
-            // remove duplicates
-            if (ip && !ipList.includes(ip)) {
-                const ipRange = {
-                    CidrIp: ip + "/32",
-                    Description: "IP Whitelist",
-                };
-                ipList.push(ip);
-                ipRanges.push(ipRange);
-            }
-        }
+        await configureAllowedIPs(ipAddresses);
 
-        z.string().array().nonempty().parse(ipList);
-
-        // add ips to security group
-        const ec2 = new EC2Client();
-
-        const securityGroupRules = await ec2.send(
-            new DescribeSecurityGroupRulesCommand({
-                Filters: [
-                    {
-                        Name: "group-id",
-                        Values: [configs.palworld_sg],
-                    },
-                ],
-            })
-        );
-
-        const toRemove = securityGroupRules.SecurityGroupRules?.filter(
-            (rule) => {
-                return rule.IpProtocol === "udp" && rule.FromPort === 8211;
-            }
-        );
-
-        // Remove previous Ips if any
-        if (toRemove && toRemove.length > 0) {
-            const removed = await ec2.send(
-                new RevokeSecurityGroupIngressCommand({
-                    GroupId: configs.palworld_sg,
-                    SecurityGroupRuleIds: toRemove.map((rule) =>
-                        rule.SecurityGroupRuleId ? rule.SecurityGroupRuleId : ""
-                    ),
-                })
-            );
-        }
-
-        const newIpList = await ec2.send(
-            new AuthorizeSecurityGroupIngressCommand({
-                GroupId: configs.palworld_sg,
-                IpPermissions: [
-                    {
-                        FromPort: 8211,
-                        ToPort: 8211,
-                        IpProtocol: "udp",
-                        IpRanges: ipRanges,
-                    },
-                ],
-            })
-        );
         return { message: `${ipAddress} added to server whitelist.` };
-    }
+    })
 );

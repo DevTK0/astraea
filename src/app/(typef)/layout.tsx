@@ -1,4 +1,4 @@
-import Navbar from "@/components/navbar/navbar";
+import Navbar from "@/app/(typef)/(components)/navbar/navbar";
 import { Toaster } from "@/components/ui/toaster";
 import { redirect } from "next/navigation";
 // import { Sidebar } from "./components/sidebar";

@@ -5,47 +5,43 @@ import { Icons } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
-import { useAction } from "next-safe-action/hooks";
-import { useEffect, useState } from "react";
-import { whitelistIp } from "./whitelist-ip.action";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { getIpAddressAction, whitelistIp } from "./whitelist-ip.action";
+import { getUser } from "@/lib/auth/client";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { User } from "@supabase/supabase-js";
+import { z } from "zod";
 
 export function WhitelistIp() {
     const [ip, setIp] = useState("Searching...");
+    const [userId, setUserId] = useState<string>();
 
-    const { execute, status } = useAction(whitelistIp, {
-        onSuccess: (result) => {
+    const { isError, isPending, mutate, error } = useMutation({
+        mutationFn: whitelistIp,
+        onSuccess: (response) => {
             toast({
                 title: "Success",
-                description: result.message,
-            });
-        },
-        onError: (err) => {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description:
-                    err.fetchError ||
-                    err.serverError ||
-                    JSON.stringify(err.validationErrors),
+                description: `${response?.message}`,
             });
         },
     });
 
     useEffect(() => {
-        fetch("/users/ip")
-            .then((res) => res.json())
-            .then((res) => {
-                setIp(res);
+        if (isError) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: error.message,
             });
-    }, []);
-
-    function handleManualIp(value: string) {
-        setIp(value);
-    }
+        }
+    }, [isError, error?.message, toast]);
 
     function handleWhitelistIp() {
-        console.log("ip: ", ip);
-        execute({ ipAddress: ip, serverId: 1, userId: 1 });
+        console.log(ip);
+        getUser().then((res) => {
+            const userId = z.string().uuid().parse(res?.id);
+            mutate({ ipAddress: ip, serverId: 1, userId: userId });
+        });
     }
 
     return (
@@ -57,18 +53,14 @@ export function WhitelistIp() {
                 </div>
             </div>
             <div className="flex flex-row items-center justify-between ">
-                <Input
-                    placeholder={ip}
-                    onChange={(e) => handleManualIp(e.target.value)}
-                    className="w-[300px]"
-                />
+                <RenderInput setIp={setIp} />
                 <Button
                     variant="outline"
                     size="icon"
                     className="ml-2"
                     onClick={handleWhitelistIp}
                 >
-                    {status === "executing" ? (
+                    {isPending ? (
                         <Icons.spinner className="h-4 w-4 animate-spin" />
                     ) : (
                         <Icons.plus />
@@ -78,3 +70,53 @@ export function WhitelistIp() {
         </div>
     );
 }
+
+const RenderInput = ({
+    setIp,
+}: {
+    setIp: Dispatch<SetStateAction<string>>;
+}) => {
+    const {
+        isError,
+        isPending,
+        data: ipAddress,
+        error,
+    } = useQuery({
+        queryKey: ["ipAddress"],
+        queryFn: () => getIpAddressAction({}),
+    });
+
+    if (ipAddress) {
+        setIp(ipAddress);
+    }
+
+    // useEffect(() => {
+    //     fetch("/users/ip")
+    //         .then((res) => res.json())
+    //         .then((res) => {
+    //             setIp(res);
+    //         });
+    // }, []);
+
+    useEffect(() => {
+        if (isError) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: error.message,
+            });
+        }
+    }, [isError, error?.message, toast]);
+
+    function handleManualIp(value: string) {
+        setIp(value);
+    }
+
+    return (
+        <Input
+            placeholder={isPending ? "Searching..." : ipAddress}
+            onChange={(e) => handleManualIp(e.target.value)}
+            className="w-[300px]"
+        />
+    );
+};

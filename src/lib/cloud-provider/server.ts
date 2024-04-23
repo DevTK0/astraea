@@ -1,5 +1,6 @@
 import { ServerError } from "@/lib/error-handling/next-safe-action";
 import {
+    addSecurityGroupRules,
     checkIfArchived,
     checkIfBackingUpVolume,
     checkIfImageExists,
@@ -7,12 +8,17 @@ import {
     checkIfServerIsStarting,
     checkIfServerIsStopping,
     getLaunchTemplateId,
+    getSecurityGroupRules,
+    removeSecurityGroupRules,
     restartInstance,
     runInstance,
     runUnixCommands,
     terminateInstance,
 } from "./aws/ec2";
-import { RunInstancesCommand } from "@aws-sdk/client-ec2";
+import {
+    DescribeSecurityGroupRulesCommand,
+    RunInstancesCommand,
+} from "@aws-sdk/client-ec2";
 import { AWSError } from "../error-handling/aws";
 import { z } from "zod";
 import { serverSettingsSchema } from "../palworld/rest-api";
@@ -156,6 +162,49 @@ export async function restartServer(game: string, serverId: number) {
     if (!instance) throw new ServerError("Server is not running");
     const instanceId = z.string().parse(instance?.instanceId);
     await restartInstance(instanceId);
+}
+
+export async function configureAllowedIPs(ipAddresses: string[]) {
+    const ipList: string[] = [];
+    const ipRanges = [];
+
+    // extract ip address from each user that has joined the seerver
+    for (const ip of ipAddresses) {
+        if (ip == "") continue;
+
+        z.string().ip({ version: "v4" }).parse(ip);
+
+        // remove duplicates
+        if (!ipList.includes(ip)) {
+            const ipRange = {
+                CidrIp: ip + "/32",
+                Description: "IP Whitelist",
+            };
+            ipList.push(ip);
+            ipRanges.push(ipRange);
+        }
+    }
+
+    z.string().array().nonempty().parse(ipList);
+
+    const securityGroupRules = await getSecurityGroupRules(configs.palworld_sg);
+
+    const toRemove = securityGroupRules.SecurityGroupRules?.filter((rule) => {
+        return rule.IpProtocol === "udp" && rule.FromPort === 8211;
+    });
+
+    // Remove previous Ips if any
+    if (toRemove && toRemove.length > 0) {
+        await removeSecurityGroupRules(configs.palworld_sg, toRemove);
+    }
+
+    await addSecurityGroupRules(
+        configs.palworld_sg,
+        ipRanges,
+        "udp",
+        8211,
+        8211
+    );
 }
 
 export async function updatePalworld() {

@@ -1,5 +1,8 @@
+import { routes } from "@/configs/site";
 import { createBrowserClient } from "@supabase/ssr";
+import { redirect } from "next/navigation";
 import { z } from "zod";
+import { getURL } from "../http/fetch";
 
 export function AuthClient() {
     return createBrowserClient(
@@ -13,6 +16,10 @@ export async function getUser() {
     const {
         data: { user },
     } = await client.auth.getUser();
+
+    if (!user) {
+        redirect(routes.signIn);
+    }
 
     return user;
 }
@@ -54,15 +61,3 @@ export async function signInWithDiscord() {
         console.log(error.message);
     }
 }
-
-const getURL = () => {
-    let url =
-        process?.env?.NEXT_PUBLIC_SITE_URL ?? // Set this to your site URL in production env.
-        process?.env?.NEXT_PUBLIC_VERCEL_URL ?? // Automatically set by Vercel.
-        "http://localhost:3000/";
-    // Make sure to include `https://` when not localhost.
-    url = url.includes("http") ? url : `https://${url}`;
-    // Make sure to including trailing `/`.
-    url = url.charAt(url.length - 1) === "/" ? url : `${url}/`;
-    return url;
-};
