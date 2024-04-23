@@ -23,8 +23,7 @@ import { Icons } from "@/components/ui/icons";
 import { useAction } from "next-safe-action/hooks";
 import { useParams } from "next/navigation";
 
-import { getSaves } from "./get-saves.action";
-import { restoreSave } from "./restore-save.action";
+import { getSaves, restoreSave } from "./restore-save.action";
 
 export function RestoreSave() {
     const { serverId } = useParams<{ serverId: string }>();
