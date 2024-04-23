@@ -1,23 +1,16 @@
 "use server";
 
-import { configs } from "@/configs/servers/palworld";
 import { Database } from "@/lib/database/actions";
 import { SupabaseDBError } from "@/lib/error-handling/database";
 import { action } from "@/lib/server-actions/next-safe-action";
-import {
-    AuthorizeSecurityGroupIngressCommand,
-    DescribeSecurityGroupRulesCommand,
-    EC2Client,
-    RevokeSecurityGroupIngressCommand,
-} from "@aws-sdk/client-ec2";
 import { z } from "zod";
 
 import { fetchWithErrorHandling, getURL } from "@/lib/http/fetch";
 import { withErrorHandling } from "@/lib/error-handling/next-safe-action";
 import { configureAllowedIPs } from "@/lib/cloud-provider/server";
 
-export const getIpAddressAction = async () =>
-    await fetchWithErrorHandling(`${getURL()}/users/ip`);
+// export const getIpAddressAction = async () =>
+//     await fetchWithErrorHandling(`${getURL()}/users/ip`);
 
 const whitelistIpSchema = z.object({
     ipAddress: z.string().ip({ version: "v4" }),

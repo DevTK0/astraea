@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/collapsible";
 
 import { RestoreSave } from "./restore-save/restore-save";
-import { WhitelistIp } from "./whitelist/whitelist-ip";
+import { WhitelistIp } from "./whitelist-ip/whitelist-ip";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";

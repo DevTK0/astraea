@@ -3,15 +3,15 @@
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { getIpAddressAction, whitelistIpAction } from "./whitelist-ip.action";
+import { whitelistIpAction } from "./whitelist-ip.action";
 import { getUser } from "@/lib/auth/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { z } from "zod";
+import { fetchWithErrorHandling } from "@/lib/http/fetch";
 
-export function WhitelistIp() {
+export function WhitelistIpComponent() {
     const [ip, setIp] = useState("Searching...");
 
     const { isError, isPending, mutate, error } = useMutation({
@@ -42,28 +42,20 @@ export function WhitelistIp() {
     }
 
     return (
-        <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-            <div className="space-y-0.5">
-                <Label className="text-base">Whitelist</Label>
-                <div className="text-sm text-muted-foreground">
-                    Adds your IP address to the list of allowed IPs.
-                </div>
-            </div>
-            <div className="flex flex-row items-center justify-between ">
-                <RenderInput setIp={setIp} />
-                <Button
-                    variant="outline"
-                    size="icon"
-                    className="ml-2"
-                    onClick={handleWhitelistIp}
-                >
-                    {isPending ? (
-                        <Icons.spinner className="h-4 w-4 animate-spin" />
-                    ) : (
-                        <Icons.plus />
-                    )}
-                </Button>
-            </div>
+        <div className="flex flex-row items-center justify-between ">
+            <RenderInput setIp={setIp} />
+            <Button
+                variant="outline"
+                size="icon"
+                className="ml-2"
+                onClick={handleWhitelistIp}
+            >
+                {isPending ? (
+                    <Icons.spinner className="h-4 w-4 animate-spin" />
+                ) : (
+                    <Icons.plus />
+                )}
+            </Button>
         </div>
     );
 }
@@ -80,7 +72,7 @@ const RenderInput = ({
         error,
     } = useQuery({
         queryKey: ["ipAddress"],
-        queryFn: () => getIpAddressAction(),
+        queryFn: () => fetchWithErrorHandling(`/users/ip`),
     });
 
     if (ipAddress) {
