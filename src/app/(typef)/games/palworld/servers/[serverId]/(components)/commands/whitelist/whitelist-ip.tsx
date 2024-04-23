@@ -9,12 +9,10 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { getIpAddressAction, whitelistIp } from "./whitelist-ip.action";
 import { getUser } from "@/lib/auth/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { User } from "@supabase/supabase-js";
 import { z } from "zod";
 
 export function WhitelistIp() {
     const [ip, setIp] = useState("Searching...");
-    const [userId, setUserId] = useState<string>();
 
     const { isError, isPending, mutate, error } = useMutation({
         mutationFn: whitelistIp,
@@ -37,7 +35,6 @@ export function WhitelistIp() {
     }, [isError, error?.message, toast]);
 
     function handleWhitelistIp() {
-        console.log(ip);
         getUser().then((res) => {
             const userId = z.string().uuid().parse(res?.id);
             mutate({ ipAddress: ip, serverId: 1, userId: userId });
@@ -89,14 +86,6 @@ const RenderInput = ({
     if (ipAddress) {
         setIp(ipAddress);
     }
-
-    // useEffect(() => {
-    //     fetch("/users/ip")
-    //         .then((res) => res.json())
-    //         .then((res) => {
-    //             setIp(res);
-    //         });
-    // }, []);
 
     useEffect(() => {
         if (isError) {
