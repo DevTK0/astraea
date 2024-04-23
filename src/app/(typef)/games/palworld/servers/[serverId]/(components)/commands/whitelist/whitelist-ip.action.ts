@@ -16,16 +16,8 @@ import { fetchWithErrorHandling, getURL } from "@/lib/http/fetch";
 import { withErrorHandling } from "@/lib/error-handling/next-safe-action";
 import { configureAllowedIPs } from "@/lib/cloud-provider/server";
 
-const getIpAddressSchema = z.object({});
-
-export const getIpAddressAction = withErrorHandling(
-    action(getIpAddressSchema, async ({}) => {
-        const response = await fetchWithErrorHandling(`${getURL()}/users/ip`);
-        const ipAddress = z.string().ip().parse(response);
-
-        return ipAddress;
-    })
-);
+export const getIpAddressAction = async () =>
+    await fetchWithErrorHandling(`${getURL()}/users/ip`);
 
 const whitelistIpSchema = z.object({
     ipAddress: z.string().ip({ version: "v4" }),
@@ -33,7 +25,7 @@ const whitelistIpSchema = z.object({
     serverId: z.number(),
 });
 
-export const whitelistIp = withErrorHandling(
+export const whitelistIpAction = withErrorHandling(
     action(whitelistIpSchema, async ({ ipAddress, userId, serverId }) => {
         const db = Database();
 

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { getIpAddressAction, whitelistIp } from "./whitelist-ip.action";
+import { getIpAddressAction, whitelistIpAction } from "./whitelist-ip.action";
 import { getUser } from "@/lib/auth/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { z } from "zod";
@@ -15,7 +15,7 @@ export function WhitelistIp() {
     const [ip, setIp] = useState("Searching...");
 
     const { isError, isPending, mutate, error } = useMutation({
-        mutationFn: whitelistIp,
+        mutationFn: whitelistIpAction,
         onSuccess: (response) => {
             toast({
                 title: "Success",
@@ -80,7 +80,7 @@ const RenderInput = ({
         error,
     } = useQuery({
         queryKey: ["ipAddress"],
-        queryFn: () => getIpAddressAction({}),
+        queryFn: () => getIpAddressAction(),
     });
 
     if (ipAddress) {
@@ -104,6 +104,7 @@ const RenderInput = ({
     return (
         <Input
             placeholder={isPending ? "Searching..." : ipAddress}
+            type="text"
             onChange={(e) => handleManualIp(e.target.value)}
             className="w-[300px]"
         />
