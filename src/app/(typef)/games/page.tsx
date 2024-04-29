@@ -1,7 +1,7 @@
-import { ClassAttributes, HTMLAttributes } from "react";
-import Sidebar from "./(components)/sidebar";
-import { gameMetadata } from "@/meta/gamedata";
-import { GamePortrait } from "./(components)/game-portrait";
+import { gameMetadata } from "@/(global)/meta/gamedata";
+
+import { Sidebar } from "./(local)/sidebar";
+import { GamePortrait } from "./(local)/game-portrait";
 
 export default function Games() {
     return (

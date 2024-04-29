@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { exchangeCodeForSession } from "@/lib/auth/actions";
+import { exchangeCodeForSession } from "@/(global)/lib/auth/actions";
 import { redirect } from "next/navigation";
-import { routes } from "@/configs/site";
+import { routes } from "@/(global)/configs/site";
 
 export async function GET(request: NextRequest) {
     const requestUrl = new URL(request.url);

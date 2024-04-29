@@ -1,4 +1,4 @@
-import { corekeeper } from "@/meta/gamedata";
+import { corekeeper } from "@/(global)/meta/gamedata";
 
 export default function Layout({
     children,

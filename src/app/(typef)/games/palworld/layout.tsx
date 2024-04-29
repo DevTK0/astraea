@@ -1,4 +1,4 @@
-import { palworld } from "@/meta/gamedata";
+import { palworld } from "@/(global)/meta/gamedata";
 
 export default function Layout({
     children,
