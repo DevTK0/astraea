@@ -1,33 +1,33 @@
 import { Button } from "@/(global)/components/ui/button";
 import { Icons } from "@/(global)/components/ui/icons";
-import { useToast } from "@/(global)/components/ui/use-toast";
+import { toast } from "@/(global)/components/ui/use-toast";
 import { cn } from "@/(global)/lib/css/utils";
 import { ClassAttributes, HTMLAttributes } from "react";
 
 import { getServerStatusAction } from "./server-status.action";
 import type { ServerStatus } from "@/(global)/lib/cloud-provider/server";
 import { useQuery } from "@tanstack/react-query";
+import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { configs } from "@/(global)/configs/servers/palworld";
 
 export function ServerStatus(
     props: JSX.IntrinsicAttributes &
         ClassAttributes<HTMLDivElement> &
         HTMLAttributes<HTMLDivElement>
 ) {
-    const serverId = 1;
-    const game = "Palworld";
-
     const {
         isPending,
         isError,
         data: server,
         error,
     } = useQuery({
-        queryKey: ["server", serverId, "status"],
-        queryFn: () =>
+        queryKey: ["server", configs.serverId, "status"],
+        queryFn: withErrorHandling(() =>
             getServerStatusAction({
-                game: game,
-                serverId: serverId,
-            }),
+                game: configs.game,
+                serverId: configs.serverId,
+            })
+        ),
     });
 
     return (
@@ -72,8 +72,6 @@ const RenderStatus = ({
         | undefined;
     error: { message: string } | null;
 }) => {
-    const { toast } = useToast();
-
     if (isPending) {
         return (
             <div className="flex items-center space-x-1">

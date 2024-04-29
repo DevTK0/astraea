@@ -259,7 +259,7 @@ function Boolean(bool: boolean) {
     return bool ? "True" : "False";
 }
 
-const serverRatesSchema = z.object({
+export const serverRatesSchema = z.object({
     ExpRate: z.number(),
     PalCaptureRate: z.number(),
     PalSpawnNumRate: z.number(),
@@ -268,7 +268,7 @@ const serverRatesSchema = z.object({
     WorkSpeedRate: z.number(),
 });
 
-const userSettingsSchema = serverSettingsSchema.pick({
+export const userSettingsSchema = serverSettingsSchema.pick({
     Difficulty: true,
     DayTimeSpeedRate: true,
     NightTimeSpeedRate: true,

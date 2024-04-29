@@ -6,6 +6,7 @@ import {
     isClientRunningAction,
     isServerRunningAction,
 } from "./client-status.action";
+import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
 
 export function ClientStatus(
     props: JSX.IntrinsicAttributes &
@@ -19,7 +20,7 @@ export function ClientStatus(
         error,
     } = useQuery({
         queryKey: ["palworld", "serverRunning"],
-        queryFn: () => isServerRunningAction({}),
+        queryFn: withErrorHandling(() => isServerRunningAction({})),
         refetchInterval: 5000,
     });
 
@@ -60,7 +61,9 @@ const RenderClientStatus = ({ ipAddress }: { ipAddress: string }) => {
         error,
     } = useQuery({
         queryKey: ["palworld", "clientRunning"],
-        queryFn: () => isClientRunningAction({ ipAddress: ipAddress }),
+        queryFn: withErrorHandling(() =>
+            isClientRunningAction({ ipAddress: ipAddress })
+        ),
         refetchInterval: 5000,
     });
 
@@ -97,7 +100,9 @@ const RenderClientSettings = ({ ipAddress }: { ipAddress: string }) => {
         error,
     } = useQuery({
         queryKey: ["palworld", "clientSettings"],
-        queryFn: () => getClientSettingsAction({ ipAddress: ipAddress }),
+        queryFn: withErrorHandling(() =>
+            getClientSettingsAction({ ipAddress: ipAddress })
+        ),
         refetchInterval: 5000,
     });
 
@@ -127,7 +132,9 @@ const RenderClientMetrics = ({ ipAddress }: { ipAddress: string }) => {
         error,
     } = useQuery({
         queryKey: ["palworld", "clientMetrics"],
-        queryFn: () => getClientMetricsAction({ ipAddress: ipAddress }),
+        queryFn: withErrorHandling(() =>
+            getClientMetricsAction({ ipAddress: ipAddress })
+        ),
         refetchInterval: 5000,
     });
 

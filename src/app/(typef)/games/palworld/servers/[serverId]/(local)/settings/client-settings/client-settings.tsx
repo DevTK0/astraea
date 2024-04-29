@@ -5,9 +5,10 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { ClientSettingsForm } from "./client-settings.client";
-import { serverSettingsSchema } from "@/(global)/lib/palworld/rest-api";
+import { userSettingsSchema } from "@/(global)/lib/cloud-provider/server";
+import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
 
-type FormValues = z.infer<typeof serverSettingsSchema>;
+type FormValues = z.infer<typeof userSettingsSchema>;
 
 const presetValues: Partial<FormValues> = {
     Difficulty: "None",
@@ -60,7 +61,7 @@ const presetValues: Partial<FormValues> = {
 export function ClientSettings() {
     const { isPending, data: ipAddress } = useQuery({
         queryKey: ["palworld", "serverRunning"],
-        queryFn: () => isServerRunningAction({}),
+        queryFn: withErrorHandling(() => isServerRunningAction({})),
     });
 
     if (isPending) {
@@ -77,7 +78,9 @@ export function ClientSettings() {
 const RenderClientSettings = ({ ipAddress }: { ipAddress: string }) => {
     const { data: clientSettings } = useQuery({
         queryKey: ["palworld", "clientSettings"],
-        queryFn: () => getClientSettingsAction({ ipAddress: ipAddress }),
+        queryFn: withErrorHandling(() =>
+            getClientSettingsAction({ ipAddress: ipAddress })
+        ),
     });
 
     const defaultValues = {

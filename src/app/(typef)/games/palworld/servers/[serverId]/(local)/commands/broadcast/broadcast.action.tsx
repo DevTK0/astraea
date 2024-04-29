@@ -14,10 +14,11 @@ const broadcastSchema = z.object({
     message: z.string(),
 });
 
-export const broadcastAction = withErrorHandling(
-    action(broadcastSchema, async ({ game, serverId, message }) => {
+export const broadcastAction = action(
+    broadcastSchema,
+    async ({ game, serverId, message }) => {
         const serverAddress = await getServerAddress(game, serverId);
 
         await announceMessage(serverAddress, message);
-    })
+    }
 );

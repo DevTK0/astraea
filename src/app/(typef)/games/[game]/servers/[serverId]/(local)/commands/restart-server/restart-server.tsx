@@ -2,16 +2,16 @@ import { Button } from "@/(global)/components/ui/button";
 import { Icons } from "@/(global)/components/ui/icons";
 import { Label } from "@/(global)/components/ui/label";
 import { restartServerAction } from "./restart-server.action";
-import { useToast } from "@/(global)/components/ui/use-toast";
+import { toast } from "@/(global)/components/ui/use-toast";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
 import { configs } from "@/(global)/configs/servers/palworld";
+import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { useError } from "@/(global)/components/error-toast/error-toast";
 
 export function RestartServer() {
-    const { toast } = useToast();
-
+    const action = withErrorHandling(restartServerAction);
     const { isError, isPending, mutate, error } = useMutation({
-        mutationFn: restartServerAction,
+        mutationFn: action,
         onSuccess: (response) => {
             toast({
                 title: "Success",
@@ -20,15 +20,7 @@ export function RestartServer() {
         },
     });
 
-    useEffect(() => {
-        if (isError) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: error.message,
-            });
-        }
-    }, [isError, error?.message, toast]);
+    useError(isError, error);
 
     return (
         <div className="flex flex-row items-center justify-between rounded-lg border p-4">

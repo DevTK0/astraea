@@ -10,8 +10,9 @@ const restartServerSchema = z.object({
     serverId: z.number(),
 });
 
-export const restartServerAction = withErrorHandling(
-    action(restartServerSchema, async ({ game, serverId }) => {
+export const restartServerAction = action(
+    restartServerSchema,
+    async ({ game, serverId }) => {
         await restartServer(game, serverId);
-    })
+    }
 );

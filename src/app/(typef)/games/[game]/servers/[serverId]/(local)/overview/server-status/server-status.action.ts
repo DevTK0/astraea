@@ -12,10 +12,9 @@ const getServerStatusSchema = z.object({
     serverId: z.number(),
 });
 
-export type GetServerStatus = z.infer<typeof getServerStatusSchema>;
-
-export const getServerStatusAction = withErrorHandling(
-    action(getServerStatusSchema, async ({ game, serverId }) => {
+export const getServerStatusAction = action(
+    getServerStatusSchema,
+    async ({ game, serverId }) => {
         return await getServerStatus(game, serverId);
-    })
+    }
 );

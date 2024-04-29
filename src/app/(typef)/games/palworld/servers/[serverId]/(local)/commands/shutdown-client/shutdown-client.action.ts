@@ -13,10 +13,11 @@ const shutdownClientSchema = z.object({
     serverId: z.number(),
 });
 
-export const shutdownClientAction = withErrorHandling(
-    action(shutdownClientSchema, async ({ game, serverId }) => {
+export const shutdownClientAction = action(
+    shutdownClientSchema,
+    async ({ game, serverId }) => {
         const serverAddress = await getServerAddress(game, serverId);
 
         await shutdown(serverAddress, 10, "Server will shutdown in 10s.");
-    })
+    }
 );

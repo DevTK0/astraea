@@ -1,10 +1,10 @@
 "use client";
 
-import { toast } from "@/(global)/components/ui/use-toast";
 import { JSX, ClassAttributes, HTMLAttributes, useEffect } from "react";
 import { getPlayerListAction } from "./player-list.action";
 import { useQuery } from "@tanstack/react-query";
 import { Player } from "@/(global)/lib/palworld/rest-api";
+import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
 
 export function PlayerList(
     props: JSX.IntrinsicAttributes &
@@ -18,7 +18,7 @@ export function PlayerList(
         error,
     } = useQuery({
         queryKey: ["palworld", "online-players"],
-        queryFn: () => getPlayerListAction({}),
+        queryFn: withErrorHandling(() => getPlayerListAction({})),
     });
 
     return (

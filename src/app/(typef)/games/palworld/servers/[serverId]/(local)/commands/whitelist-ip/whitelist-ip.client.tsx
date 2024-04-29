@@ -10,12 +10,15 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { fetchWithErrorHandling } from "@/(global)/lib/request/fetch";
 
 import { useError } from "@/(global)/components/error-toast/error-toast";
+import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { configs } from "@/(global)/configs/servers/palworld";
 
 export function WhitelistIpComponent() {
     const [ip, setIp] = useState<string>("1.1.1.1");
 
+    const action = withErrorHandling(whitelistIpAction);
     const { isError, isPending, mutate, error } = useMutation({
-        mutationFn: whitelistIpAction,
+        mutationFn: action,
         onSuccess: (response) => {
             toast({
                 title: "Success",
@@ -27,7 +30,7 @@ export function WhitelistIpComponent() {
     useError(isError, error);
 
     function handleWhitelistIp() {
-        mutate({ ipAddress: ip, serverId: 1 });
+        mutate({ ipAddress: ip, serverId: configs.serverId });
     }
 
     return (

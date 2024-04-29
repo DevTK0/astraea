@@ -4,19 +4,8 @@ import { action } from "@/(global)/lib/request/next-safe-action";
 import { z } from "zod";
 
 import { gamelist } from "@/(global)/meta/gamedata";
-import {
-    ServerError,
-    withErrorHandling,
-} from "@/(global)/lib/error-handling/next-safe-action";
-import {
-    announceMessage,
-    getPlayerList,
-    banPlayer,
-    unbanPlayer,
-    save,
-    getServerInfo,
-    checkIfClientIsRunning,
-} from "@/(global)/lib/palworld/rest-api";
+import { ServerError } from "@/(global)/lib/error-handling/next-safe-action";
+import { checkIfClientIsRunning } from "@/(global)/lib/palworld/rest-api";
 import {
     getServerAddress,
     updatePalworld,
@@ -27,8 +16,9 @@ const updateClientSchema = z.object({
     serverId: z.number(),
 });
 
-export const updateClientAction = withErrorHandling(
-    action(updateClientSchema, async ({ game, serverId }) => {
+export const updateClientAction = action(
+    updateClientSchema,
+    async ({ game, serverId }) => {
         const serverAddress = await getServerAddress(game, serverId);
 
         const response = await checkIfClientIsRunning(serverAddress);
@@ -39,5 +29,5 @@ export const updateClientAction = withErrorHandling(
             );
 
         await updatePalworld();
-    })
+    }
 );

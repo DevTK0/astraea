@@ -3,7 +3,6 @@
 import { action } from "@/(global)/lib/request/next-safe-action";
 import { z } from "zod";
 
-import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
 import {
     checkIfClientIsRunning,
     getServerSettings,
@@ -14,40 +13,44 @@ import { configs } from "@/(global)/configs/servers/palworld";
 
 const isServerRunningSchema = z.object({});
 
-export const isServerRunningAction = withErrorHandling(
-    action(isServerRunningSchema, async ({}) => {
+export const isServerRunningAction = action(
+    isServerRunningSchema,
+    async ({}) => {
         const server = await getServerStatus(configs.game, configs.serverId);
 
         return server.status === "Running" ? server.ipAddress : undefined;
-    })
+    }
 );
 
 const isClientRunningSchema = z.object({ ipAddress: z.string().ip() });
 
-export const isClientRunningAction = withErrorHandling(
-    action(isClientRunningSchema, async ({ ipAddress }) => {
+export const isClientRunningAction = action(
+    isClientRunningSchema,
+    async ({ ipAddress }) => {
         const serverAddress = z.string().ip().parse(ipAddress);
 
         return await checkIfClientIsRunning(serverAddress);
-    })
+    }
 );
 
 const getClientSettingsSchema = z.object({
     ipAddress: z.string().ip(),
 });
 
-export const getClientSettingsAction = withErrorHandling(
-    action(getClientSettingsSchema, async ({ ipAddress }) => {
+export const getClientSettingsAction = action(
+    getClientSettingsSchema,
+    async ({ ipAddress }) => {
         return await getServerSettings(ipAddress);
-    })
+    }
 );
 
 const getClientMetricsSchema = z.object({
     ipAddress: z.string().ip(),
 });
 
-export const getClientMetricsAction = withErrorHandling(
-    action(getClientMetricsSchema, async ({ ipAddress }) => {
+export const getClientMetricsAction = action(
+    getClientMetricsSchema,
+    async ({ ipAddress }) => {
         return await getServerMetrics(ipAddress);
-    })
+    }
 );

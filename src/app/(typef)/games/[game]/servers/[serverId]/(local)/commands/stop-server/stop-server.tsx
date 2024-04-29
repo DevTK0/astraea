@@ -1,19 +1,17 @@
 import { Button } from "@/(global)/components/ui/button";
 import { Icons } from "@/(global)/components/ui/icons";
 import { Label } from "@/(global)/components/ui/label";
-import { useToast } from "@/(global)/components/ui/use-toast";
+import { toast } from "@/(global)/components/ui/use-toast";
 import { stopServerAction } from "./stop-server.action";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
 import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { configs } from "@/(global)/configs/servers/palworld";
+import { useError } from "@/(global)/components/error-toast/error-toast";
 
 export function StopServer() {
-    const game = "Palworld";
-    const serverId = 1;
-    const { toast } = useToast();
-
+    const action = withErrorHandling(stopServerAction);
     const { isError, isPending, mutate, error } = useMutation({
-        mutationFn: withErrorHandling(stopServerAction),
+        mutationFn: action,
         onSuccess: (response) => {
             toast({
                 title: "Success",
@@ -22,15 +20,7 @@ export function StopServer() {
         },
     });
 
-    useEffect(() => {
-        if (isError) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: error.message,
-            });
-        }
-    }, [isError, error?.message, toast]);
+    useError(isError, error);
 
     return (
         <div className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -44,7 +34,9 @@ export function StopServer() {
                 variant="secondary"
                 size="sm"
                 className="w-[80px]"
-                onClick={() => mutate({ game: game, serverId: serverId })}
+                onClick={() =>
+                    mutate({ game: configs.game, serverId: configs.serverId })
+                }
             >
                 {isPending ? (
                     <Icons.spinner className="h-4 w-4 animate-spin" />

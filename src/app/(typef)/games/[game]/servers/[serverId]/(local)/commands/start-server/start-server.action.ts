@@ -12,8 +12,9 @@ const startServerSchema = z.object({
     serverId: z.number(),
 });
 
-export const startServerAction = withErrorHandling(
-    action(startServerSchema, async ({ game, serverId }) => {
+export const startServerAction = action(
+    startServerSchema,
+    async ({ game, serverId }) => {
         const db = Database();
         const { data: configs, error } = await db
             .from("server_configs")
@@ -38,5 +39,5 @@ export const startServerAction = withErrorHandling(
             volumeSize: configs.volume_size,
             instanceType: configs.instance_type,
         });
-    })
+    }
 );

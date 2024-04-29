@@ -16,52 +16,50 @@ const getSavesSchema = z.object({
     // userId: z.string(),
 });
 
-export const getSavesAction = withErrorHandling(
-    action(getSavesSchema, async ({ serverId }) => {
-        const user = await getUser();
-        const userId = user.id;
+export const getSavesAction = action(getSavesSchema, async ({ serverId }) => {
+    const user = await getUser();
+    const userId = user.id;
 
-        const db = Database();
-        const { data, error } = await db
-            .from("server_communities")
-            .select(
-                `
+    const db = Database();
+    const { data, error } = await db
+        .from("server_communities")
+        .select(
+            `
             server_id,
             save_id,
             users!inner (
                 auth_uid
             )
             `
-            )
-            .eq("users.auth_uid", userId)
-            .eq("server_id", serverId)
-            .single();
+        )
+        .eq("users.auth_uid", userId)
+        .eq("server_id", serverId)
+        .single();
 
-        if (error) throw new SupabaseDBError(error);
+    if (error) throw new SupabaseDBError(error);
 
-        const saveId = z.string().length(32).parse(data?.save_id);
+    const saveId = z.string().length(32).parse(data?.save_id);
 
-        const s3 = new S3Client({ region: "ap-southeast-1" });
-        const saves = await s3.send(
-            new ListObjectsV2Command({
-                Bucket: "astraea-typef",
-                Prefix: `1/backups/${saveId}`,
-            })
-        );
+    const s3 = new S3Client({ region: "ap-southeast-1" });
+    const saves = await s3.send(
+        new ListObjectsV2Command({
+            Bucket: "astraea-typef",
+            Prefix: `1/backups/${saveId}`,
+        })
+    );
 
-        const saveFiles: Set<string> = new Set<string>();
+    const saveFiles: Set<string> = new Set<string>();
 
-        saves.Contents?.forEach((content) => {
-            const saveFile = content.Key?.split("/")[3];
-            if (saveFile) saveFiles.add(saveFile);
-        });
+    saves.Contents?.forEach((content) => {
+        const saveFile = content.Key?.split("/")[3];
+        if (saveFile) saveFiles.add(saveFile);
+    });
 
-        return {
-            saveId: saveId,
-            saveFiles: Array.from(saveFiles),
-        };
-    })
-);
+    return {
+        saveId: saveId,
+        saveFiles: Array.from(saveFiles),
+    };
+});
 
 const restoreSaveSchema = z.object({
     serverId: z.number(),
@@ -69,12 +67,9 @@ const restoreSaveSchema = z.object({
     saveId: z.string().min(1),
 });
 
-export const restoreSaveAction = withErrorHandling(
-    action(restoreSaveSchema, async ({ serverId, saveFile, saveId }) => {
-        console.log({ serverId, saveFile, saveId });
-        return {
-            message: "Restored save",
-        };
+export const restoreSaveAction = action(
+    restoreSaveSchema,
+    async ({ serverId, saveFile, saveId }) => {
         const s3FilePath = `s3://astraea-typef/${serverId}/backups`;
         const saveFilePath = configs.saveFilePath;
 
@@ -133,5 +128,5 @@ export const restoreSaveAction = withErrorHandling(
         return {
             message: `Restored ${saveFile}`,
         };
-    })
+    }
 );

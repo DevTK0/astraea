@@ -30,30 +30,10 @@ import { useEffect } from "react";
 import { Icons } from "@/(global)/components/ui/icons";
 import { serverSettingsSchema } from "@/(global)/lib/palworld/rest-api";
 import { useError } from "@/(global)/components/error-toast/error-toast";
+import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { userSettingsSchema } from "@/(global)/lib/cloud-provider/server";
 
-const formSchema = serverSettingsSchema.omit({
-    ExpRate: true,
-    PalCaptureRate: true,
-    PalSpawnNumRate: true,
-    EnemyDropItemRate: true,
-    PalEggDefaultHatchingTime: true,
-    WorkSpeedRate: true,
-    ServerName: true,
-    ServerDescription: true,
-    PublicPort: true,
-    PublicIP: true,
-    RCONEnabled: true,
-    RCONPort: true,
-    Region: true,
-    bUseAuth: true,
-    BanListURL: true,
-    RESTAPIEnabled: true,
-    RESTAPIPort: true,
-    bShowPlayerList: true,
-    AllowConnectPlatform: true,
-    bIsUseBackupSaveData: true,
-    LogFormatType: true,
-});
+const formSchema = userSettingsSchema;
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -67,8 +47,9 @@ export function ClientSettingsForm({
         defaultValues,
     });
 
+    const action = withErrorHandling(setClientSettingsAction);
     const { isError, isPending, mutate, error } = useMutation({
-        mutationFn: setClientSettingsAction,
+        mutationFn: action,
         onSuccess: (response) => {
             toast({
                 title: "Success",

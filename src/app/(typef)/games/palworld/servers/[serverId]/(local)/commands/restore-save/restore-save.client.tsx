@@ -15,7 +15,7 @@ import {
 } from "@/(global)/components/ui/popover";
 import { useEffect, useState } from "react";
 import { Button } from "@/(global)/components/ui/button";
-import { useToast } from "@/(global)/components/ui/use-toast";
+import { toast, useToast } from "@/(global)/components/ui/use-toast";
 import { ScrollArea } from "@/(global)/components/ui/scroll-area";
 import { Icons } from "@/(global)/components/ui/icons";
 
@@ -27,10 +27,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { getUser } from "@/(global)/lib/auth/client";
 import { z } from "zod";
 import { save } from "@/(global)/lib/palworld/rest-api";
+import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
 
 export function RestoreSaveComponent() {
     const { serverId } = useParams<{ serverId: string }>();
-    const { toast } = useToast();
 
     const [comboBoxOpen, setComboBoxOpen] = useState(false);
     const [comboBoxValue, setComboBoxValue] = useState("");
@@ -44,7 +44,9 @@ export function RestoreSaveComponent() {
         error,
     } = useQuery({
         queryKey: ["key"],
-        queryFn: () => getSavesAction({ serverId: 1 }),
+        queryFn: withErrorHandling(() =>
+            getSavesAction({ serverId: parseInt(serverId) })
+        ),
     });
 
     useEffect(() => {
@@ -174,10 +176,9 @@ const RenderRestoreButton = ({
     saveFile: string;
     saveId: string | undefined;
 }) => {
-    console.log(saveId, saveFile);
-    const { toast } = useToast();
+    const action = withErrorHandling(restoreSaveAction);
     const { isError, isPending, mutate, error } = useMutation({
-        mutationFn: restoreSaveAction,
+        mutationFn: action,
         onSuccess: (response) => {
             toast({
                 title: "Success",

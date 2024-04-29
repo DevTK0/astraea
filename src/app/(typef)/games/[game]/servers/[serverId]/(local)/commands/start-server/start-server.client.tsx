@@ -3,17 +3,16 @@
 import { Button } from "@/(global)/components/ui/button";
 import { Icons } from "@/(global)/components/ui/icons";
 import { startServerAction } from "./start-server.action";
-import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useToast } from "@/(global)/components/ui/use-toast";
+import { toast } from "@/(global)/components/ui/use-toast";
+import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { configs } from "@/(global)/configs/servers/palworld";
+import { useError } from "@/(global)/components/error-toast/error-toast";
 
 export function StartServerButton() {
-    const game = "Palworld";
-    const serverId = 1;
-    const { toast } = useToast();
-
+    const action = withErrorHandling(startServerAction);
     const { isError, isPending, mutate, error } = useMutation({
-        mutationFn: startServerAction,
+        mutationFn: action,
         onSuccess: (response) => {
             toast({
                 title: "Success",
@@ -22,22 +21,16 @@ export function StartServerButton() {
         },
     });
 
-    useEffect(() => {
-        if (isError) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: error.message,
-            });
-        }
-    }, [isError, error?.message, toast]);
+    useError(isError, error);
 
     return (
         <Button
             variant="secondary"
             size="sm"
             className="w-[80px]"
-            onClick={() => mutate({ game: game, serverId: serverId })}
+            onClick={() =>
+                mutate({ game: configs.game, serverId: configs.serverId })
+            }
         >
             {isPending ? (
                 <Icons.spinner className="h-4 w-4 animate-spin" />

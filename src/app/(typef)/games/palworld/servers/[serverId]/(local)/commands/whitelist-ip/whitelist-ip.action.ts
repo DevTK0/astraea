@@ -5,21 +5,17 @@ import { SupabaseDBError } from "@/(global)/lib/error-handling/database";
 import { action } from "@/(global)/lib/request/next-safe-action";
 import { z } from "zod";
 
-import { fetchWithErrorHandling, getURL } from "@/(global)/lib/request/fetch";
-import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
 import { configureAllowedIPs } from "@/(global)/lib/cloud-provider/server";
 import { getUser } from "@/(global)/lib/auth/actions";
 
-// export const getIpAddressAction = async () =>
-//     await fetchWithErrorHandling(`${getURL()}/users/ip`);
-
-const whitelistIpSchema = z.object({
+export const whitelistIpSchema = z.object({
     ipAddress: z.string().ip({ version: "v4" }),
     serverId: z.number(),
 });
 
-export const whitelistIpAction = withErrorHandling(
-    action(whitelistIpSchema, async ({ ipAddress, serverId }) => {
+export const whitelistIpAction = action(
+    whitelistIpSchema,
+    async ({ ipAddress, serverId }) => {
         const user = await getUser();
         const userId = z.string().uuid().parse(user?.id);
         const db = Database();
@@ -55,5 +51,5 @@ export const whitelistIpAction = withErrorHandling(
         await configureAllowedIPs(ipAddresses);
 
         return { message: `${ipAddress} added to server whitelist.` };
-    })
+    }
 );
