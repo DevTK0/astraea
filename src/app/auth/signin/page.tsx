@@ -6,8 +6,10 @@ import { getSession } from "@/(global)/lib/auth/server";
 import { routes } from "@/(global)/configs/site";
 
 import { UserAuthForm } from "./(local)/user-auth-form";
+import { getURL } from "@/(global)/lib/request/fetch";
 
 export default async function SignIn() {
+    console.log(getURL());
     const {
         data: { session },
     } = await getSession();

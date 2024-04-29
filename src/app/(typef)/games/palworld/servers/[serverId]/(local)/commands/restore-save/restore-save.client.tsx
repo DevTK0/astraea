@@ -57,7 +57,7 @@ export function RestoreSaveComponent() {
                 description: error.message,
             });
         }
-    }, [isError, error?.message, toast]);
+    }, [isError, error?.message]);
 
     // const getSavesAction = useAction(getSavesAction, {
     //     onSuccess: (res) => {
@@ -204,7 +204,7 @@ const RenderRestoreButton = ({
                 description: error.message,
             });
         }
-    }, [isError, error?.message, toast]);
+    }, [isError, error?.message]);
 
     return (
         <Button

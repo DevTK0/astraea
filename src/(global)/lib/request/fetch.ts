@@ -26,12 +26,14 @@ export async function fetchWithErrorHandling(
 export const getURL = () => {
     const env = process.env.NEXT_PUBLIC_VERCEL_ENV ?? "local";
 
-    let url =
+    let url: string | undefined =
         env == "production"
-            ? process?.env?.NEXT_PUBLIC_VERCEL_URL // Set this to your site URL in production env.
+            ? process?.env?.NEXT_PUBLIC_VERCEL_URL // Vercel production env.
             : env == "preview"
-            ? process.env.NEXT_PUBLIC_VERCEL_BRANCH_URL // Automatically set by Vercel.
-            : "http://localhost:3000/";
+            ? process?.env?.NEXT_PUBLIC_VERCEL_BRANCH_URL // Vercel branch env.
+            : undefined;
+
+    url = url ?? "http://localhost:3000/";
     // Make sure to include `https://` when not localhost.
     url = url.includes("http") ? url : `https://${url}`;
     // Make sure to including trailing `/`.
