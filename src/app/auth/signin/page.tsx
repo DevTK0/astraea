@@ -9,7 +9,6 @@ import { UserAuthForm } from "./(local)/user-auth-form";
 import { getURL } from "@/(global)/lib/request/fetch";
 
 export default async function SignIn() {
-    console.log(getURL());
     const {
         data: { session },
     } = await getSession();
@@ -47,7 +46,7 @@ export default async function SignIn() {
                                 </Link>{" "}
                             </p>
                             <p className="px-8 underline text-center text-sm text-muted-foreground hover:text-primary mt-2">
-                                <Link href="/forgot-password">
+                                <Link href="/auth/forgot-password">
                                     Forgot password
                                 </Link>
                             </p>

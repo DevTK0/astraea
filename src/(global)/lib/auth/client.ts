@@ -42,6 +42,19 @@ export async function signInWithPassword(values: FormValues) {
     }
 }
 
+export async function signUpWithPassword(values: FormValues) {
+    const client = AuthClient();
+    const { data, error } = await client.auth.signUp({
+        email: values.email,
+        password: values.password,
+    });
+
+    if (error) {
+        console.log(error.message);
+        return error;
+    }
+}
+
 export async function signOut() {
     const client = AuthClient();
     const { error } = await client.auth.signOut();
