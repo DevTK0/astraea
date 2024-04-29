@@ -1,10 +1,15 @@
 "use client";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from "@/(global)/components/ui/tabs";
+import { Separator } from "@/(global)/components/ui/separator";
 
-import Commands from "./(components)/commands/commands";
+import Commands from "./(local)/commands/commands";
 // import Settings from "./(components)/settings";
-import Overview from "./(components)/overview/overview";
+import Overview from "./(local)/overview/overview";
 
 export default function Game() {
     return (

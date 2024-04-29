@@ -1,4 +1,4 @@
-import { vrising } from "@/meta/gamedata";
+import { vrising } from "@/(global)/meta/gamedata";
 
 export default function Layout({
     children,

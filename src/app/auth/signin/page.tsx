@@ -1,14 +1,20 @@
 import { redirect } from "next/navigation";
-import Logo from "@/components/ui/logo";
-import { getUser } from "@/lib/auth/server";
 import Link from "next/link";
-import { UserAuthForm } from "./(components)/user-auth-form";
-import { routes } from "@/configs/site";
+
+import Logo from "@/(global)/components/ui/logo";
+import { getSession } from "@/(global)/lib/auth/server";
+import { routes } from "@/(global)/configs/site";
+
+import { UserAuthForm } from "./(local)/user-auth-form";
+import { getURL } from "@/(global)/lib/request/fetch";
 
 export default async function SignIn() {
-    const user = await getUser();
+    console.log(getURL());
+    const {
+        data: { session },
+    } = await getSession();
 
-    if (user) {
+    if (session) {
         redirect(routes.landing);
     }
 
@@ -34,7 +40,7 @@ export default async function SignIn() {
                             <p className="px-8 text-center text-sm text-muted-foreground">
                                 Don&apos;t have an account?{" "}
                                 <Link
-                                    href="/signup"
+                                    href="/auth/signup"
                                     className="underline hover:text-primary"
                                 >
                                     Sign up

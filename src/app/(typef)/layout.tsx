@@ -1,5 +1,5 @@
-import Navbar from "@/components/navbar/navbar";
-import { Toaster } from "@/components/ui/toaster";
+import Navbar from "./(local)/navbar/navbar";
+import { Toaster } from "@/(global)/components/ui/toaster";
 import { redirect } from "next/navigation";
 // import { Sidebar } from "./components/sidebar";
 // import { gamelist } from "./games/gamelist";
