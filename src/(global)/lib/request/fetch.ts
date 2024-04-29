@@ -28,7 +28,7 @@ export const getURL = () => {
 
     let url: string | undefined =
         env == "production"
-            ? process?.env?.NEXT_PUBLIC_VERCEL_URL // Vercel production env.
+            ? process?.env?.NEXT_PUBLIC_SITE_URL // Vercel production env.
             : env == "preview"
             ? process?.env?.NEXT_PUBLIC_VERCEL_BRANCH_URL // Vercel branch env.
             : undefined;
