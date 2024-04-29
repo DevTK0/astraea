@@ -8,7 +8,7 @@ import { z } from "zod";
 import { configureAllowedIPs } from "@/(global)/lib/cloud-provider/server";
 import { getUser } from "@/(global)/lib/auth/actions";
 
-export const whitelistIpSchema = z.object({
+const whitelistIpSchema = z.object({
     ipAddress: z.string().ip({ version: "v4" }),
     serverId: z.number(),
 });

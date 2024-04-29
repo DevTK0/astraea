@@ -42,7 +42,7 @@ export default async function SignUp() {
                                 </Link>
                             </p>
                             <p className="px-8 underline text-center text-sm text-muted-foreground hover:text-primary mt-2">
-                                <Link href="/forgot-password">
+                                <Link href="/auth/forgot-password">
                                     Forgot password
                                 </Link>
                             </p>

@@ -2,37 +2,76 @@
 import { Alert, AlertDescription } from "@/(global)/components/ui/alert";
 import { Button } from "@/(global)/components/ui/button";
 import {
+    Form,
+    FormControl,
     FormField,
     FormItem,
     FormLabel,
-    FormControl,
     FormMessage,
 } from "@/(global)/components/ui/form";
 import { Icons } from "@/(global)/components/ui/icons";
 import { Input } from "@/(global)/components/ui/input";
-import { signInSchema } from "@/(global)/lib/auth/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/router";
-import { useForm, Form } from "react-hook-form";
-import { FormValues } from "../../signin/(local)/user-auth-form";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+
+import { signUpWithPassword } from "@/(global)/lib/auth/client";
+import { signInWithDiscord } from "@/(global)/lib/auth/client";
+import z from "zod";
+import { useState } from "react";
+
+const signUpSchema = z
+    .object({
+        email: z.string().email(),
+        password: z.string().min(8),
+        password2: z.string().min(8),
+    })
+    .refine((data) => data.password === data.password2, {
+        message: "Passwords do not match",
+        path: ["password2"],
+    });
+
+type FormValues = z.infer<typeof signUpSchema>;
 
 export const SignUpForm = () => {
-    // const router = useRouter();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [signUpError, setSignUpError] = useState<string>("");
+    const router = useRouter();
     const form = useForm<FormValues>({
-        resolver: zodResolver(signInSchema),
+        resolver: zodResolver(signUpSchema),
         defaultValues: {
             email: "",
             password: "",
+            password2: "",
         },
     });
 
+    async function emailSignUp(values: FormValues) {
+        setIsLoading(true);
+
+        const error = await signUpWithPassword(values);
+
+        if (error) {
+            setSignUpError(error.message);
+        } else {
+            router.refresh();
+        }
+
+        setIsLoading(false);
+    }
+
+    async function discordSignUp() {
+        setIsLoading(true);
+        await signInWithDiscord();
+    }
+
     return (
         <div className="grid gap-6">
-            {/* <Button
+            <Button
                 variant="outline"
                 type="button"
                 disabled={isLoading}
-                onClick={discordSignIn}
+                onClick={discordSignUp}
             >
                 {isLoading ? (
                     <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
@@ -53,7 +92,7 @@ export const SignUpForm = () => {
             </div>
             <Form {...form}>
                 <form
-                    onSubmit={form.handleSubmit(emailSignIn)}
+                    onSubmit={form.handleSubmit(emailSignUp)}
                     className="space-y-2"
                 >
                     <FormField
@@ -96,28 +135,49 @@ export const SignUpForm = () => {
                             </FormItem>
                         )}
                     />
+                    <FormField
+                        control={form.control}
+                        name="password2"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel> Confirm Password </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type="password"
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        autoCapitalize="none"
+                                        autoComplete="password"
+                                        autoCorrect="off"
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                     <div>
                         <Button
-                            disabled={isLoading}
+                            // disabled={isLoading}
                             type="submit"
                             className="w-full mt-4"
+                            // onClick={() => console.log("hi")}
                         >
                             {isLoading && (
                                 <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                             )}
-                            Sign In with Email
+                            Sign Up with Email
                         </Button>
-                        {signInError && (
+                        {signUpError && (
                             <Alert variant="destructive" className="mt-6">
                                 <AlertDescription className="flex font-bold">
                                     <Icons.exclamation_triangle className="h-5 w-5 mr-2" />
-                                    {signInError}
+                                    {signUpError}
                                 </AlertDescription>
                             </Alert>
                         )}
                     </div>
                 </form>
-            </Form> */}
+            </Form>
         </div>
     );
 };
