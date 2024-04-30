@@ -3,8 +3,8 @@
 import { configs } from "@/(global)/configs/servers/palworld";
 import { getUser } from "@/(global)/lib/auth/actions";
 import { Database } from "@/(global)/lib/database/server";
-import { SupabaseDBError } from "@/(global)/lib/error-handling/database";
-import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { SupabaseDBError } from "@/(global)/lib/exception/database";
+import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { action } from "@/(global)/lib/request/next-safe-action";
 import { DescribeInstancesCommand, EC2Client } from "@aws-sdk/client-ec2";
 import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";

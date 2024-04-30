@@ -2,18 +2,18 @@ import { Button } from "@/(global)/components/ui/button";
 import { Input } from "@/(global)/components/ui/input";
 import { Label } from "@/(global)/components/ui/label";
 import { broadcastAction } from "./broadcast.action";
-import { toast, useToast } from "@/(global)/components/ui/use-toast";
+import { toast } from "@/(global)/components/ui/use-toast";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Icons } from "@/(global)/components/ui/icons";
-import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { useError } from "@/(global)/components/error-toast/error-toast";
 import { configs } from "@/(global)/configs/servers/palworld";
 
 export function Broadcast() {
     const [message, setMessage] = useState("");
 
-    const action = withErrorHandling(broadcastAction);
+    const action = actionWithErrorHandling(broadcastAction);
     const { isError, isPending, mutate, error } = useMutation({
         mutationFn: action,
         onSuccess: (response) => {

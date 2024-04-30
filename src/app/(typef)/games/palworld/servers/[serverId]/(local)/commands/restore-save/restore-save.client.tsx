@@ -13,24 +13,22 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/(global)/components/ui/popover";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/(global)/components/ui/button";
-import { toast, useToast } from "@/(global)/components/ui/use-toast";
+import { toast } from "@/(global)/components/ui/use-toast";
 import { ScrollArea } from "@/(global)/components/ui/scroll-area";
 import { Icons } from "@/(global)/components/ui/icons";
 
-import { useAction } from "next-safe-action/hooks";
 import { useParams } from "next/navigation";
 
 import { getSavesAction, restoreSaveAction } from "./restore-save.action";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { getUser } from "@/(global)/lib/auth/client";
-import { z } from "zod";
-import { save } from "@/(global)/lib/palworld/rest-api";
-import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
+import { useError } from "@/(global)/components/error-toast/error-toast";
 
 export function RestoreSaveComponent() {
     const { serverId } = useParams<{ serverId: string }>();
+    console.log(serverId);
 
     const [comboBoxOpen, setComboBoxOpen] = useState(false);
     const [comboBoxValue, setComboBoxValue] = useState("");
@@ -43,64 +41,16 @@ export function RestoreSaveComponent() {
         data: saves,
         error,
     } = useQuery({
-        queryKey: ["key"],
-        queryFn: withErrorHandling(() =>
+        queryKey: ["palworld", "saves"],
+        queryFn: actionWithErrorHandling(() =>
             getSavesAction({ serverId: parseInt(serverId) })
         ),
     });
 
-    useEffect(() => {
-        if (isError) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: error.message,
-            });
-        }
-    }, [isError, error?.message]);
-
-    // const getSavesAction = useAction(getSavesAction, {
-    //     onSuccess: (res) => {
-    //         setSaveId(res.saveId);
-    //         setSaves(res.saves);
-    //     },
-    //     onError: (err) => {
-    //         toast({
-    //             variant: "destructive",
-    //             title: "Error",
-    //             description: err.serverError || "",
-    //         });
-    //     },
-    // });
-
-    // const restoreSaveAction = useAction(restoreSaveAction, {
-    //     onSuccess: (res) => {
-    //         toast({
-    //             title: "Success",
-    //             description: res.message,
-    //         });
-    //     },
-    //     onError: (err) => {
-    //         toast({
-    //             variant: "destructive",
-    //             title: "Error",
-    //             description:
-    //                 err.serverError || JSON.stringify(err.validationErrors),
-    //         });
-    //     },
-    // });
+    useError(isError, error);
 
     function handleLoadSaveFiles(open: boolean) {
         setComboBoxOpen(open);
-
-        // if (saves.length == 0) {
-        //     if (getSavesAction.status === "executing") return;
-
-        //     getSavesAction.execute({
-        //         serverId: parseInt(serverId),
-        //         userId: 1,
-        //     });
-        // }
     }
 
     return (
@@ -176,7 +126,7 @@ const RenderRestoreButton = ({
     saveFile: string;
     saveId: string | undefined;
 }) => {
-    const action = withErrorHandling(restoreSaveAction);
+    const action = actionWithErrorHandling(restoreSaveAction);
     const { isError, isPending, mutate, error } = useMutation({
         mutationFn: action,
         onSuccess: (response) => {
@@ -196,15 +146,7 @@ const RenderRestoreButton = ({
         });
     }
 
-    useEffect(() => {
-        if (isError) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: error.message,
-            });
-        }
-    }, [isError, error?.message]);
+    useError(isError, error);
 
     return (
         <Button

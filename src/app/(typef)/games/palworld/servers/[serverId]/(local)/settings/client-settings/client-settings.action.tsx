@@ -3,7 +3,7 @@
 import { action } from "@/(global)/lib/request/next-safe-action";
 import { z } from "zod";
 
-import { ServerError } from "@/(global)/lib/error-handling/next-safe-action";
+import { ServerError } from "@/(global)/lib/exception/next-safe-action";
 import {
     checkIfClientIsRunning,
     getServerSettings,

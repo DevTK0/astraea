@@ -5,11 +5,11 @@ import { restartServerAction } from "./restart-server.action";
 import { toast } from "@/(global)/components/ui/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { configs } from "@/(global)/configs/servers/palworld";
-import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { useError } from "@/(global)/components/error-toast/error-toast";
 
 export function RestartServer() {
-    const action = withErrorHandling(restartServerAction);
+    const action = actionWithErrorHandling(restartServerAction);
     const { isError, isPending, mutate, error } = useMutation({
         mutationFn: action,
         onSuccess: (response) => {

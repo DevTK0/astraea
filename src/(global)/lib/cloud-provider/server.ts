@@ -1,4 +1,4 @@
-import { ServerError } from "@/(global)/lib/error-handling/next-safe-action";
+import { ServerError } from "@/(global)/lib/exception/next-safe-action";
 import {
     addSecurityGroupRules,
     checkIfArchived,
@@ -15,7 +15,7 @@ import {
     runUnixCommands,
     terminateInstance,
 } from "./aws/ec2";
-import { AWSError } from "../error-handling/aws";
+import { AWSError } from "../exception/aws";
 import { z } from "zod";
 import { serverSettingsSchema } from "../palworld/rest-api";
 import { configs } from "@/(global)/configs/servers/palworld";

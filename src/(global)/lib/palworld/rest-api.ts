@@ -31,30 +31,31 @@ export async function getServerInfo(address: string) {
     );
 }
 
-export type Player = {
-    name: string;
-    playerid: string;
-    userid: string;
-    ip: string;
-    ping: number;
-    location_x: number;
-    location_y: number;
-    level: number;
-};
+export const playerListSchema = z
+    .object({
+        name: z.string(),
+        playerid: z.string(),
+        userid: z.string(),
+        ip: z.string(),
+        ping: z.number(),
+        location_x: z.number(),
+        location_y: z.number(),
+        level: z.number(),
+    })
+    .array();
 
-export async function getPlayerList(address: string): Promise<Player[]> {
-    return (
-        await fetchWithErrorHandling(
-            `http://${address}:${configs.apiPort}/v1/api/players`,
-            {
-                method: "GET",
-                headers: {
-                    contentType: "application/json",
-                    Authorization: `Basic ${process.env.PALWORLD_API_AUTH_HEADER}`,
-                },
-            }
-        )
-    ).players;
+export async function getPlayerList(address: string) {
+    const response = await fetchWithErrorHandling(
+        `http://${address}:${configs.apiPort}/v1/api/players`,
+        {
+            method: "GET",
+            headers: {
+                contentType: "application/json",
+                Authorization: `Basic ${process.env.PALWORLD_API_AUTH_HEADER}`,
+            },
+        }
+    );
+    return playerListSchema.parse(response.players);
 }
 
 export const serverSettingsSchema = z.object({

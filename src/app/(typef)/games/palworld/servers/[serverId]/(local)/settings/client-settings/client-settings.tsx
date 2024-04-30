@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { ClientSettingsForm } from "./client-settings.client";
 import { userSettingsSchema } from "@/(global)/lib/cloud-provider/server";
-import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 
 type FormValues = z.infer<typeof userSettingsSchema>;
 
@@ -61,7 +61,7 @@ const presetValues: Partial<FormValues> = {
 export function ClientSettings() {
     const { isPending, data: ipAddress } = useQuery({
         queryKey: ["palworld", "serverRunning"],
-        queryFn: withErrorHandling(() => isServerRunningAction({})),
+        queryFn: actionWithErrorHandling(() => isServerRunningAction({})),
     });
 
     if (isPending) {
@@ -78,7 +78,7 @@ export function ClientSettings() {
 const RenderClientSettings = ({ ipAddress }: { ipAddress: string }) => {
     const { data: clientSettings } = useQuery({
         queryKey: ["palworld", "clientSettings"],
-        queryFn: withErrorHandling(() =>
+        queryFn: actionWithErrorHandling(() =>
             getClientSettingsAction({ ipAddress: ipAddress })
         ),
     });

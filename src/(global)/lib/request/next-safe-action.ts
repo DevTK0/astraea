@@ -1,6 +1,24 @@
-import { createSafeActionClient } from "next-safe-action";
-import { cookies } from "next/headers";
-import { ZodError } from "zod";
+import { SafeAction, createSafeActionClient } from "next-safe-action";
+import { ZodError, type ZodSchema, type z } from "zod";
+import { ServerError, ValidationError } from "../exception/next-safe-action";
+
+export function actionWithErrorHandling<S extends ZodSchema, Data>(
+    action: SafeAction<S, Data>
+): (input: z.infer<S>) => Promise<Data | undefined> {
+    return async function (params) {
+        const { data, serverError, validationErrors } = await action(params);
+
+        if (serverError) {
+            throw new ServerError(serverError);
+        }
+
+        for (const error in validationErrors) {
+            throw new ValidationError("Invalid " + error);
+        }
+
+        return data;
+    };
+}
 
 export const action = createSafeActionClient({
     handleReturnedServerError(err) {

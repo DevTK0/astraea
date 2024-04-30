@@ -1,7 +1,7 @@
 "use server";
 
 import { Database } from "@/(global)/lib/database/actions";
-import { SupabaseDBError } from "@/(global)/lib/error-handling/database";
+import { SupabaseDBError } from "@/(global)/lib/exception/database";
 import { action } from "@/(global)/lib/request/next-safe-action";
 import { z } from "zod";
 

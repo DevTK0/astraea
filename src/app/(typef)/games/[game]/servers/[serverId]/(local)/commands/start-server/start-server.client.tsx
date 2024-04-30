@@ -5,12 +5,12 @@ import { Icons } from "@/(global)/components/ui/icons";
 import { startServerAction } from "./start-server.action";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "@/(global)/components/ui/use-toast";
-import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { configs } from "@/(global)/configs/servers/palworld";
 import { useError } from "@/(global)/components/error-toast/error-toast";
 
 export function StartServerButton() {
-    const action = withErrorHandling(startServerAction);
+    const action = actionWithErrorHandling(startServerAction);
     const { isError, isPending, mutate, error } = useMutation({
         mutationFn: action,
         onSuccess: (response) => {

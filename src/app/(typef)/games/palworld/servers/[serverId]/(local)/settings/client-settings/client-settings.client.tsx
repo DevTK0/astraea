@@ -14,7 +14,7 @@ import {
 } from "@/(global)/components/ui/form";
 import { Button } from "@/(global)/components/ui/button";
 import { Switch } from "@/(global)/components/ui/switch";
-import { toast, useToast } from "@/(global)/components/ui/use-toast";
+import { toast } from "@/(global)/components/ui/use-toast";
 
 import {
     Select,
@@ -26,11 +26,9 @@ import {
 } from "@/(global)/components/ui/select";
 import { setClientSettingsAction } from "./client-settings.action";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
 import { Icons } from "@/(global)/components/ui/icons";
-import { serverSettingsSchema } from "@/(global)/lib/palworld/rest-api";
 import { useError } from "@/(global)/components/error-toast/error-toast";
-import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { userSettingsSchema } from "@/(global)/lib/cloud-provider/server";
 
 const formSchema = userSettingsSchema;
@@ -47,7 +45,7 @@ export function ClientSettingsForm({
         defaultValues,
     });
 
-    const action = withErrorHandling(setClientSettingsAction);
+    const action = actionWithErrorHandling(setClientSettingsAction);
     const { isError, isPending, mutate, error } = useMutation({
         mutationFn: action,
         onSuccess: (response) => {

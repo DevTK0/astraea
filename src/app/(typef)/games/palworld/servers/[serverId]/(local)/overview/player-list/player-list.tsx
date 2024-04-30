@@ -3,8 +3,11 @@
 import { JSX, ClassAttributes, HTMLAttributes, useEffect } from "react";
 import { getPlayerListAction } from "./player-list.action";
 import { useQuery } from "@tanstack/react-query";
-import { Player } from "@/(global)/lib/palworld/rest-api";
-import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { playerListSchema } from "@/(global)/lib/palworld/rest-api";
+import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
+import z from "zod";
+
+type Players = z.infer<typeof playerListSchema>;
 
 export function PlayerList(
     props: JSX.IntrinsicAttributes &
@@ -18,7 +21,7 @@ export function PlayerList(
         error,
     } = useQuery({
         queryKey: ["palworld", "online-players"],
-        queryFn: withErrorHandling(() => getPlayerListAction({})),
+        queryFn: actionWithErrorHandling(() => getPlayerListAction({})),
     });
 
     return (
@@ -46,7 +49,7 @@ const RenderOnlinePlayers = ({
 }: {
     isPending: boolean;
     isError: boolean;
-    playerList: Player[] | readonly [] | undefined;
+    playerList: Players | readonly [] | undefined;
     error: Error | null;
 }) => {
     if (isPending) {
