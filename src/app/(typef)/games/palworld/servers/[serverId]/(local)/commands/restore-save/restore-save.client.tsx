@@ -25,15 +25,13 @@ import { getSavesAction, restoreSaveAction } from "./restore-save.action";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { useError } from "@/(global)/components/error-toast/error-toast";
+import { configs } from "@/(global)/configs/servers/palworld";
 
 export function RestoreSaveComponent() {
     const { serverId } = useParams<{ serverId: string }>();
-    console.log(serverId);
 
     const [comboBoxOpen, setComboBoxOpen] = useState(false);
     const [comboBoxValue, setComboBoxValue] = useState("");
-    // const [saves, setSaves] = useState<string[]>([]);
-    // const [saveId, setSaveId] = useState<string>("");
 
     const {
         isError,
@@ -50,6 +48,7 @@ export function RestoreSaveComponent() {
     useError(isError, error);
 
     function handleLoadSaveFiles(open: boolean) {
+        console.log(isPending, saves);
         setComboBoxOpen(open);
     }
 
@@ -70,11 +69,12 @@ export function RestoreSaveComponent() {
                 <PopoverContent className="w-[300px] p-0">
                     <Command>
                         <CommandInput placeholder="Search" className="h-9" />
-                        <CommandEmpty>No sav files found.</CommandEmpty>
                         <CommandGroup>
                             <ScrollArea className="max-h-[200px]">
-                                {isPending ? (
-                                    <div className="ml-2">Loading...</div>
+                                {saves?.saveFiles.length == 0 ? (
+                                    <div className="py-6 text-center text-sm">
+                                        No save files found.
+                                    </div>
                                 ) : (
                                     saves?.saveFiles.map((filename) => (
                                         <CommandItem
@@ -138,9 +138,14 @@ const RenderRestoreButton = ({
     });
 
     function handleRestoreSave() {
-        if (isPending || saveId === undefined) return;
+        if (!saveId) {
+            useError(true, new Error("Save ID is not found"));
+        }
+
+        if (isPending || !saveId) return;
+
         mutate({
-            serverId: 1,
+            serverId: configs.serverId,
             saveFile: saveFile,
             saveId: saveId,
         });
@@ -154,7 +159,7 @@ const RenderRestoreButton = ({
             size="icon"
             className="ml-2"
             onClick={handleRestoreSave}
-            disabled={saveId === undefined}
+            disabled={!saveFile || isPending}
         >
             {isPending ? (
                 <Icons.spinner className="h-4 w-4 animate-spin" />

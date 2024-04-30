@@ -38,7 +38,14 @@ export const getSavesAction = action(getSavesSchema, async ({ serverId }) => {
 
     if (error) throw new SupabaseDBError(error);
 
-    const saveId = z.string().length(32).parse(data?.save_id);
+    const saveId = z.string().optional().parse(data?.save_id);
+
+    if (!saveId) {
+        return {
+            saveId: "",
+            saveFiles: [],
+        };
+    }
 
     const s3 = new S3Client({ region: "ap-southeast-1" });
     const saves = await s3.send(
