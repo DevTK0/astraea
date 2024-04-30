@@ -34,13 +34,13 @@ export async function getServerInfo(address: string) {
 export const playerListSchema = z
     .object({
         name: z.string(),
-        playerid: z.string(),
-        userid: z.string(),
+        // playerid: z.string(),
+        // userid: z.string(),
         ip: z.string(),
-        ping: z.number(),
-        location_x: z.number(),
-        location_y: z.number(),
-        level: z.number(),
+        ping: z.coerce.number(),
+        location_x: z.coerce.number(),
+        location_y: z.coerce.number(),
+        level: z.coerce.number(),
     })
     .array();
 
