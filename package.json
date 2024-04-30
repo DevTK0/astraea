@@ -1,13 +1,14 @@
 {
   "name": "astraea",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db-types": "pnpm supabase gen types typescript --local > ./src/lib/database/types.ts"
+    "db-types": "pnpm supabase gen types typescript --local > ./src/\\(global\\)/lib/database/types.ts",
+    "db-migrate": "pnpm supabase db diff --linked"
   },
   "dependencies": {
     "@aws-sdk/client-ec2": "^3.556.0",

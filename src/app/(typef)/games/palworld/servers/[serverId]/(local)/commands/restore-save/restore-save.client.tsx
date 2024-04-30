@@ -13,29 +13,25 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/(global)/components/ui/popover";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/(global)/components/ui/button";
-import { toast, useToast } from "@/(global)/components/ui/use-toast";
+import { toast } from "@/(global)/components/ui/use-toast";
 import { ScrollArea } from "@/(global)/components/ui/scroll-area";
 import { Icons } from "@/(global)/components/ui/icons";
 
-import { useAction } from "next-safe-action/hooks";
 import { useParams } from "next/navigation";
 
 import { getSavesAction, restoreSaveAction } from "./restore-save.action";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { getUser } from "@/(global)/lib/auth/client";
-import { z } from "zod";
-import { save } from "@/(global)/lib/palworld/rest-api";
-import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
+import { useError } from "@/(global)/components/error-toast/error-toast";
+import { configs } from "@/(global)/configs/servers/palworld";
 
 export function RestoreSaveComponent() {
     const { serverId } = useParams<{ serverId: string }>();
 
     const [comboBoxOpen, setComboBoxOpen] = useState(false);
     const [comboBoxValue, setComboBoxValue] = useState("");
-    // const [saves, setSaves] = useState<string[]>([]);
-    // const [saveId, setSaveId] = useState<string>("");
 
     const {
         isError,
@@ -43,64 +39,17 @@ export function RestoreSaveComponent() {
         data: saves,
         error,
     } = useQuery({
-        queryKey: ["key"],
-        queryFn: withErrorHandling(() =>
+        queryKey: ["palworld", "saves"],
+        queryFn: actionWithErrorHandling(() =>
             getSavesAction({ serverId: parseInt(serverId) })
         ),
     });
 
-    useEffect(() => {
-        if (isError) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: error.message,
-            });
-        }
-    }, [isError, error?.message]);
-
-    // const getSavesAction = useAction(getSavesAction, {
-    //     onSuccess: (res) => {
-    //         setSaveId(res.saveId);
-    //         setSaves(res.saves);
-    //     },
-    //     onError: (err) => {
-    //         toast({
-    //             variant: "destructive",
-    //             title: "Error",
-    //             description: err.serverError || "",
-    //         });
-    //     },
-    // });
-
-    // const restoreSaveAction = useAction(restoreSaveAction, {
-    //     onSuccess: (res) => {
-    //         toast({
-    //             title: "Success",
-    //             description: res.message,
-    //         });
-    //     },
-    //     onError: (err) => {
-    //         toast({
-    //             variant: "destructive",
-    //             title: "Error",
-    //             description:
-    //                 err.serverError || JSON.stringify(err.validationErrors),
-    //         });
-    //     },
-    // });
+    useError(isError, error);
 
     function handleLoadSaveFiles(open: boolean) {
+        console.log(isPending, saves);
         setComboBoxOpen(open);
-
-        // if (saves.length == 0) {
-        //     if (getSavesAction.status === "executing") return;
-
-        //     getSavesAction.execute({
-        //         serverId: parseInt(serverId),
-        //         userId: 1,
-        //     });
-        // }
     }
 
     return (
@@ -120,11 +69,12 @@ export function RestoreSaveComponent() {
                 <PopoverContent className="w-[300px] p-0">
                     <Command>
                         <CommandInput placeholder="Search" className="h-9" />
-                        <CommandEmpty>No sav files found.</CommandEmpty>
                         <CommandGroup>
                             <ScrollArea className="max-h-[200px]">
-                                {isPending ? (
-                                    <div className="ml-2">Loading...</div>
+                                {saves?.saveFiles.length == 0 ? (
+                                    <div className="py-6 text-center text-sm">
+                                        No save files found.
+                                    </div>
                                 ) : (
                                     saves?.saveFiles.map((filename) => (
                                         <CommandItem
@@ -176,7 +126,7 @@ const RenderRestoreButton = ({
     saveFile: string;
     saveId: string | undefined;
 }) => {
-    const action = withErrorHandling(restoreSaveAction);
+    const action = actionWithErrorHandling(restoreSaveAction);
     const { isError, isPending, mutate, error } = useMutation({
         mutationFn: action,
         onSuccess: (response) => {
@@ -188,23 +138,16 @@ const RenderRestoreButton = ({
     });
 
     function handleRestoreSave() {
-        if (isPending || saveId === undefined) return;
+        if (isPending || !saveId) return;
+
         mutate({
-            serverId: 1,
+            serverId: configs.serverId,
             saveFile: saveFile,
             saveId: saveId,
         });
     }
 
-    useEffect(() => {
-        if (isError) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: error.message,
-            });
-        }
-    }, [isError, error?.message]);
+    useError(isError, error);
 
     return (
         <Button
@@ -212,7 +155,7 @@ const RenderRestoreButton = ({
             size="icon"
             className="ml-2"
             onClick={handleRestoreSave}
-            disabled={saveId === undefined}
+            disabled={!saveFile || isPending}
         >
             {isPending ? (
                 <Icons.spinner className="h-4 w-4 animate-spin" />

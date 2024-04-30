@@ -7,18 +7,18 @@ import { Icons } from "@/(global)/components/ui/icons";
 
 import { useMutation } from "@tanstack/react-query";
 import { updateClientAction } from "./update-client.action";
-import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { useError } from "@/(global)/components/error-toast/error-toast";
 import { configs } from "@/(global)/configs/servers/palworld";
 
 export function UpdateClient() {
-    const action = withErrorHandling(updateClientAction);
+    const action = actionWithErrorHandling(updateClientAction);
     const { isError, isPending, mutate, error } = useMutation({
         mutationFn: action,
         onSuccess: (response) => {
             toast({
                 title: "Success",
-                description: `Server is updating... ${response}`,
+                description: `Server is updating...`,
             });
         },
     });

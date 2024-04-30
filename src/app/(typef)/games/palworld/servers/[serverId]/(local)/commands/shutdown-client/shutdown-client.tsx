@@ -8,11 +8,11 @@ import { Icons } from "@/(global)/components/ui/icons";
 import { useMutation } from "@tanstack/react-query";
 import { shutdownClientAction } from "./shutdown-client.action";
 import { useError } from "@/(global)/components/error-toast/error-toast";
-import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { configs } from "@/(global)/configs/servers/palworld";
 
 export function ShutdownClient() {
-    const action = withErrorHandling(shutdownClientAction);
+    const action = actionWithErrorHandling(shutdownClientAction);
     const { isError, isPending, mutate, error } = useMutation({
         mutationFn: action,
         onSuccess: (response) => {

@@ -4,12 +4,12 @@ import { Label } from "@/(global)/components/ui/label";
 import { toast } from "@/(global)/components/ui/use-toast";
 import { stopServerAction } from "./stop-server.action";
 import { useMutation } from "@tanstack/react-query";
-import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { configs } from "@/(global)/configs/servers/palworld";
 import { useError } from "@/(global)/components/error-toast/error-toast";
 
 export function StopServer() {
-    const action = withErrorHandling(stopServerAction);
+    const action = actionWithErrorHandling(stopServerAction);
     const { isError, isPending, mutate, error } = useMutation({
         mutationFn: action,
         onSuccess: (response) => {

@@ -7,7 +7,7 @@ import { ClassAttributes, HTMLAttributes } from "react";
 import { getServerStatusAction } from "./server-status.action";
 import type { ServerStatus } from "@/(global)/lib/cloud-provider/server";
 import { useQuery } from "@tanstack/react-query";
-import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { configs } from "@/(global)/configs/servers/palworld";
 
 export function ServerStatus(
@@ -22,7 +22,7 @@ export function ServerStatus(
         error,
     } = useQuery({
         queryKey: ["server", configs.serverId, "status"],
-        queryFn: withErrorHandling(() =>
+        queryFn: actionWithErrorHandling(() =>
             getServerStatusAction({
                 game: configs.game,
                 serverId: configs.serverId,

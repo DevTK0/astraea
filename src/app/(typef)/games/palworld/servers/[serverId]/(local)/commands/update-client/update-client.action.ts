@@ -4,7 +4,7 @@ import { action } from "@/(global)/lib/request/next-safe-action";
 import { z } from "zod";
 
 import { gamelist } from "@/(global)/meta/gamedata";
-import { ServerError } from "@/(global)/lib/error-handling/next-safe-action";
+import { ServerError } from "@/(global)/lib/exception/next-safe-action";
 import { checkIfClientIsRunning } from "@/(global)/lib/palworld/rest-api";
 import {
     getServerAddress,

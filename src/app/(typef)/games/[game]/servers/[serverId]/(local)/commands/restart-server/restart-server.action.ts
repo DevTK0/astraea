@@ -1,6 +1,6 @@
 "use server";
 import { gamelist } from "@/(global)/meta/gamedata";
-import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { action } from "@/(global)/lib/request/next-safe-action";
 import { z } from "zod";
 import { restartServer } from "@/(global)/lib/cloud-provider/server";

@@ -10,13 +10,13 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { fetchWithErrorHandling } from "@/(global)/lib/request/fetch";
 
 import { useError } from "@/(global)/components/error-toast/error-toast";
-import { withErrorHandling } from "@/(global)/lib/error-handling/next-safe-action";
+import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { configs } from "@/(global)/configs/servers/palworld";
 
 export function WhitelistIpComponent() {
     const [ip, setIp] = useState<string>("1.1.1.1");
 
-    const action = withErrorHandling(whitelistIpAction);
+    const action = actionWithErrorHandling(whitelistIpAction);
     const { isError, isPending, mutate, error } = useMutation({
         mutationFn: action,
         onSuccess: (response) => {

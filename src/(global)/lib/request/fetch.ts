@@ -1,4 +1,4 @@
-import { HTTPError } from "@/(global)/lib/error-handling/http";
+import { HTTPError } from "@/(global)/lib/exception/http";
 
 export async function fetchWithErrorHandling(
     url: string,

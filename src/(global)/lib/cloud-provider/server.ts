@@ -1,4 +1,4 @@
-import { ServerError } from "@/(global)/lib/error-handling/next-safe-action";
+import { ServerError } from "@/(global)/lib/exception/next-safe-action";
 import {
     addSecurityGroupRules,
     checkIfArchived,
@@ -15,7 +15,7 @@ import {
     runUnixCommands,
     terminateInstance,
 } from "./aws/ec2";
-import { AWSError } from "../error-handling/aws";
+import { AWSError } from "../exception/aws";
 import { z } from "zod";
 import { serverSettingsSchema } from "../palworld/rest-api";
 import { configs } from "@/(global)/configs/servers/palworld";
@@ -162,7 +162,10 @@ export async function restartServer(game: string, serverId: number) {
     await restartInstance(instanceId);
 }
 
-export async function configureAllowedIPs(ipAddresses: string[]) {
+export async function configureAllowedIPs(
+    ipAddresses: string[],
+    securityGroupId: string
+) {
     const ipList: string[] = [];
     const ipRanges = [];
 
@@ -185,7 +188,7 @@ export async function configureAllowedIPs(ipAddresses: string[]) {
 
     z.string().array().nonempty().parse(ipList);
 
-    const securityGroupRules = await getSecurityGroupRules(configs.palworld_sg);
+    const securityGroupRules = await getSecurityGroupRules(securityGroupId);
 
     const toRemove = securityGroupRules.SecurityGroupRules?.filter((rule) => {
         return rule.IpProtocol === "udp" && rule.FromPort === 8211;
@@ -193,16 +196,10 @@ export async function configureAllowedIPs(ipAddresses: string[]) {
 
     // Remove previous Ips if any
     if (toRemove && toRemove.length > 0) {
-        await removeSecurityGroupRules(configs.palworld_sg, toRemove);
+        await removeSecurityGroupRules(securityGroupId, toRemove);
     }
 
-    await addSecurityGroupRules(
-        configs.palworld_sg,
-        ipRanges,
-        "udp",
-        8211,
-        8211
-    );
+    await addSecurityGroupRules(securityGroupId, ipRanges, "udp", 8211, 8211);
 }
 
 export async function updatePalworld() {
