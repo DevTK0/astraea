@@ -138,10 +138,6 @@ const RenderRestoreButton = ({
     });
 
     function handleRestoreSave() {
-        if (!saveId) {
-            useError(true, new Error("Save ID is not found"));
-        }
-
         if (isPending || !saveId) return;
 
         mutate({
