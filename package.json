@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db-types": "pnpm supabase gen types typescript --local > ./src/lib/database/types.ts"
+    "db-types": "pnpm supabase gen types typescript --local > ./src/\\(global\\)/lib/database/types.ts"
   },
   "dependencies": {
     "@aws-sdk/client-ec2": "^3.556.0",

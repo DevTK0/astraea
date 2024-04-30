@@ -162,7 +162,10 @@ export async function restartServer(game: string, serverId: number) {
     await restartInstance(instanceId);
 }
 
-export async function configureAllowedIPs(ipAddresses: string[]) {
+export async function configureAllowedIPs(
+    ipAddresses: string[],
+    securityGroupId: string
+) {
     const ipList: string[] = [];
     const ipRanges = [];
 
@@ -185,7 +188,7 @@ export async function configureAllowedIPs(ipAddresses: string[]) {
 
     z.string().array().nonempty().parse(ipList);
 
-    const securityGroupRules = await getSecurityGroupRules(configs.palworld_sg);
+    const securityGroupRules = await getSecurityGroupRules(securityGroupId);
 
     const toRemove = securityGroupRules.SecurityGroupRules?.filter((rule) => {
         return rule.IpProtocol === "udp" && rule.FromPort === 8211;
@@ -193,16 +196,10 @@ export async function configureAllowedIPs(ipAddresses: string[]) {
 
     // Remove previous Ips if any
     if (toRemove && toRemove.length > 0) {
-        await removeSecurityGroupRules(configs.palworld_sg, toRemove);
+        await removeSecurityGroupRules(securityGroupId, toRemove);
     }
 
-    await addSecurityGroupRules(
-        configs.palworld_sg,
-        ipRanges,
-        "udp",
-        8211,
-        8211
-    );
+    await addSecurityGroupRules(securityGroupId, ipRanges, "udp", 8211, 8211);
 }
 
 export async function updatePalworld() {

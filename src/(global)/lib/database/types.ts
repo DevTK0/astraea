@@ -90,28 +90,28 @@ export type Database = {
       }
       server_configs: {
         Row: {
+          config: string
           created_at: string
-          instance_type: string
           server_id: number
-          volume_size: number
+          value: string | null
         }
         Insert: {
+          config?: string
           created_at?: string
-          instance_type?: string
           server_id: number
-          volume_size?: number
+          value?: string | null
         }
         Update: {
+          config?: string
           created_at?: string
-          instance_type?: string
           server_id?: number
-          volume_size?: number
+          value?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "server_configs_server_id_fkey"
             columns: ["server_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "servers"
             referencedColumns: ["server_id"]
           },
@@ -153,17 +153,14 @@ export type Database = {
         Row: {
           auth_uid: string
           ip_address: string | null
-          user_id: number
         }
         Insert: {
-          auth_uid: string
+          auth_uid?: string
           ip_address?: string | null
-          user_id?: number
         }
         Update: {
           auth_uid?: string
           ip_address?: string | null
-          user_id?: number
         }
         Relationships: [
           {

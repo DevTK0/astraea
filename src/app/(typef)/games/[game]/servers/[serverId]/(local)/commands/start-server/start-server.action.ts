@@ -1,11 +1,10 @@
 "use server";
 import { gamelist } from "@/(global)/meta/gamedata";
-import { Database } from "@/(global)/lib/database/actions";
-import { SupabaseDBError } from "@/(global)/lib/exception/database";
-import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { action } from "@/(global)/lib/request/next-safe-action";
 import { z } from "zod";
 import { startServer } from "@/(global)/lib/cloud-provider/server";
+import { instanceTypes } from "@/(global)/lib/cloud-provider/aws/ec2";
+import { getServerConfigs } from "@/(global)/lib/database/db-configs";
 
 const startServerSchema = z.object({
     game: z.enum(gamelist),
@@ -15,29 +14,18 @@ const startServerSchema = z.object({
 export const startServerAction = action(
     startServerSchema,
     async ({ game, serverId }) => {
-        const db = Database();
-        const { data: configs, error } = await db
-            .from("server_configs")
-            .select(
-                `
-                volume_size,
-                instance_type,
-                server_id
-                `
-            )
-            .eq("server_id", serverId)
-            .single();
+        const configs = await getServerConfigs(serverId);
 
-        if (error) throw new SupabaseDBError(error);
-
-        z.object({
-            volume_size: z.number(),
-            instance_type: z.string(),
-        }).parse(configs);
+        const { volume_size, instance_type } = z
+            .object({
+                volume_size: z.coerce.number(),
+                instance_type: z.enum(instanceTypes),
+            })
+            .parse(configs);
 
         await startServer(game, serverId, {
-            volumeSize: configs.volume_size,
-            instanceType: configs.instance_type,
+            volumeSize: volume_size,
+            instanceType: instance_type,
         });
     }
 );
