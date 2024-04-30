@@ -18,7 +18,7 @@ export function UpdateClient() {
         onSuccess: (response) => {
             toast({
                 title: "Success",
-                description: `Server is updating... ${response}`,
+                description: `Server is updating...`,
             });
         },
     });
