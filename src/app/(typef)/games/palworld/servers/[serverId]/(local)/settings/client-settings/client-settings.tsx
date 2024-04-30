@@ -41,7 +41,7 @@ const presetValues: Partial<FormValues> = {
     DropItemMaxNum: 3000,
     DropItemMaxNum_UNKO: 100,
     BaseCampMaxNum: 128,
-    BaseCampWorkerMaxNum: 15,
+    BaseCampWorkerMaxNum: 20,
     DropItemAliveMaxHours: 1,
     bAutoResetGuildNoOnlinePlayers: false,
     AutoResetGuildTimeNoOnlinePlayers: 72,
