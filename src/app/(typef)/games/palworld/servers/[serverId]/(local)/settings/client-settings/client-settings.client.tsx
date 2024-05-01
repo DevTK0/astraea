@@ -1,8 +1,10 @@
 "use client";
 
+import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+
 import {
     Form,
     FormControl,
@@ -24,16 +26,15 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/(global)/components/ui/select";
-import { setClientSettingsAction } from "./client-settings.action";
-import { useMutation } from "@tanstack/react-query";
+
 import { Icons } from "@/(global)/components/ui/icons";
 import { useError } from "@/(global)/components/error-toast/error-toast";
 import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
-import { userSettingsSchema } from "@/(global)/lib/cloud-provider/server";
 
-const formSchema = userSettingsSchema;
+import { setClientSettingsSchema } from "./client-settings.service";
+import { setClientSettingsAction } from "./client-settings.action";
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof setClientSettingsSchema>;
 
 export function ClientSettingsForm({
     defaultValues,
@@ -41,7 +42,7 @@ export function ClientSettingsForm({
     defaultValues: Partial<FormValues>;
 }) {
     const form = useForm<FormValues>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(setClientSettingsSchema),
         defaultValues,
     });
 

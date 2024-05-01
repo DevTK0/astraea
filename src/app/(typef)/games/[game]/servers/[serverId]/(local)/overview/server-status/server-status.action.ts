@@ -5,7 +5,6 @@ import { action } from "@/(global)/lib/request/next-safe-action";
 import { z } from "zod";
 
 import { gamelist } from "@/(global)/meta/gamedata";
-import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 
 const getServerStatusSchema = z.object({
     game: z.enum(gamelist),
