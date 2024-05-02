@@ -48,27 +48,26 @@ export function RestoreSaveComponent() {
     useError(isError, error);
 
     function handleLoadSaveFiles(open: boolean) {
-        console.log(isPending, saves);
         setComboBoxOpen(open);
     }
 
     return (
-        <div className="flex flex-row items-center justify-between ">
+        <div className="flex flex-row items-center justify-between w-full md:w-[300px] ">
             <Popover open={comboBoxOpen} onOpenChange={handleLoadSaveFiles}>
                 <PopoverTrigger asChild>
                     <Button
                         variant="outline"
                         role="combobox"
                         aria-expanded={comboBoxOpen}
-                        className="w-[300px] justify-between text-ellipsis overflow-hidden"
+                        className="w-full justify-between text-ellipsis overflow-hidden"
                     >
                         {comboBoxValue ? comboBoxValue : "Select Backup Save"}
                         <Icons.caret_sort className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[300px] p-0">
+                <PopoverContent className="w-full p-0">
                     <Command>
-                        <CommandInput placeholder="Search" className="h-9" />
+                        <CommandInput placeholder="Search" />
                         <CommandGroup>
                             <ScrollArea className="max-h-[200px]">
                                 {saves?.saveFiles.length == 0 ? (

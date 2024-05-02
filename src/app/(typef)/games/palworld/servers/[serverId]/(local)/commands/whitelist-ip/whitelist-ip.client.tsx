@@ -34,7 +34,7 @@ export function WhitelistIpComponent() {
     }
 
     return (
-        <div className="flex flex-row items-center justify-between ">
+        <div className="flex flex-row items-center justify-between w-full md:w-[300px]">
             <RenderInput onIpChange={setIp} />
             <Button
                 variant="outline"
@@ -80,7 +80,6 @@ const RenderInput = ({ onIpChange }: { onIpChange: (ip: string) => void }) => {
             placeholder={isPending ? "Searching..." : ipAddress}
             type="text"
             onChange={(e) => handleManualIp(e.target.value)}
-            className="w-[300px]"
         />
     );
 };

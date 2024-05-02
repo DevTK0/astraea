@@ -27,16 +27,16 @@ export function Broadcast() {
     useError(isError, error);
 
     return (
-        <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+        <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 items-start md:items-center justify-between rounded-lg border p-4">
             <div className="space-y-0.5">
                 <Label className="text-base">Broadcast</Label>
                 <div className="text-sm text-muted-foreground">
                     Sends a message to the entire server.
                 </div>
             </div>
-            <div className="flex flex-row items-center justify-between ">
+            <div className="flex flex-row items-center justify-between w-full md:w-[300px]">
                 <Input
-                    className="w-[300px]"
+                    className="w-full"
                     onChange={(e) => setMessage(e.target.value)}
                     value={message}
                 />
