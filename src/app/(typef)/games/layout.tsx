@@ -1,4 +1,4 @@
-import Breadcrumb from "@/(global)/components/ui/breadcrumb";
+import { Breadcrumb } from "@/(global)/components/ui/breadcrumb";
 
 export default function GamesLayout({
     children,

@@ -10,7 +10,7 @@ type Page = {
     current: boolean;
 };
 
-export default function Breadcrumb() {
+export function Breadcrumb() {
     const path = usePathname();
 
     const sublinks = path.split("/").filter((x) => x !== "");
