@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/(global)/components/ui/button";
 import { Input } from "@/(global)/components/ui/input";
 import { Label } from "@/(global)/components/ui/label";

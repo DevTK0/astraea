@@ -4,6 +4,7 @@ import { Button } from "@/(global)/components/ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/(global)/lib/css/utils";
+import { Icons } from "../ui/icons";
 
 export default function ServerSideBar({
     children,
@@ -30,10 +31,11 @@ export default function ServerSideBar({
                             <span className="">{serverName}</span>
                         </Link>
                         <Button
-                            variant="outline"
+                            variant="ghost"
                             size="icon"
                             className="ml-auto h-8 w-8"
                         >
+                            <Icons.gear className="h-5 w-5" />
                             <span className="sr-only">
                                 Toggle notifications
                             </span>

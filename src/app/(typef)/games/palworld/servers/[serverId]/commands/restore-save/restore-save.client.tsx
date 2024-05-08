@@ -27,7 +27,7 @@ import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action
 import { useError } from "@/(global)/components/error-toast/error-toast";
 import { configs } from "@/(global)/configs/servers/palworld";
 
-export function RestoreSaveComponent() {
+export function ClientComponent() {
     const { serverId } = useParams<{ serverId: string }>();
 
     const [comboBoxOpen, setComboBoxOpen] = useState(false);
@@ -48,6 +48,7 @@ export function RestoreSaveComponent() {
     useError(isError, error);
 
     function handleLoadSaveFiles(open: boolean) {
+        console.log(saves);
         setComboBoxOpen(open);
     }
 

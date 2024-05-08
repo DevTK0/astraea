@@ -1,5 +1,5 @@
 import { Label } from "@/(global)/components/ui/label";
-import { RestoreSaveComponent } from "./restore-save.client";
+import { ClientComponent } from "./restore-save.client";
 
 export function RestoreSave() {
     return (
@@ -10,7 +10,7 @@ export function RestoreSave() {
                     Replaces your current save with a backup.
                 </div>
             </div>
-            <RestoreSaveComponent />
+            <ClientComponent />
         </div>
     );
 }

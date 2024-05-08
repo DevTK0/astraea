@@ -1,13 +1,3 @@
-"use client";
-import {
-    Collapsible,
-    CollapsibleTrigger,
-    CollapsibleContent,
-} from "@/(global)/components/ui/collapsible";
-import { Button } from "@/(global)/components/ui/button";
-import { Separator } from "@/(global)/components/ui/separator";
-import { Icons } from "@/(global)/components/ui/icons";
-
 import { RestoreSave } from "./restore-save/restore-save";
 import { WhitelistIp } from "./whitelist-ip/whitelist-ip";
 import { UpdateClient } from "./update-client/update-client";
@@ -23,50 +13,21 @@ export default function Commands() {
             <div className="flex items-center">
                 <h1 className="text-lg font-semibold md:text-2xl">Commands</h1>
             </div>
-            <Collapsible defaultOpen>
-                <h3 className="mb-4 text-lg font-semibold">
-                    General
-                    <CollapsibleTrigger asChild>
-                        <Button variant="ghost" size="sm">
-                            <Icons.caret_sort className="h-4 w-4" />
-                            <span className="sr-only">Toggle</span>
-                        </Button>
-                    </CollapsibleTrigger>
-                </h3>
-                <CollapsibleContent>
-                    <div className="space-y-4">
-                        <WhitelistIp />
-                        <RestoreSave />
-                        <StartServer />
-                        <StopServer />
-                        <RestartServer />
-                    </div>
-                </CollapsibleContent>
-            </Collapsible>
-            <Separator className="my-4" />
-            <Collapsible defaultOpen>
-                <h3 className="mb-4 text-lg font-semibold">
-                    Admin
-                    <CollapsibleTrigger asChild>
-                        <Button variant="ghost" size="sm">
-                            <Icons.caret_sort className="h-4 w-4" />
-                            <span className="sr-only">Toggle</span>
-                        </Button>
-                    </CollapsibleTrigger>
-                </h3>
-                <CollapsibleContent>
-                    <div className="space-y-4">
-                        <Broadcast />
-                        <ShutdownClient />
-                        <UpdateClient />
-                        {/* 
-                        <KickAll />
-                        <BanPlayer />
-                        <UnbanPlayer />
-                         */}
-                    </div>
-                </CollapsibleContent>
-            </Collapsible>
+            <h3 className="text-lg font-semibold">General</h3>
+            <div className="space-y-4">
+                <WhitelistIp />
+                <RestoreSave />
+                <StartServer />
+                <StopServer />
+                <RestartServer />
+            </div>
+            {/* <Separator className="my-4" /> */}
+            <h3 className="text-lg font-semibold">Admin</h3>
+            <div className="space-y-4">
+                <Broadcast />
+                <ShutdownClient />
+                <UpdateClient />
+            </div>
         </main>
     );
 }

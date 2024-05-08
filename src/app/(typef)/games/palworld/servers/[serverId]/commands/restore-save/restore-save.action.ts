@@ -57,7 +57,7 @@ export const getSavesAction = action(getSavesSchema, async ({ serverId }) => {
     const saveFiles: Set<string> = new Set<string>();
 
     saves.Contents?.forEach((content) => {
-        const saveFile = content.Key?.split("/")[3];
+        const saveFile = content.Key?.split("/")[4];
         if (saveFile) saveFiles.add(saveFile);
     });
 
