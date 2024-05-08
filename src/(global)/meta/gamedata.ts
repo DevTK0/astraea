@@ -10,7 +10,7 @@ export interface Game {
 
 export const palworld: Game = {
     name: "Palworld",
-    link: "/games/palworld",
+    link: "/games/palworld/servers/1/overview",
     thumbnail:
         "https://cdn.cloudflare.steamstatic.com/steam/apps/1623730/library_600x900_2x.jpg?t=1705661524",
     banner: "https://cdn.cloudflare.steamstatic.com/steam/apps/1623730/library_hero.jpg?t=1705661524",
@@ -19,7 +19,7 @@ export const palworld: Game = {
 
 export const vrising: Game = {
     name: "V Rising",
-    link: "/games/vrising",
+    link: "/games/vrising/servers/2/overview",
     thumbnail:
         "https://cdn.cloudflare.steamstatic.com/steam/apps/1604030/library_600x900_2x.jpg?t=1694689356",
     banner: "https://cdn.cloudflare.steamstatic.com/steam/apps/1604030/library_hero.jpg?t=1694689356",

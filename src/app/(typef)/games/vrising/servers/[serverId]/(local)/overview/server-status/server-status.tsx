@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/(global)/components/ui/button";
 import { Icons } from "@/(global)/components/ui/icons";
 import { toast } from "@/(global)/components/ui/use-toast";

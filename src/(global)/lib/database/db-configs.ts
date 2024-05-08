@@ -1,5 +1,5 @@
-import { config } from "process";
 import { SupabaseDBError } from "../exception/database";
+import { ServerError } from "../exception/next-safe-action";
 import { Database } from "./actions";
 
 export async function getServerConfigs(serverId: number) {
@@ -23,4 +23,39 @@ export async function getServerConfigs(serverId: number) {
     });
 
     return configObject;
+}
+
+export async function getGameConfigs(serverId: number) {
+    const db = Database();
+    const { data: configs, error } = await db
+        .from("server_configs")
+        .select(
+            `
+            config,
+            value
+            `
+        )
+        .eq("server_id", serverId)
+        .eq("config", "game_configs")
+        .single();
+
+    if (error) throw new SupabaseDBError(error);
+
+    if (!configs.value) return {};
+
+    return JSON.parse(configs.value);
+}
+
+export async function updateGameConfigs(
+    serverId: number,
+    configs: Record<string, any>
+) {
+    const db = Database();
+    const { error } = await db
+        .from("server_configs")
+        .update({ value: JSON.stringify(configs) })
+        .eq("server_id", serverId)
+        .eq("config", "game_configs");
+
+    if (error) throw new SupabaseDBError(error);
 }
