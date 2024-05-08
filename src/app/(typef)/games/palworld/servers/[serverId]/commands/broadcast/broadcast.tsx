@@ -10,9 +10,11 @@ import { useState } from "react";
 import { Icons } from "@/(global)/components/ui/icons";
 import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { useError } from "@/(global)/components/error-toast/error-toast";
-import { configs } from "@/(global)/configs/servers/palworld";
+import { usePathSegments } from "@/(global)/hooks/path";
 
 export function Broadcast() {
+    const { game, serverId } = usePathSegments();
+
     const [message, setMessage] = useState("");
 
     const action = actionWithErrorHandling(broadcastAction);
@@ -48,8 +50,8 @@ export function Broadcast() {
                     className="ml-2"
                     onClick={() =>
                         mutate({
-                            game: configs.game,
-                            serverId: configs.serverId,
+                            game: game,
+                            serverId: serverId,
                             message: message,
                         })
                     }

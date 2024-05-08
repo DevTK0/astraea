@@ -7,7 +7,7 @@ export default function Layout({
 }>) {
     return (
         <>
-            <h1 className="text-5xl">{corekeeper.name}</h1>
+            <h1 className="text-5xl">{corekeeper.label}</h1>
             {children}
         </>
     );

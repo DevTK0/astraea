@@ -9,9 +9,10 @@ import { useMutation } from "@tanstack/react-query";
 import { updateClientAction } from "./update-client.action";
 import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { useError } from "@/(global)/components/error-toast/error-toast";
-import { configs } from "@/(global)/configs/servers/palworld";
+import { usePathSegments } from "@/(global)/hooks/path";
 
 export function UpdateClient() {
+    const { game, serverId } = usePathSegments();
     const action = actionWithErrorHandling(updateClientAction);
     const { isError, isPending, mutate, error } = useMutation({
         mutationFn: action,
@@ -37,9 +38,7 @@ export function UpdateClient() {
                 variant="secondary"
                 size="sm"
                 className="w-[80px]"
-                onClick={() =>
-                    mutate({ game: configs.game, serverId: configs.serverId })
-                }
+                onClick={() => mutate({ game: game, serverId: serverId })}
             >
                 {isPending ? (
                     <Icons.spinner className="h-4 w-4 animate-spin" />

@@ -11,9 +11,10 @@ import { fetchWithErrorHandling } from "@/(global)/lib/request/fetch";
 
 import { useError } from "@/(global)/components/error-toast/error-toast";
 import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
-import { configs } from "@/(global)/configs/servers/palworld";
+import { usePathSegments } from "@/(global)/hooks/path";
 
 export function WhitelistIpComponent() {
+    const { serverId } = usePathSegments();
     const [ip, setIp] = useState<string>("1.1.1.1");
 
     const action = actionWithErrorHandling(whitelistIpAction);
@@ -30,7 +31,7 @@ export function WhitelistIpComponent() {
     useError(isError, error);
 
     function handleWhitelistIp() {
-        mutate({ ipAddress: ip, serverId: configs.serverId });
+        mutate({ ipAddress: ip, serverId: serverId });
     }
 
     return (

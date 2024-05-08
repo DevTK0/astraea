@@ -11,23 +11,30 @@ import type { ServerStatus } from "@/(global)/lib/cloud-provider/server";
 import { useQuery } from "@tanstack/react-query";
 import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { configs } from "@/(global)/configs/servers/palworld";
+import { gamelist } from "@/(global)/meta/gamedata";
+import { usePathname } from "next/navigation";
+import { z } from "zod";
 
 export function ServerStatus(
     props: JSX.IntrinsicAttributes &
         ClassAttributes<HTMLDivElement> &
         HTMLAttributes<HTMLDivElement>
 ) {
+    const path = usePathname();
+    const game = z.enum(gamelist).parse(path.split("/")[2]);
+    const serverId = z.coerce.number().parse(path.split("/")[4]);
+
     const {
         isPending,
         isError,
         data: server,
         error,
     } = useQuery({
-        queryKey: ["server", configs.serverId, "status"],
+        queryKey: ["server", serverId, "status"],
         queryFn: actionWithErrorHandling(() =>
             getServerStatusAction({
-                game: configs.game,
-                serverId: configs.serverId,
+                game: game,
+                serverId: serverId,
             })
         ),
     });

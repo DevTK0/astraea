@@ -19,16 +19,15 @@ import { toast } from "@/(global)/components/ui/use-toast";
 import { ScrollArea } from "@/(global)/components/ui/scroll-area";
 import { Icons } from "@/(global)/components/ui/icons";
 
-import { useParams } from "next/navigation";
-
 import { getSavesAction, restoreSaveAction } from "./restore-save.action";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { useError } from "@/(global)/components/error-toast/error-toast";
 import { configs } from "@/(global)/configs/servers/palworld";
+import { usePathSegments } from "@/(global)/hooks/path";
 
 export function ClientComponent() {
-    const { serverId } = useParams<{ serverId: string }>();
+    const { serverId } = usePathSegments();
 
     const [comboBoxOpen, setComboBoxOpen] = useState(false);
     const [comboBoxValue, setComboBoxValue] = useState("");
@@ -41,14 +40,13 @@ export function ClientComponent() {
     } = useQuery({
         queryKey: ["palworld", "saves"],
         queryFn: actionWithErrorHandling(() =>
-            getSavesAction({ serverId: parseInt(serverId) })
+            getSavesAction({ serverId: serverId })
         ),
     });
 
     useError(isError, error);
 
     function handleLoadSaveFiles(open: boolean) {
-        console.log(saves);
         setComboBoxOpen(open);
     }
 
