@@ -27,26 +27,17 @@ export default function Commands() {
     };
 
     return (
-        <>
-            <Collapsible defaultOpen>
-                <h3 className="mb-4 text-lg font-semibold">
-                    General
-                    <CollapsibleTrigger asChild>
-                        <Button variant="ghost" size="sm">
-                            <Icons.caret_sort className="h-4 w-4" />
-                            <span className="sr-only">Toggle</span>
-                        </Button>
-                    </CollapsibleTrigger>
-                </h3>
-                <CollapsibleContent>
-                    <div className="space-y-4">
-                        <StartServer />
-                        <StopServer />
-                        {/* <RestartServer/> */}
-                    </div>
-                </CollapsibleContent>
-            </Collapsible>
+        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+            <div className="flex items-center">
+                <h1 className="text-lg font-semibold md:text-2xl">Commands</h1>
+            </div>
+            <div className="space-y-4">
+                <StartServer />
+                <StopServer />
+                <RestartServer />
+            </div>
+
             <Separator className="my-4" />
-        </>
+        </main>
     );
 }

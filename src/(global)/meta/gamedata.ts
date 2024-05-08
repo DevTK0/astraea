@@ -35,4 +35,12 @@ export const corekeeper: Game = {
     active: true,
 };
 
+export const template: Game = {
+    name: "Template",
+    link: "/games/test/servers/1/overview",
+    thumbnail: "",
+    banner: "",
+    active: true,
+};
+
 export const gameMetadata = [palworld, vrising, corekeeper];

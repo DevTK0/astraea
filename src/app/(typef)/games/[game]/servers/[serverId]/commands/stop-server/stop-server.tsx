@@ -1,21 +1,22 @@
+"use client";
 import { Button } from "@/(global)/components/ui/button";
 import { Icons } from "@/(global)/components/ui/icons";
 import { Label } from "@/(global)/components/ui/label";
-import { restartServerAction } from "./restart-server.action";
 import { toast } from "@/(global)/components/ui/use-toast";
+import { stopServerAction } from "./stop-server.action";
 import { useMutation } from "@tanstack/react-query";
-import { configs } from "@/(global)/configs/servers/palworld";
 import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
+import { configs } from "@/(global)/configs/servers/palworld";
 import { useError } from "@/(global)/components/error-toast/error-toast";
 
-export function RestartServer() {
-    const action = actionWithErrorHandling(restartServerAction);
+export function StopServer() {
+    const action = actionWithErrorHandling(stopServerAction);
     const { isError, isPending, mutate, error } = useMutation({
         mutationFn: action,
         onSuccess: (response) => {
             toast({
                 title: "Success",
-                description: `Server restarting...`,
+                description: `Server Stopping...`,
             });
         },
     });
@@ -25,9 +26,9 @@ export function RestartServer() {
     return (
         <div className="flex flex-row items-center justify-between rounded-lg border p-4">
             <div className="space-y-0.5">
-                <Label className="text-base">Restart</Label>
+                <Label className="text-base">Stop</Label>
                 <div className="text-sm text-muted-foreground">
-                    Restarts the server.
+                    Stops the server.
                 </div>
             </div>
             <Button
@@ -41,7 +42,7 @@ export function RestartServer() {
                 {isPending ? (
                     <Icons.spinner className="h-4 w-4 animate-spin" />
                 ) : (
-                    <Icons.reload />
+                    <Icons.stop />
                 )}
             </Button>
         </div>

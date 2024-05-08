@@ -1,4 +1,4 @@
-import { ServerStatus } from "../../../../[game]/servers/[serverId]/(local)/overview/server-status/server-status";
+import { ServerStatus } from "../../../../[game]/servers/[serverId]/overview/server-status/server-status";
 import { ClientStatus } from "./client-status/client-status";
 import { PlayerList } from "./player-list/player-list";
 

@@ -13,9 +13,9 @@ import { WhitelistIp } from "./whitelist-ip/whitelist-ip";
 import { UpdateClient } from "./update-client/update-client";
 import { ShutdownClient } from "./shutdown-client/shutdown-client";
 import { Broadcast } from "./broadcast/broadcast";
-import { StartServer } from "@/app/(typef)/games/[game]/servers/[serverId]/(local)/commands/start-server/start-server";
-import { StopServer } from "@/app/(typef)/games/[game]/servers/[serverId]/(local)/commands/stop-server/stop-server";
-import { RestartServer } from "@/app/(typef)/games/[game]/servers/[serverId]/(local)/commands/restart-server/restart-server";
+import { StartServer } from "@/app/(typef)/games/[game]/servers/[serverId]/commands/start-server/start-server";
+import { StopServer } from "@/app/(typef)/games/[game]/servers/[serverId]/commands/stop-server/stop-server";
+import { RestartServer } from "@/app/(typef)/games/[game]/servers/[serverId]/commands/restart-server/restart-server";
 
 export default function Commands() {
     return (
