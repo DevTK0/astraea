@@ -1,4 +1,4 @@
 export const routes = {
-    landing: "/games/palworld/servers/1/",
+    landing: "/games/",
     signIn: "/auth/signin",
 };
