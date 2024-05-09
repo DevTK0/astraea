@@ -13,7 +13,7 @@ import { useError } from "@/(global)/components/error-toast/error-toast";
 import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { usePathSegments } from "@/(global)/hooks/path";
 
-export function WhitelistIpComponent() {
+export function WhitelistIpComponent({ port }: { port: number }) {
     const { serverId } = usePathSegments();
     const [ip, setIp] = useState<string>("1.1.1.1");
 
@@ -31,7 +31,7 @@ export function WhitelistIpComponent() {
     useError(isError, error);
 
     function handleWhitelistIp() {
-        mutate({ ipAddress: ip, serverId: serverId });
+        mutate({ ipAddress: ip, protocol: "udp", port, serverId });
     }
 
     return (

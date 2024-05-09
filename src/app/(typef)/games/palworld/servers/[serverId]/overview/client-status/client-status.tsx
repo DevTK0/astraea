@@ -9,12 +9,11 @@ import {
     isServerRunningAction,
 } from "./client-status.action";
 import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
+import { usePathSegments } from "@/(global)/hooks/path";
 
-export function ClientStatus(
-    props: JSX.IntrinsicAttributes &
-        ClassAttributes<HTMLDivElement> &
-        HTMLAttributes<HTMLDivElement>
-) {
+export function ClientStatus({ className }: { className?: string }) {
+    const { game, serverId } = usePathSegments();
+
     const {
         isError,
         isPending,
@@ -22,17 +21,19 @@ export function ClientStatus(
         error,
     } = useQuery({
         queryKey: ["palworld", "serverRunning"],
-        queryFn: actionWithErrorHandling(() => isServerRunningAction({})),
+        queryFn: actionWithErrorHandling(() =>
+            isServerRunningAction({ game, serverId })
+        ),
         refetchInterval: 5000,
     });
 
     if (isPending) {
-        return <div {...props}></div>;
+        return <div className={className}></div>;
     }
 
     if (isError) {
         return (
-            <div {...props}>
+            <div className={className}>
                 <div className="flex flex-col items-start justify-start rounded-lg border p-4 space-y-2">
                     <h1 className="text-xl font-semibold">Client</h1>
                     <div className="text-red-500"> Error: {error?.message}</div>
@@ -41,12 +42,14 @@ export function ClientStatus(
         );
     }
 
+    console.log(ipAddress);
+
     if (!ipAddress) {
-        return <div {...props}></div>;
+        return <div className={className}></div>;
     }
 
     return (
-        <div {...props}>
+        <div className={className}>
             <div className="flex flex-col items-start justify-start rounded-lg border p-4 space-y-2">
                 <h1 className="text-xl font-semibold">Client</h1>
                 <RenderClientStatus ipAddress={ipAddress} />

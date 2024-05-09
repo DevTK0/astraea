@@ -19,7 +19,7 @@ import {
 } from "./aws/ec2";
 import { AWSError } from "../exception/aws";
 import { z } from "zod";
-import { serverSettingsSchema } from "../palworld/rest-api";
+import { serverSettingsSchema } from "../../services/palworld/rest-api";
 import { configs } from "@/(global)/configs/servers/palworld";
 import { writeToFile } from "../files/file-writer";
 
@@ -123,7 +123,9 @@ export async function startServer(
     serverId: number,
     options: { volumeSize: number; instanceType: string }
 ) {
+    console.log("hi");
     const instance = await getServerStatus(game, serverId);
+    console.log(instance);
 
     if (instance.status === "Running")
         throw new ServerError("Server is already running");
@@ -135,10 +137,12 @@ export async function startServer(
         throw new ServerError("Server is archived");
 
     const image = await checkIfImageExists(game, serverId);
+    console.log(image);
 
     if (!image) throw new AWSError("AMI not found");
 
     const templateId = await getLaunchTemplateId(game, serverId);
+    console.log(templateId);
 
     await runInstance(
         templateId,
@@ -167,6 +171,8 @@ export async function restartServer(game: string, serverId: number) {
 
 export async function configureAllowedIPs(
     ipAddresses: string[],
+    protocol: string,
+    port: number,
     securityGroupId: string
 ) {
     const ipList: string[] = [];
@@ -194,7 +200,7 @@ export async function configureAllowedIPs(
     const securityGroupRules = await getSecurityGroupRules(securityGroupId);
 
     const toRemove = securityGroupRules.SecurityGroupRules?.filter((rule) => {
-        return rule.IpProtocol === "udp" && rule.FromPort === 8211;
+        return rule.IpProtocol === protocol && rule.FromPort === port;
     });
 
     // Remove previous Ips if any
@@ -202,5 +208,11 @@ export async function configureAllowedIPs(
         await removeSecurityGroupRules(securityGroupId, toRemove);
     }
 
-    await addSecurityGroupRules(securityGroupId, ipRanges, "udp", 8211, 8211);
+    await addSecurityGroupRules(
+        securityGroupId,
+        ipRanges,
+        protocol,
+        port,
+        port
+    );
 }

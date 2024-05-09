@@ -1,6 +1,6 @@
-import { SupabaseDBError } from "../exception/database";
-import { ServerError } from "../exception/next-safe-action";
-import { Database } from "./actions";
+import { SupabaseDBError } from "../../lib/exception/database";
+import { ServerError } from "../../lib/exception/next-safe-action";
+import { Database } from "../../lib/database/actions";
 
 export async function getServerConfigs(serverId: number) {
     const db = Database();

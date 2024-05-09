@@ -7,16 +7,18 @@ import { z } from "zod";
 
 import { configureAllowedIPs } from "@/(global)/lib/cloud-provider/server";
 import { getUser } from "@/(global)/lib/auth/actions";
-import { getServerConfigs } from "@/(global)/lib/database/db-configs";
+import { getServerConfigs } from "@/(global)/services/database/db-configs";
 
 const whitelistIpSchema = z.object({
     ipAddress: z.string().ip({ version: "v4" }),
     serverId: z.number(),
+    protocol: z.string(),
+    port: z.number(),
 });
 
 export const whitelistIpAction = action(
     whitelistIpSchema,
-    async ({ ipAddress, serverId }) => {
+    async ({ ipAddress, serverId, protocol, port }) => {
         const user = await getUser();
         const userId = z.string().uuid().parse(user?.id);
         const db = Database();
@@ -34,7 +36,7 @@ export const whitelistIpAction = action(
                 `
                 auth_uid,
                 ip_address,
-                server_communities (
+                server_communities!inner (
                     server_id        
                 )
                 `
@@ -55,7 +57,12 @@ export const whitelistIpAction = action(
             })
             .parse(await getServerConfigs(serverId));
 
-        await configureAllowedIPs(ipAddresses, configs.security_group);
+        await configureAllowedIPs(
+            ipAddresses,
+            protocol,
+            port,
+            configs.security_group
+        );
 
         return { message: `${ipAddress} added to server whitelist.` };
     }

@@ -9,10 +9,10 @@ const routes = [
         label: "Commands",
         path: "commands",
     },
-    {
-        label: "Settings",
-        path: "settings",
-    },
+    // {
+    //     label: "Settings",
+    //     path: "settings",
+    // },
     // {
     //     label: "Shop",
     //     path: "shop",

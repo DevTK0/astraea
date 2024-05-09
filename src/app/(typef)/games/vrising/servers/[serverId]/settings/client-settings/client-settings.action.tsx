@@ -2,40 +2,42 @@
 
 import { action } from "@/(global)/lib/request/next-safe-action";
 import {
-    updatePalworldSettings,
-    userSettingsSchema,
-} from "@/(global)/lib/palworld/service";
-import { configs } from "@/(global)/configs/servers/palworld";
-import {
     getServerStatus,
     restartServer,
 } from "@/(global)/lib/cloud-provider/server";
-import { getServerSettings } from "@/(global)/lib/palworld/rest-api";
 import { z } from "zod";
-import { getGameConfigs } from "@/(global)/lib/database/db-configs";
+import { getGameConfigs } from "@/(global)/services/database/db-configs";
+import { gamelist } from "@/(global)/meta/gamedata";
 
 const getClientSettingsSchema = z.object({});
 
 export const getClientSettingsAction = action(
     getClientSettingsSchema,
     async ({}) => {
-        // change to use database
-        const res = await getGameConfigs(1);
-        return res;
+        return await getGameConfigs(2);
     }
 );
 
-const setClientSettingsSchema = z.object({ test: z.boolean() });
+const setClientSettingsSchema = z.object({
+    settings: z.object({
+        RelicSpawnType: z.string(),
+        ShowSiegeWeaponMapIcon: z.boolean(),
+    }),
+    game: z.enum(gamelist),
+    serverId: z.number(),
+});
 
 export const setClientSettingsAction = action(
     setClientSettingsSchema,
-    async (clientSettings) => {
-        // await updatePalworldSettings(clientSettings);
+    async ({ settings, game, serverId }) => {
+        // await updatePalworldSettings(settings);
 
-        const server = await getServerStatus(configs.game, configs.serverId);
+        console.log(settings);
 
-        if (server.status === "Running") {
-            await restartServer(configs.game, configs.serverId);
-        }
+        // const server = await getServerStatus(game, serverId);
+
+        // if (server.status === "Running") {
+        //     await restartServer(game, serverId);
+        // }
     }
 );

@@ -1,8 +1,9 @@
 import { RestoreSave } from "./restore-save/restore-save";
-import { WhitelistIp } from "./whitelist-ip/whitelist-ip";
+import { WhitelistIp } from "../../../../[game]/servers/[serverId]/commands/whitelist-ip/whitelist-ip";
 import { UpdateClient } from "./update-client/update-client";
 import { ShutdownClient } from "./shutdown-client/shutdown-client";
 import { Broadcast } from "./broadcast/broadcast";
+
 import { StartServer } from "@/app/(typef)/games/[game]/servers/[serverId]/commands/start-server/start-server";
 import { StopServer } from "@/app/(typef)/games/[game]/servers/[serverId]/commands/stop-server/stop-server";
 import { RestartServer } from "@/app/(typef)/games/[game]/servers/[serverId]/commands/restart-server/restart-server";
@@ -15,7 +16,7 @@ export default function Commands() {
             </div>
             <h3 className="text-lg font-semibold">General</h3>
             <div className="space-y-4">
-                <WhitelistIp />
+                <WhitelistIp port={8211} />
                 <RestoreSave />
                 <StartServer />
                 <StopServer />

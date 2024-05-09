@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { gamelist } from "@/(global)/meta/gamedata";
-import { announceMessage } from "@/(global)/lib/palworld/rest-api";
+import { announceMessage } from "@/(global)/services/palworld/rest-api";
 import { getServerAddress } from "@/(global)/lib/cloud-provider/server";
 
 type input = z.infer<typeof broadcastSchema>;

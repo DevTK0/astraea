@@ -5,7 +5,7 @@ import {
     checkIfServerIsRunning,
     runUnixCommands,
     uploadFileToS3,
-} from "../cloud-provider/aws/ec2";
+} from "../../lib/cloud-provider/aws/ec2";
 import { serverSettingsSchema } from "./rest-api";
 import { updateGameConfigs } from "../database/db-configs";
 

@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { gamelist } from "@/(global)/meta/gamedata";
 import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
-import { shutdown } from "@/(global)/lib/palworld/rest-api";
+import { shutdown } from "@/(global)/services/palworld/rest-api";
 import { getServerAddress } from "@/(global)/lib/cloud-provider/server";
 
 const shutdownClientSchema = z.object({

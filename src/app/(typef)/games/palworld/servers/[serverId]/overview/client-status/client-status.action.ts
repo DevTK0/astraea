@@ -7,16 +7,20 @@ import {
     checkIfClientIsRunning,
     getServerSettings,
     getServerMetrics,
-} from "@/(global)/lib/palworld/rest-api";
+} from "@/(global)/services/palworld/rest-api";
 import { getServerStatus } from "@/(global)/lib/cloud-provider/server";
-import { configs } from "@/(global)/configs/servers/palworld";
+import { gamelist } from "@/(global)/meta/gamedata";
+import { IpAddressType } from "@aws-sdk/client-ec2";
 
-const isServerRunningSchema = z.object({});
+const isServerRunningSchema = z.object({
+    game: z.enum(gamelist),
+    serverId: z.number(),
+});
 
 export const isServerRunningAction = action(
     isServerRunningSchema,
-    async ({}) => {
-        const server = await getServerStatus(configs.game, configs.serverId);
+    async ({ game, serverId }) => {
+        const server = await getServerStatus(game, serverId);
 
         return server.status === "Running" ? server.ipAddress : undefined;
     }

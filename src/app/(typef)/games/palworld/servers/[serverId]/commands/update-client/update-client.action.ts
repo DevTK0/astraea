@@ -5,9 +5,9 @@ import { z } from "zod";
 
 import { gamelist } from "@/(global)/meta/gamedata";
 import { ServerError } from "@/(global)/lib/exception/next-safe-action";
-import { checkIfClientIsRunning } from "@/(global)/lib/palworld/rest-api";
+import { checkIfClientIsRunning } from "@/(global)/services/palworld/rest-api";
 import { getServerAddress } from "@/(global)/lib/cloud-provider/server";
-import { updatePalworld } from "@/(global)/lib/palworld/service";
+import { updatePalworld } from "@/(global)/services/palworld/service";
 
 const updateClientSchema = z.object({
     game: z.enum(gamelist),

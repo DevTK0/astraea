@@ -10,19 +10,16 @@ import { getServerStatusAction } from "./server-status.action";
 import type { ServerStatus } from "@/(global)/lib/cloud-provider/server";
 import { useQuery } from "@tanstack/react-query";
 import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
-import { configs } from "@/(global)/configs/servers/palworld";
-import { gamelist } from "@/(global)/meta/gamedata";
-import { usePathname } from "next/navigation";
-import { z } from "zod";
+import { usePathSegments } from "@/(global)/hooks/path";
 
-export function ServerStatus(
-    props: JSX.IntrinsicAttributes &
-        ClassAttributes<HTMLDivElement> &
-        HTMLAttributes<HTMLDivElement>
-) {
-    const path = usePathname();
-    const game = z.enum(gamelist).parse(path.split("/")[2]);
-    const serverId = z.coerce.number().parse(path.split("/")[4]);
+export function ServerStatus({
+    className,
+    portNum,
+}: {
+    className?: string;
+    portNum: number;
+}) {
+    const { game, serverId } = usePathSegments();
 
     const {
         isPending,
@@ -37,15 +34,17 @@ export function ServerStatus(
                 serverId: serverId,
             })
         ),
+        refetchInterval: 5000,
     });
 
     return (
-        <div {...props}>
+        <div className={className}>
             <div className="flex flex-col items-start justify-start rounded-lg border p-4">
                 <div className="flex flex-row items-start justify-between w-full">
                     <div className="space-y-2">
                         <h1 className="text-xl font-semibold">Server</h1>
                         <RenderStatus
+                            portNum={portNum}
                             isPending={isPending}
                             isError={isError}
                             server={server}
@@ -65,11 +64,13 @@ export function ServerStatus(
 }
 
 const RenderStatus = ({
+    portNum,
     isPending,
     isError,
     server,
     error,
 }: {
+    portNum: number;
     isPending: boolean;
     isError: boolean;
     server:
@@ -117,7 +118,7 @@ const RenderStatus = ({
                     <div className="flex items-center space-x-1">
                         <p className="text-sm">
                             {`${server.ipAddress}`}
-                            <span className="font-bold">:8211 </span>
+                            <span className="font-bold">:{portNum} </span>
                         </p>
                         <Button
                             variant="ghost"

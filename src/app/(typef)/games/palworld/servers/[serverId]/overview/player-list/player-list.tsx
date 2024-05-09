@@ -3,9 +3,10 @@
 import { JSX, ClassAttributes, HTMLAttributes, useEffect } from "react";
 import { getPlayerListAction } from "./player-list.action";
 import { useQuery } from "@tanstack/react-query";
-import { playerListSchema } from "@/(global)/lib/palworld/rest-api";
+import { playerListSchema } from "@/(global)/services/palworld/rest-api";
 import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import z from "zod";
+import { usePathSegments } from "@/(global)/hooks/path";
 
 type Players = z.infer<typeof playerListSchema>;
 
@@ -14,6 +15,8 @@ export function PlayerList(
         ClassAttributes<HTMLDivElement> &
         HTMLAttributes<HTMLDivElement>
 ) {
+    const { game, serverId } = usePathSegments();
+
     const {
         isError,
         isPending,
@@ -21,7 +24,9 @@ export function PlayerList(
         error,
     } = useQuery({
         queryKey: ["palworld", "online-players"],
-        queryFn: actionWithErrorHandling(() => getPlayerListAction({})),
+        queryFn: actionWithErrorHandling(() =>
+            getPlayerListAction({ game, serverId })
+        ),
     });
 
     return (

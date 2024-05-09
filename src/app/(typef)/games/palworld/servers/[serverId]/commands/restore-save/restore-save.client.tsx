@@ -112,6 +112,7 @@ export function ClientComponent() {
             <RenderRestoreButton
                 saveFile={comboBoxValue}
                 saveId={saves?.saveId}
+                serverId={serverId}
             />
         </div>
     );
@@ -120,9 +121,11 @@ export function ClientComponent() {
 const RenderRestoreButton = ({
     saveFile,
     saveId,
+    serverId,
 }: {
     saveFile: string;
     saveId: string | undefined;
+    serverId: number;
 }) => {
     const action = actionWithErrorHandling(restoreSaveAction);
     const { isError, isPending, mutate, error } = useMutation({
@@ -139,7 +142,7 @@ const RenderRestoreButton = ({
         if (isPending || !saveId) return;
 
         mutate({
-            serverId: configs.serverId,
+            serverId: serverId,
             saveFile: saveFile,
             saveId: saveId,
         });
