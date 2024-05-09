@@ -126,7 +126,7 @@ const RenderStatus = ({
                             onClick={() => {
                                 if (server.ipAddress === undefined) return;
                                 navigator.clipboard.writeText(
-                                    `${server.ipAddress}:8211`
+                                    `${server.ipAddress}:${portNum}`
                                 );
                                 toast({
                                     description: "Copied to clipboard.",
