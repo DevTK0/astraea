@@ -17,10 +17,12 @@ import {
     waitUntilInstanceStopped,
 } from "@aws-sdk/client-ec2";
 import { SSMClient, SendCommandCommand } from "@aws-sdk/client-ssm";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { z } from "zod";
 
 const ec2 = new EC2Client();
 const ssm = new SSMClient();
+const s3 = new S3Client();
 
 const instanceState = [
     "pending",
@@ -521,6 +523,20 @@ export async function addSecurityGroupRules(
                     IpRanges: ipRanges,
                 },
             ],
+        })
+    );
+}
+
+export async function uploadFileToS3(
+    bucket: string,
+    key: string,
+    body: string
+) {
+    return await s3.send(
+        new PutObjectCommand({
+            Bucket: bucket,
+            Key: key,
+            Body: body,
         })
     );
 }

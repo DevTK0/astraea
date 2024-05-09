@@ -24,7 +24,7 @@ export function GamePortrait({
                 <Link href={game.link}>
                     <Image
                         src={game.thumbnail}
-                        alt={game.name}
+                        alt={game.label}
                         width={width}
                         height={height}
                         className="h-auto w-auto object-cover transition-all hover:scale-105 aspect-[3/4]"

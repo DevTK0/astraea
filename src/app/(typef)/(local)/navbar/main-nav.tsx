@@ -1,4 +1,5 @@
 import { cn } from "@/(global)/lib/css/utils";
+import Link from "next/link";
 
 export function MainNav({
     className,
@@ -11,6 +12,19 @@ export function MainNav({
                 className
             )}
             {...props}
-        ></nav>
+        >
+            <Link
+                href="/games"
+                className="text-muted-foreground hover:text-foreground"
+            >
+                Games
+            </Link>
+            <Link
+                href="#"
+                className="text-muted-foreground hover:text-foreground"
+            >
+                Blog
+            </Link>
+        </nav>
     );
 }

@@ -1,7 +1,6 @@
-export const gamelist = ["Palworld", "Corekeeper", "VRising"] as const;
-
 export interface Game {
-    name: string;
+    label: string;
+    key: string; // should be lower case with no spaces
     link: string;
     thumbnail: string;
     banner: string;
@@ -9,8 +8,9 @@ export interface Game {
 }
 
 export const palworld: Game = {
-    name: "Palworld",
-    link: "/games/palworld",
+    label: "Palworld",
+    key: "palworld",
+    link: "/games/palworld/servers/1/overview",
     thumbnail:
         "https://cdn.cloudflare.steamstatic.com/steam/apps/1623730/library_600x900_2x.jpg?t=1705661524",
     banner: "https://cdn.cloudflare.steamstatic.com/steam/apps/1623730/library_hero.jpg?t=1705661524",
@@ -18,8 +18,9 @@ export const palworld: Game = {
 };
 
 export const vrising: Game = {
-    name: "V Rising",
-    link: "/games/vrising",
+    label: "V Rising",
+    key: "vrising",
+    link: "/games/vrising/servers/2/overview",
     thumbnail:
         "https://cdn.cloudflare.steamstatic.com/steam/apps/1604030/library_600x900_2x.jpg?t=1694689356",
     banner: "https://cdn.cloudflare.steamstatic.com/steam/apps/1604030/library_hero.jpg?t=1694689356",
@@ -27,7 +28,8 @@ export const vrising: Game = {
 };
 
 export const corekeeper: Game = {
-    name: "Core Keeper",
+    label: "Core Keeper",
+    key: "corekeeper",
     link: "/games/corekeeper",
     thumbnail:
         "https://cdn.cloudflare.steamstatic.com/steam/apps/1621690/library_600x900_2x.jpg?t=1700216976",
@@ -35,4 +37,15 @@ export const corekeeper: Game = {
     active: true,
 };
 
-export const gameMetadata = [palworld, vrising, corekeeper];
+export const template: Game = {
+    label: "Template",
+    key: "test",
+    link: "/games/test/servers/1/overview",
+    thumbnail: "",
+    banner: "",
+    active: true,
+};
+
+export const gamelist = [palworld.key, corekeeper.key, vrising.key] as const;
+
+export const gameMetadataList = [palworld, vrising, corekeeper];
