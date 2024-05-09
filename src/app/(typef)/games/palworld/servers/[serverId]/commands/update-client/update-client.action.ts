@@ -17,7 +17,6 @@ const updateClientSchema = z.object({
 export const updateClientAction = action(
     updateClientSchema,
     async ({ game, serverId }) => {
-        console.log(game, serverId);
         const serverAddress = await getServerAddress(game, serverId);
 
         const response = await checkIfClientIsRunning(serverAddress);

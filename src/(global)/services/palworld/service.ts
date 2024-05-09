@@ -23,17 +23,17 @@ export async function updatePalworld(serverId: number) {
     await runUnixCommands(instanceId, updateCommand);
 }
 
-export async function startPalworld() {
-    const response = await checkIfServerIsRunning("Palworld", 1);
+// export async function startPalworld(serverId: number) {
+//     const response = await checkIfServerIsRunning(palworld.key, serverId);
 
-    const updateCommand = [
-        `runuser -l palworld -c '/home/palworld/Palworld/start.sh'`,
-    ];
+//     const updateCommand = [
+//         `runuser -l palworld -c '/home/palworld/Palworld/start.sh'`,
+//     ];
 
-    const instanceId = z.string().parse(response?.instanceId);
+//     const instanceId = z.string().parse(response?.instanceId);
 
-    await runUnixCommands(instanceId, updateCommand);
-}
+//     await runUnixCommands(instanceId, updateCommand);
+// }
 
 export function generateSettings(
     userSettings: z.output<typeof userSettingsSchema>,

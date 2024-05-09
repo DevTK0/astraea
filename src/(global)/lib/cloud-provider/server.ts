@@ -113,7 +113,10 @@ export async function getServerAddress(game: string, serverId: number) {
 
     if (!isRunning) throw new ServerError("Server is not running");
 
-    const serverAddress = z.string().ip().parse(isRunning?.ipAddress);
+    const serverAddress = z
+        .string()
+        .ip({ message: "Server ipAddress is invalid." })
+        .parse(isRunning?.ipAddress);
 
     return serverAddress;
 }

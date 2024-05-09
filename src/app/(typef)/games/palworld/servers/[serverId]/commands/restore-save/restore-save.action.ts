@@ -5,6 +5,7 @@ import { getUser } from "@/(global)/lib/auth/actions";
 import { Database } from "@/(global)/lib/database/server";
 import { SupabaseDBError } from "@/(global)/lib/exception/database";
 import { action } from "@/(global)/lib/request/next-safe-action";
+import { palworld } from "@/(global)/meta/gamedata";
 import { DescribeInstancesCommand, EC2Client } from "@aws-sdk/client-ec2";
 import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 import { SSMClient, SendCommandCommand } from "@aws-sdk/client-ssm";
@@ -87,7 +88,7 @@ export const restoreSaveAction = action(
                 Filters: [
                     {
                         Name: "tag:Game",
-                        Values: ["Palworld"],
+                        Values: [palworld.key],
                     },
                     {
                         Name: "tag:InstanceType",
@@ -104,7 +105,7 @@ export const restoreSaveAction = action(
         const reservations = z
             .any()
             .array()
-            .length(1)
+            .length(1, { message: "Server is not running." })
             .parse(response.Reservations);
 
         const instances = z

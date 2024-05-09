@@ -27,6 +27,7 @@ export async function getServerInfo(address: string) {
                 contentType: "application/json",
                 Authorization: `Basic ${process.env.PALWORLD_API_AUTH_HEADER}`,
             },
+            cache: "no-cache",
         }
     );
 }
@@ -53,6 +54,7 @@ export async function getPlayerList(address: string) {
                 contentType: "application/json",
                 Authorization: `Basic ${process.env.PALWORLD_API_AUTH_HEADER}`,
             },
+            cache: "no-cache",
         }
     );
     return playerListSchema.parse(response.players);
