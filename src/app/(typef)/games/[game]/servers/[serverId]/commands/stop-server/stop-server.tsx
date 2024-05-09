@@ -4,18 +4,20 @@ import { Icons } from "@/(global)/components/ui/icons";
 import { Label } from "@/(global)/components/ui/label";
 import { toast } from "@/(global)/components/ui/use-toast";
 import { stopServerAction } from "./stop-server.action";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { useError } from "@/(global)/components/error-toast/error-toast";
 import { usePathSegments } from "@/(global)/hooks/path";
 
 export function StopServer() {
     const { game, serverId } = usePathSegments();
+    const queryClient = useQueryClient();
 
     const action = actionWithErrorHandling(stopServerAction);
     const { isError, isPending, mutate, error } = useMutation({
         mutationFn: action,
         onSuccess: (response) => {
+            queryClient.invalidateQueries({ queryKey: [game, serverId] });
             toast({
                 title: "Success",
                 description: `Server Stopping...`,

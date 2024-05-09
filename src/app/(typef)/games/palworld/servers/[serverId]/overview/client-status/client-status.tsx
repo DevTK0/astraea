@@ -1,80 +1,37 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { JSX, ClassAttributes, HTMLAttributes } from "react";
 import {
     getClientMetricsAction,
     getClientSettingsAction,
-    isClientRunningAction,
-    isServerRunningAction,
+    getRunningIpAddressAction,
 } from "./client-status.action";
 import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { usePathSegments } from "@/(global)/hooks/path";
 
 export function ClientStatus({ className }: { className?: string }) {
-    const { game, serverId } = usePathSegments();
-
-    const {
-        isError,
-        isPending,
-        data: ipAddress,
-        error,
-    } = useQuery({
-        queryKey: ["palworld", "serverRunning"],
-        queryFn: actionWithErrorHandling(() =>
-            isServerRunningAction({ game, serverId })
-        ),
-        refetchInterval: 5000,
-    });
-
-    if (isPending) {
-        return <div className={className}></div>;
-    }
-
-    if (isError) {
-        return (
-            <div className={className}>
-                <div className="flex flex-col items-start justify-start rounded-lg border p-4 space-y-2">
-                    <h1 className="text-xl font-semibold">Client</h1>
-                    <div className="text-red-500"> Error: {error?.message}</div>
-                </div>
-            </div>
-        );
-    }
-
-    console.log(ipAddress);
-
-    if (!ipAddress) {
-        return <div className={className}></div>;
-    }
-
     return (
         <div className={className}>
             <div className="flex flex-col items-start justify-start rounded-lg border p-4 space-y-2">
                 <h1 className="text-xl font-semibold">Client</h1>
-                <RenderClientStatus ipAddress={ipAddress} />
+                <RenderClientStatus />
             </div>
         </div>
     );
 }
 
-const RenderClientStatus = ({ ipAddress }: { ipAddress: string }) => {
-    const {
-        isError,
-        isPending,
-        data: isClientRunning,
-        error,
-    } = useQuery({
-        queryKey: ["palworld", "clientRunning"],
+const RenderClientStatus = () => {
+    const { game, serverId } = usePathSegments();
+
+    const { data: ipAddress } = useQuery({
+        queryKey: [serverId, "ipAddress"],
         queryFn: actionWithErrorHandling(() =>
-            isClientRunningAction({ ipAddress: ipAddress })
+            getRunningIpAddressAction({ game, serverId })
         ),
         refetchInterval: 5000,
     });
 
-    if (isError) console.log(error.message);
-
-    if (!isClientRunning) {
+    if (!ipAddress) {
         return (
             <div className="flex items-center space-x-1">
                 <div className="rounded-full border w-3 h-3 bg-gray-500"></div>
@@ -83,76 +40,61 @@ const RenderClientStatus = ({ ipAddress }: { ipAddress: string }) => {
         );
     }
 
-    return (
-        <>
-            <div className="flex items-center space-x-1">
-                <div className="rounded-full border w-3 h-3 bg-green-500"></div>
-                <div className="text-sm font-medium text-green-500">Online</div>
-            </div>
-            <div className="grid grid-cols-1 gap-4 w-full md:grid-cols-2 ">
-                <RenderClientSettings ipAddress={ipAddress} />
-                <RenderClientMetrics ipAddress={ipAddress} />
-            </div>
-        </>
-    );
-};
-
-const RenderClientSettings = ({ ipAddress }: { ipAddress: string }) => {
-    const {
-        isError,
-        isPending,
-        data: settings,
-        error,
-    } = useQuery({
-        queryKey: ["palworld", "clientSettings"],
-        queryFn: actionWithErrorHandling(() =>
-            getClientSettingsAction({ ipAddress: ipAddress })
-        ),
-        refetchInterval: 5000,
-    });
+    // const { data: settings } = useQuery({
+    //     queryKey: [serverId, "settings"],
+    //     queryFn: actionWithErrorHandling(() =>
+    //         getClientSettingsAction({ ipAddress: ipAddress })
+    //     ),
+    // });
 
     return (
-        <div className="rounded-lg border p-4 ">
-            <div className="grid grid-cols-2">
-                <div>Exp Rate </div>
-                <div>{settings?.ExpRate}x</div>
-                <div>Capture Rate </div>
-                <div>{settings?.PalCaptureRate}x</div>
-                <div>Work Speed Rate </div>
-                <div>{settings?.WorkSpeedRate}x</div>
-                <div>Drop Rate </div>
-                <div>{settings?.EnemyDropItemRate}x</div>
-                <div>Egg Hatch Rate</div>
-                <div>{settings?.PalEggDefaultHatchingTime}x</div>
-            </div>
+        <div className="flex items-center space-x-1">
+            <div className="rounded-full border w-3 h-3 bg-green-500"></div>
+            <div className="text-sm font-medium text-green-500">Online</div>
         </div>
     );
-};
 
-const RenderClientMetrics = ({ ipAddress }: { ipAddress: string }) => {
-    const {
-        isError,
-        isPending,
-        data: metrics,
-        error,
-    } = useQuery({
-        queryKey: ["palworld", "clientMetrics"],
-        queryFn: actionWithErrorHandling(() =>
-            getClientMetricsAction({ ipAddress: ipAddress })
-        ),
-        refetchInterval: 5000,
-    });
+    // const { data: metrics } = useQuery({
+    //     queryKey: [serverId, "metrics"],
+    //     queryFn: actionWithErrorHandling(() =>
+    //         getClientMetricsAction({ ipAddress: ipAddress })
+    //     ),
+    // });
 
-    return (
-        <div className="rounded-lg border p-4">
-            <div className="grid grid-cols-2 ">
-                <div>Server FPS </div>
-                <div>{metrics?.serverfps}</div>
-                <div>Uptime</div>
-                <div>
-                    {metrics ? (metrics?.uptime / 3600).toPrecision(2) : ""} hrs
-                </div>
-            </div>
-        </div>
-    );
+    // return (
+    //     <>
+    //         <div className="flex items-center space-x-1">
+    //             <div className="rounded-full border w-3 h-3 bg-green-500"></div>
+    //             <div className="text-sm font-medium text-green-500">Online</div>
+    //         </div>
+    //         <div className="grid grid-cols-1 gap-4 w-full md:grid-cols-2 ">
+    //             <div className="rounded-lg border p-4 ">
+    //                 <div className="grid grid-cols-2">
+    //                     <div>Exp Rate </div>
+    //                     <div>{settings?.ExpRate}x</div>
+    //                     <div>Capture Rate </div>
+    //                     <div>{settings?.PalCaptureRate}x</div>
+    //                     <div>Work Speed Rate </div>
+    //                     <div>{settings?.WorkSpeedRate}x</div>
+    //                     <div>Drop Rate </div>
+    //                     <div>{settings?.EnemyDropItemRate}x</div>
+    //                     <div>Egg Hatch Rate</div>
+    //                     <div>{settings?.PalEggDefaultHatchingTime}x</div>
+    //                 </div>
+    //             </div>
+    //             <div className="rounded-lg border p-4">
+    //                 <div className="grid grid-cols-2 ">
+    //                     <div>Server FPS </div>
+    //                     <div>{metrics?.serverfps}</div>
+    //                     <div>Uptime</div>
+    //                     <div>
+    //                         {metrics
+    //                             ? (metrics?.uptime / 3600).toPrecision(2)
+    //                             : ""}{" "}
+    //                         hrs
+    //                     </div>
+    //                 </div>
+    //             </div>
+    //         </div>
+    //     </>
 };

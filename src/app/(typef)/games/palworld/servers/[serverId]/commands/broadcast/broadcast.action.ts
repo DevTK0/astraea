@@ -15,6 +15,6 @@ const broadcastSchema = z.object({
 export const broadcastAction = action(
     broadcastSchema,
     async ({ game, serverId, message }) => {
-        broadcast({ game, serverId, message });
+        await broadcast({ game, serverId, message });
     }
 );

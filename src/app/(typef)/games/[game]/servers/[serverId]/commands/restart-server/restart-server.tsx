@@ -4,18 +4,20 @@ import { Icons } from "@/(global)/components/ui/icons";
 import { Label } from "@/(global)/components/ui/label";
 import { restartServerAction } from "./restart-server.action";
 import { toast } from "@/(global)/components/ui/use-toast";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { actionWithErrorHandling } from "@/(global)/lib/request/next-safe-action";
 import { useError } from "@/(global)/components/error-toast/error-toast";
 import { usePathSegments } from "@/(global)/hooks/path";
 
 export function RestartServer() {
     const { game, serverId } = usePathSegments();
+    const queryClient = useQueryClient();
 
     const action = actionWithErrorHandling(restartServerAction);
     const { isError, isPending, mutate, error } = useMutation({
         mutationFn: action,
         onSuccess: (response) => {
+            queryClient.invalidateQueries({ queryKey: [game, serverId] });
             toast({
                 title: "Success",
                 description: `Server restarting...`,

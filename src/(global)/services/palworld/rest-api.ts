@@ -6,6 +6,7 @@ export async function checkIfClientIsRunning(address: string) {
     try {
         await getServerInfo(address);
     } catch (error) {
+        console.log(error);
         if (
             error instanceof TypeError &&
             error.cause instanceof Error &&

@@ -27,7 +27,7 @@ export function ServerStatus({
         data: server,
         error,
     } = useQuery({
-        queryKey: ["server", serverId, "status"],
+        queryKey: [serverId, "serverStatus"],
         queryFn: actionWithErrorHandling(() =>
             getServerStatusAction({
                 game: game,

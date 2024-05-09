@@ -10,30 +10,28 @@ import {
 } from "@/(global)/services/palworld/rest-api";
 import { getServerStatus } from "@/(global)/lib/cloud-provider/server";
 import { gamelist } from "@/(global)/meta/gamedata";
-import { IpAddressType } from "@aws-sdk/client-ec2";
+import { ServerError } from "@/(global)/lib/exception/next-safe-action";
 
-const isServerRunningSchema = z.object({
+const getRunningIpAddressSchema = z.object({
     game: z.enum(gamelist),
     serverId: z.number(),
 });
 
-export const isServerRunningAction = action(
-    isServerRunningSchema,
+// will only return if client is running
+export const getRunningIpAddressAction = action(
+    getRunningIpAddressSchema,
     async ({ game, serverId }) => {
         const server = await getServerStatus(game, serverId);
+        const serverAddress = z
+            .string()
+            .ip({ message: "Server is not running." })
+            .parse(server.ipAddress);
 
-        return server.status === "Running" ? server.ipAddress : undefined;
-    }
-);
+        const isUp = await checkIfClientIsRunning(serverAddress);
 
-const isClientRunningSchema = z.object({ ipAddress: z.string().ip() });
+        if (!isUp) return undefined;
 
-export const isClientRunningAction = action(
-    isClientRunningSchema,
-    async ({ ipAddress }) => {
-        const serverAddress = z.string().ip().parse(ipAddress);
-
-        return await checkIfClientIsRunning(serverAddress);
+        return serverAddress;
     }
 );
 

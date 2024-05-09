@@ -23,7 +23,7 @@ export function PlayerList(
         data: playerList,
         error,
     } = useQuery({
-        queryKey: ["palworld", "online-players"],
+        queryKey: [serverId, "onlinePlayers"],
         queryFn: actionWithErrorHandling(() =>
             getPlayerListAction({ game, serverId })
         ),
