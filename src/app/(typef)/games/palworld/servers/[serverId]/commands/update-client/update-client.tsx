@@ -38,7 +38,7 @@ export function UpdateClient() {
                 variant="secondary"
                 size="sm"
                 className="w-[80px]"
-                onClick={() => mutate({ game: game, serverId: serverId })}
+                onClick={() => mutate({ game, serverId })}
             >
                 {isPending ? (
                     <Icons.spinner className="h-4 w-4 animate-spin" />

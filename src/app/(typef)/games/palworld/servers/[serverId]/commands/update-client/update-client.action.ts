@@ -17,6 +17,7 @@ const updateClientSchema = z.object({
 export const updateClientAction = action(
     updateClientSchema,
     async ({ game, serverId }) => {
+        console.log(game, serverId);
         const serverAddress = await getServerAddress(game, serverId);
 
         const response = await checkIfClientIsRunning(serverAddress);
@@ -26,6 +27,6 @@ export const updateClientAction = action(
                 "Client must be shutdown before performing updates."
             );
 
-        await updatePalworld();
+        await updatePalworld(serverId);
     }
 );
