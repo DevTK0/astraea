@@ -16,7 +16,7 @@ export default async function Navbar() {
                     <Logo />
                     <MainNav className="mx-6" />
                     <div className="ml-auto flex items-center space-x-6">
-                        <div className="flex items-center">
+                        {/* <div className="flex items-center">
                             <Button
                                 variant="ghost"
                                 size="icon"
@@ -25,7 +25,7 @@ export default async function Navbar() {
                                 <Icons.diamond className="h-4 w-4 text-cyan-500" />
                             </Button>
                             <div className="text-cyan-500"> 500 </div>
-                        </div>
+                        </div> */}
                         {/* <div className="flex items-center">
                             <Button
                                 variant="ghost"
