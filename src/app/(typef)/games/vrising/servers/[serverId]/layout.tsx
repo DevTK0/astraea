@@ -1,3 +1,4 @@
+import { Note } from "@/(global)/components/notes/notes";
 import ServerSideBar from "@/(global)/components/server/server-side-bar";
 
 const routes = [
@@ -26,6 +27,10 @@ export default function Layout({
 }>) {
     return (
         <ServerSideBar routes={routes} serverName="Astraea V Rising">
+            <Note type="warning">
+                Weekend servers are only available from Friday 6:00 PM to Sunday
+                2:00 AM.
+            </Note>
             {children}
         </ServerSideBar>
     );
