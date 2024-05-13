@@ -4,7 +4,10 @@ import { action } from "@/(global)/lib/request/next-safe-action";
 import { z } from "zod";
 import { startServer } from "@/(global)/lib/cloud-provider/server";
 import { instanceTypes } from "@/(global)/lib/cloud-provider/aws/ec2";
-import { getServerConfigs } from "@/(global)/services/database/db-configs";
+import {
+    getServerConfigs,
+    getWeekdayAccess,
+} from "@/(global)/services/database/db-configs";
 import { ServerError } from "@/(global)/lib/exception/next-safe-action";
 
 const startServerSchema = z.object({
@@ -20,11 +23,7 @@ export const startServerAction = action(
     async ({ game, serverId }) => {
         const date = new Date();
 
-        if (!validateHours(date)) {
-            throw new ServerError(
-                "Server is only available from Friday 6:00 PM to Sunday 2:00 AM"
-            );
-        }
+        await validate(serverId);
 
         const configs = await getServerConfigs(serverId);
 
@@ -42,10 +41,23 @@ export const startServerAction = action(
     }
 );
 
-const validateHours = (date: Date) => {
-    // admins can start the server at any time
+async function validate(serverId: number) {
     if (admin) return true;
 
+    const success = validateHours(new Date());
+
+    if (success) return true;
+
+    const weekdayAccess = await getWeekdayAccess(serverId);
+
+    if (weekdayAccess) return true;
+
+    throw new ServerError(
+        "Free Access is only available from Friday 6:00 PM to Monday 2:00 AM"
+    );
+}
+
+const validateHours = (date: Date) => {
     return (
         (date.getUTCDay() === 5 && date.getUTCHours() >= 10) ||
         date.getUTCDay() === 6 ||

@@ -1,4 +1,4 @@
-import ServerSideBar from "@/(global)/components/server/server-side-bar";
+import ServerLayout from "@/(global)/components/server/server-layout";
 
 const routes = [
     {
@@ -25,9 +25,9 @@ export default function Layout({
     children: React.ReactNode;
 }>) {
     return (
-        <ServerSideBar routes={routes} serverName="Template">
+        <ServerLayout routes={routes} serverName="Template">
             {" "}
             {children}{" "}
-        </ServerSideBar>
+        </ServerLayout>
     );
 }

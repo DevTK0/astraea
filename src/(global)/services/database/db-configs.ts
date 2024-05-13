@@ -59,3 +59,38 @@ export async function updateGameConfigs(
 
     if (error) throw new SupabaseDBError(error);
 }
+
+export async function getWeekdayAccess(serverId: number) {
+    const db = Database();
+    const { data: wdAccess, error } = await db
+        .from("server_configs")
+        .select(
+            `
+            config,
+            value
+            `
+        )
+        .eq("server_id", serverId)
+        .eq("config", "weekday_access")
+        .single();
+
+    if (error) throw new SupabaseDBError(error);
+
+    if (!wdAccess.value) return false;
+
+    return wdAccess.value === "true";
+}
+
+export async function setWeekdayAccess(serverId: number, value: boolean) {
+    const db = Database();
+    const { error } = await db
+        .from("server_configs")
+        .upsert({
+            server_id: serverId,
+            config: "weekday_access",
+            value: value.toString(),
+        })
+        .select();
+
+    if (error) throw new SupabaseDBError(error);
+}

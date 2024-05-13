@@ -1,4 +1,4 @@
-import Logo from "@/(global)/components/ui/logo";
+import Logo from "@/(global)/components/navigation/logo";
 import { MainNav } from "./main-nav";
 import { UserNav } from "./user-nav";
 import { getUser } from "@/(global)/lib/auth/server";

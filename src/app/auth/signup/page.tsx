@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
-import Logo from "@/(global)/components/ui/logo";
+import Logo from "@/(global)/components/navigation/logo";
 import { getSession } from "@/(global)/lib/auth/server";
 import { routes } from "@/(global)/configs/site";
 

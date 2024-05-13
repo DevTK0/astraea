@@ -5,8 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/(global)/lib/css/utils";
 import { Icons } from "../ui/icons";
+import { Note } from "../notes/notes";
 
-export default function ServerSideBar({
+export default function ServerLayout({
     children,
     routes,
     serverName,
@@ -62,6 +63,10 @@ export default function ServerSideBar({
                 </div>
             </div>
             <div className="w-full flex-1 h-full px-4 py-6 space-y-4 lg:px-8 ">
+                <Note type="info">
+                    Weekend servers are only available from Friday 6:00 PM to
+                    Monday 2:00 AM.
+                </Note>
                 {children}
             </div>
         </div>
