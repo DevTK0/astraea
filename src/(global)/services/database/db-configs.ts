@@ -86,12 +86,11 @@ export async function setWeekdayAccess(serverId: number, value: boolean) {
     const db = Database();
     const { error } = await db
         .from("server_configs")
-        .upsert({
-            server_id: serverId,
-            config: "weekday_access",
+        .update({
             value: value.toString(),
         })
-        .select();
+        .eq("server_id", serverId)
+        .eq("config", "weekday_access");
 
     if (error) throw new SupabaseDBError(error);
 }

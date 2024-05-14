@@ -35,12 +35,12 @@ export function WhitelistIpComponent({ port }: { port: number }) {
     }
 
     return (
-        <div className="flex flex-row items-center justify-between w-full md:w-[300px]">
+        <div className="flex flex-row items-center justify-between w-full md:w-[300px] space-x-2">
             <RenderInput onIpChange={setIp} />
             <Button
                 variant="outline"
                 size="icon"
-                className="ml-2"
+                className="w-[40px]"
                 onClick={handleWhitelistIp}
             >
                 {isPending ? (

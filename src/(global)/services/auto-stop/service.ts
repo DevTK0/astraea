@@ -64,6 +64,16 @@ async function removeWeekdayAccess(serverId: number) {
     if (error) throw new SupabaseDBError(error);
 }
 
+export async function registerAutostop(serverId: number, days: number) {
+    await inngest.send({
+        name: "weekday-autostop",
+        data: {
+            serverId,
+            days,
+        },
+    });
+}
+
 export const weekendAutostopFn = inngest.createFunction(
     { id: "weekend-autostop" },
     { cron: "TZ=Asia/Singapore 0 2 * * 1" },

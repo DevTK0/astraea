@@ -152,14 +152,17 @@ export type Database = {
       users: {
         Row: {
           auth_uid: string
+          coins: number
           ip_address: string | null
         }
         Insert: {
           auth_uid?: string
+          coins?: number
           ip_address?: string | null
         }
         Update: {
           auth_uid?: string
+          coins?: number
           ip_address?: string | null
         }
         Relationships: [
