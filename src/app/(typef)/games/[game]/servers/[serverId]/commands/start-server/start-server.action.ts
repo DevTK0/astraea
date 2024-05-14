@@ -9,6 +9,7 @@ import {
     getWeekdayAccess,
 } from "@/(global)/services/database/db-configs";
 import { ServerError } from "@/(global)/lib/exception/next-safe-action";
+import { isWeekend } from "@/(global)/lib/date/utils";
 
 const startServerSchema = z.object({
     game: z.enum(gamelist),
@@ -21,8 +22,6 @@ const admin = false;
 export const startServerAction = action(
     startServerSchema,
     async ({ game, serverId }) => {
-        const date = new Date();
-
         await validate(serverId);
 
         const configs = await getServerConfigs(serverId);
@@ -43,10 +42,7 @@ export const startServerAction = action(
 
 async function validate(serverId: number) {
     if (admin) return true;
-
-    const success = validateHours(new Date());
-
-    if (success) return true;
+    if (isWeekend()) return true;
 
     const weekdayAccess = await getWeekdayAccess(serverId);
 
@@ -56,11 +52,3 @@ async function validate(serverId: number) {
         "Free Access is only available from Friday 6:00 PM to Monday 2:00 AM"
     );
 }
-
-const validateHours = (date: Date) => {
-    return (
-        (date.getUTCDay() === 5 && date.getUTCHours() >= 10) ||
-        date.getUTCDay() === 6 ||
-        (date.getUTCDay() === 0 && date.getUTCHours() < 18)
-    );
-};

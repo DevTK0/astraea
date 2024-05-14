@@ -68,7 +68,7 @@ export const getServerStatus = async (
             instanceType: isStarting.instanceType,
         };
 
-    const isRunning = await checkIfServerIsRunning(game, serverId);
+    const isRunning = await checkIfServerIsRunning(serverId);
 
     if (isRunning)
         return {
@@ -109,7 +109,7 @@ export const getServerStatus = async (
 };
 
 export async function getServerAddress(game: string, serverId: number) {
-    const isRunning = await checkIfServerIsRunning(game, serverId);
+    const isRunning = await checkIfServerIsRunning(serverId);
 
     if (!isRunning) throw new ServerError("Server is not running");
 
@@ -155,8 +155,8 @@ export async function startServer(
     );
 }
 
-export async function stopServer(game: string, serverId: number) {
-    const instance = await checkIfServerIsRunning(game, serverId);
+export async function stopServer(serverId: number) {
+    const instance = await checkIfServerIsRunning(serverId);
 
     if (!instance) throw new ServerError("Server is not running");
 
@@ -166,7 +166,7 @@ export async function stopServer(game: string, serverId: number) {
 }
 
 export async function restartServer(game: string, serverId: number) {
-    const instance = await checkIfServerIsRunning(game, serverId);
+    const instance = await checkIfServerIsRunning(serverId);
     if (!instance) throw new ServerError("Server is not running");
     const instanceId = z.string().parse(instance?.instanceId);
     await restartInstance(instanceId);

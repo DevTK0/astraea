@@ -89,14 +89,10 @@ export async function checkIfServerIsStarting(game: string, serverId: number) {
     };
 }
 
-export async function checkIfServerIsRunning(game: string, serverId: number) {
+export async function checkIfServerIsRunning(serverId: number) {
     const response = await ec2.send(
         new DescribeInstancesCommand({
             Filters: [
-                {
-                    Name: "tag:Game",
-                    Values: [game],
-                },
                 {
                     Name: "tag:ServerId",
                     Values: [String(serverId)],
@@ -356,7 +352,7 @@ export async function waitForServerIp(game: string, serverId: number) {
         }
     );
 
-    return checkIfServerIsRunning(game, serverId);
+    return checkIfServerIsRunning(serverId);
 }
 
 export async function getLaunchTemplateId(game: string, serverId: number) {
