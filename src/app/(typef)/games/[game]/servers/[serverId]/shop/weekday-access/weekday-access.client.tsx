@@ -62,10 +62,11 @@ export function ClientComponent() {
                 {isPending ? (
                     <Icons.spinner className="h-4 w-4 animate-spin" />
                 ) : (
-                    <Icons.coin className="" />
+                    <>
+                        <Icons.coin className="" />
+                        <span className="text-base"> {100 * days}</span>
+                    </>
                 )}
-
-                <span className="text-base"> {100 * days}</span>
             </Button>
         </div>
     );
