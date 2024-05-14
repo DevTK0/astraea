@@ -34,11 +34,18 @@ export const weekdayAccessAction = action(
         }
 
         // set Weekday Access
-        await setWeekdayAccess(serverId, true);
-        await registerAutostop(serverId, days);
+        try {
+            await setWeekdayAccess(serverId, true);
+            await registerAutostop(serverId, days);
 
-        // remove coins
-        await setCoins(user.id, coins - cost);
+            // remove coins
+            await setCoins(user.id, coins - cost);
+        } catch (e) {
+            await setWeekdayAccess(serverId, false);
+            // remove autostop
+
+            throw e;
+        }
 
         revalidatePath("/");
     }
