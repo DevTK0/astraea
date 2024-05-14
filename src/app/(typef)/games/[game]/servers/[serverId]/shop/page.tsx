@@ -10,7 +10,7 @@ export default function Shop() {
             </div>
             <div className="space-y-4">
                 <WeekdayAccess />
-                <InstanceUpgrade />
+                {/* <InstanceUpgrade /> */}
             </div>
 
             <Separator className="my-4" />

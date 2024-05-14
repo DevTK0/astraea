@@ -57,6 +57,7 @@ export function ClientComponent() {
                 size="sm"
                 className="flex flex-row items-center space-x-1 text-amber-400"
                 onClick={() => mutate({ serverId, days })}
+                disabled={days === 0}
             >
                 {isPending ? (
                     <Icons.spinner className="h-4 w-4 animate-spin" />
