@@ -37,7 +37,7 @@ export const weekendAutostopFn = inngest.createFunction(
                 stopped.push(serverId);
             }
 
-            return { stopped: servers };
+            return { stopped: stopped };
         });
     }
 );

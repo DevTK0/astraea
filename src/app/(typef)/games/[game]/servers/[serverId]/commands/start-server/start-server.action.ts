@@ -17,7 +17,7 @@ const startServerSchema = z.object({
 });
 
 // TODO: replace this with a proper admin check
-const admin = true;
+const admin = false;
 
 export const startServerAction = action(
     startServerSchema,
