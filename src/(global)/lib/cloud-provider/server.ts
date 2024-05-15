@@ -165,6 +165,12 @@ export async function stopServer(serverId: number) {
     await terminateInstance(instanceId);
 }
 
+export async function safeStop(serverId: number) {
+    try {
+        await stopServer(serverId);
+    } catch {}
+}
+
 export async function restartServer(game: string, serverId: number) {
     const instance = await checkIfServerIsRunning(serverId);
     if (!instance) throw new ServerError("Server is not running");

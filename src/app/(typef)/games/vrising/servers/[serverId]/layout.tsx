@@ -14,10 +14,10 @@ const routes = [
     //     label: "Settings",
     //     path: "settings",
     // },
-    // {
-    //     label: "Shop",
-    //     path: "shop",
-    // },
+    {
+        label: "Shop",
+        path: "shop",
+    },
 ];
 
 export default function Layout({

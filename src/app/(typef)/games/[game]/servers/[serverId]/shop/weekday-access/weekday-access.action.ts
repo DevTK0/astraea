@@ -6,7 +6,7 @@ import {
     getWeekdayAccess,
     setWeekdayAccess,
 } from "@/(global)/services/database/db-configs";
-import { registerAutostop } from "@/(global)/services/auto-stop/service";
+import { expireWeekdayAccess } from "@/(global)/services/auto-stop/service";
 import { getCoins, setCoins } from "@/(global)/services/database/users";
 import { getUser } from "@/(global)/lib/auth/actions";
 import { revalidatePath } from "next/cache";
@@ -36,7 +36,7 @@ export const weekdayAccessAction = action(
         // set Weekday Access
         try {
             await setWeekdayAccess(serverId, true);
-            await registerAutostop(serverId, days);
+            await expireWeekdayAccess(serverId, days, user.id);
 
             // remove coins
             await setCoins(user.id, coins - cost);
