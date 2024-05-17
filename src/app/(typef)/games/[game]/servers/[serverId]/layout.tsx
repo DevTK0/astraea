@@ -1,4 +1,4 @@
-import ServerSideBar from "@/(global)/components/server/server-side-bar";
+import ServerLayout from "@/(global)/components/server/server-layout";
 
 const routes = [
     {
@@ -13,10 +13,10 @@ const routes = [
     //     label: "Settings",
     //     path: "settings",
     // },
-    // {
-    //     label: "Shop",
-    //     path: "shop",
-    // },
+    {
+        label: "Shop",
+        path: "shop",
+    },
 ];
 
 export default function Layout({
@@ -25,9 +25,8 @@ export default function Layout({
     children: React.ReactNode;
 }>) {
     return (
-        <ServerSideBar routes={routes} serverName="Template">
-            {" "}
-            {children}{" "}
-        </ServerSideBar>
+        <ServerLayout routes={routes} serverName="Template">
+            {children}
+        </ServerLayout>
     );
 }

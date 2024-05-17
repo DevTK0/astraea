@@ -149,17 +149,41 @@ export type Database = {
           },
         ]
       }
+      site_configs: {
+        Row: {
+          config: string
+          created_at: string
+          id: number
+          value: string | null
+        }
+        Insert: {
+          config: string
+          created_at?: string
+          id?: number
+          value?: string | null
+        }
+        Update: {
+          config?: string
+          created_at?: string
+          id?: number
+          value?: string | null
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           auth_uid: string
+          coins: number
           ip_address: string | null
         }
         Insert: {
           auth_uid?: string
+          coins?: number
           ip_address?: string | null
         }
         Update: {
           auth_uid?: string
+          coins?: number
           ip_address?: string | null
         }
         Relationships: [

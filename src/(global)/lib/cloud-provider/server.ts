@@ -14,14 +14,11 @@ import {
     removeSecurityGroupRules,
     restartInstance,
     runInstance,
-    runUnixCommands,
     terminateInstance,
+    InstanceType,
 } from "./aws/ec2";
 import { AWSError } from "../exception/aws";
 import { z } from "zod";
-import { serverSettingsSchema } from "../../services/palworld/rest-api";
-import { configs } from "@/(global)/configs/servers/palworld";
-import { writeToFile } from "../files/file-writer";
 
 const dryRun = process.env.DRY_RUN === "true";
 
@@ -68,7 +65,7 @@ export const getServerStatus = async (
             instanceType: isStarting.instanceType,
         };
 
-    const isRunning = await checkIfServerIsRunning(game, serverId);
+    const isRunning = await checkIfServerIsRunning(serverId);
 
     if (isRunning)
         return {
@@ -109,7 +106,7 @@ export const getServerStatus = async (
 };
 
 export async function getServerAddress(game: string, serverId: number) {
-    const isRunning = await checkIfServerIsRunning(game, serverId);
+    const isRunning = await checkIfServerIsRunning(serverId);
 
     if (!isRunning) throw new ServerError("Server is not running");
 
@@ -155,8 +152,8 @@ export async function startServer(
     );
 }
 
-export async function stopServer(game: string, serverId: number) {
-    const instance = await checkIfServerIsRunning(game, serverId);
+export async function stopServer(serverId: number) {
+    const instance = await checkIfServerIsRunning(serverId);
 
     if (!instance) throw new ServerError("Server is not running");
 
@@ -165,8 +162,14 @@ export async function stopServer(game: string, serverId: number) {
     await terminateInstance(instanceId);
 }
 
+export async function safeStop(serverId: number) {
+    try {
+        await stopServer(serverId);
+    } catch {}
+}
+
 export async function restartServer(game: string, serverId: number) {
-    const instance = await checkIfServerIsRunning(game, serverId);
+    const instance = await checkIfServerIsRunning(serverId);
     if (!instance) throw new ServerError("Server is not running");
     const instanceId = z.string().parse(instance?.instanceId);
     await restartInstance(instanceId);

@@ -8,11 +8,9 @@ import {
 } from "../../lib/cloud-provider/aws/ec2";
 import { serverSettingsSchema } from "./rest-api";
 import { updateGameConfigs } from "../database/db-configs";
-import { configs } from "@/(global)/configs/servers/palworld";
-import { palworld } from "@/(global)/meta/gamedata";
 
 export async function updatePalworld(serverId: number) {
-    const response = await checkIfServerIsRunning(palworld.key, serverId);
+    const response = await checkIfServerIsRunning(serverId);
 
     const updateCommand = [
         `runuser -l palworld -c '/home/palworld/Palworld/update.sh'`,

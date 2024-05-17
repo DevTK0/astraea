@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-import Logo from "@/(global)/components/ui/logo";
+import Logo from "@/(global)/components/navigation/logo";
 import { ResetPasswordForm } from "./(local)/reset-password";
 
 export default function ForgotPassword() {

@@ -46,6 +46,11 @@ export const template: Game = {
     active: true,
 };
 
-export const gamelist = [palworld.key, corekeeper.key, vrising.key] as const;
+export const gamelist = [
+    palworld.key,
+    corekeeper.key,
+    vrising.key,
+    template.key,
+] as const;
 
 export const gameMetadataList = [palworld, vrising, corekeeper];
