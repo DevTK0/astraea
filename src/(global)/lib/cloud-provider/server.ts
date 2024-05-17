@@ -14,14 +14,11 @@ import {
     removeSecurityGroupRules,
     restartInstance,
     runInstance,
-    runUnixCommands,
     terminateInstance,
+    InstanceType,
 } from "./aws/ec2";
 import { AWSError } from "../exception/aws";
 import { z } from "zod";
-import { serverSettingsSchema } from "../../services/palworld/rest-api";
-import { configs } from "@/(global)/configs/servers/palworld";
-import { writeToFile } from "../files/file-writer";
 
 const dryRun = process.env.DRY_RUN === "true";
 

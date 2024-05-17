@@ -64,8 +64,8 @@ export default function ServerLayout({
             </div>
             <div className="w-full flex-1 h-full px-4 py-6 space-y-4 lg:px-8 ">
                 <Note type="warning">
-                    Free weekend servers are only available from Friday 6:00 PM
-                    to Monday 2:00 AM.
+                    Free weekend servers are only available from Friday 8:00 PM
+                    to Sunday 10:00 PM.
                 </Note>
                 {children}
             </div>

@@ -2,7 +2,11 @@ import { Separator } from "@/(global)/components/ui/separator";
 import { WeekdayAccess } from "./weekday-access/weekday-access";
 import { InstanceUpgrade } from "./instance-upgrade/instance-upgrade";
 
-export default function Shop() {
+export default function Shop({
+    params,
+}: {
+    params: { game: string; serverId: number };
+}) {
     return (
         <main className="flex flex-1 flex-col gap-4">
             <div className="flex items-center">
@@ -10,7 +14,7 @@ export default function Shop() {
             </div>
             <div className="space-y-4">
                 <WeekdayAccess />
-                {/* <InstanceUpgrade /> */}
+                <InstanceUpgrade serverId={params.serverId} />
             </div>
 
             <Separator className="my-4" />

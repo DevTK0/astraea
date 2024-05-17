@@ -3,7 +3,7 @@ import {
     parseWithErrorHandling,
 } from "@/(global)/lib/inngest/service";
 import { ServiceRole } from "@/(global)/lib/database/service_role";
-import { ZodSchema, z } from "zod";
+import { z } from "zod";
 import { SupabaseDBError } from "@/(global)/lib/exception/database";
 import { safeStop } from "@/(global)/lib/cloud-provider/server";
 import {
@@ -11,7 +11,6 @@ import {
     getNextWeekday,
     isWeekend,
 } from "@/(global)/lib/date/utils";
-import { NonRetriableError } from "inngest";
 import { expireWithErrorHandling } from "@/(global)/lib/inngest/service";
 
 const events = {

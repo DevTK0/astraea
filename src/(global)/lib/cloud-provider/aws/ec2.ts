@@ -313,13 +313,18 @@ export async function checkIfArchived(game: string, serverId: number) {
     };
 }
 
+// sorted in order of performance
 export const instanceTypes = [
     "t2.small",
     "t2.medium",
     "c5a.large",
     "r5a.large",
+    "r5a.xlarge",
+    "r5a.2xlarge",
     "r6a.large",
 ] as const;
+
+export type InstanceType = (typeof instanceTypes)[number];
 
 export async function waitForServerIp(game: string, serverId: number) {
     await waitUntilInstanceRunning(
