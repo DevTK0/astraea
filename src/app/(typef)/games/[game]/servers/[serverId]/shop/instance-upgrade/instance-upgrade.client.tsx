@@ -21,7 +21,7 @@ import { set } from "zod";
 
 // ordered from lowest to highest
 const allowedInstances = [
-    { label: "r5a.xlarge (default)", value: "r5a.large" },
+    { label: "r5a.large (default)", value: "r5a.large" },
     { label: "r5a.xlarge (2x)", value: "r5a.xlarge" },
     { label: "r5a.2xlarge (4x)", value: "r5a.2xlarge" },
 ];
