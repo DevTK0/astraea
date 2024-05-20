@@ -1,13 +1,33 @@
+const freePeriodStart = {
+    day: 5,
+    hour: 12,
+    minute: 0,
+};
+
+const freePeriodEnd = {
+    day: 0,
+    hour: 14,
+    minute: 0,
+};
+
 export function isFreePeriod(date?: Date) {
     date = date ? new Date(date) : new Date();
 
-    // SGT time is Friday 6:00 PM to Monday 2:00 AM
-    // UTC time is Friday 10:00 AM to Sunday 6:00 PM
-    return (
-        (date.getUTCDay() === 5 && date.getUTCHours() >= 10) ||
-        date.getUTCDay() === 6 ||
-        (date.getUTCDay() === 0 && date.getUTCHours() < 18)
-    );
+    if (freePeriodStart.day < freePeriodEnd.day) {
+        return (
+            date.getUTCDay() >= freePeriodStart.day &&
+            date.getUTCHours() >= freePeriodStart.hour &&
+            date.getUTCDay() <= freePeriodEnd.day &&
+            date.getUTCHours() < freePeriodEnd.hour
+        );
+    } else {
+        return (
+            (date.getUTCDay() >= freePeriodStart.day &&
+                date.getUTCHours() >= freePeriodStart.hour) ||
+            (date.getUTCDay() <= freePeriodEnd.day &&
+                date.getUTCHours() < freePeriodEnd.hour)
+        );
+    }
 }
 
 export function getNextFreePeriodEnd(sDate?: Date) {
@@ -15,10 +35,15 @@ export function getNextFreePeriodEnd(sDate?: Date) {
     const date = sDate ? new Date(sDate) : new Date();
     const day = date.getUTCDay();
     const time = date.getUTCHours();
-    const diff = day == 0 ? (time < 18 ? 0 : 7) : 7 - day;
+    const diff =
+        day == freePeriodEnd.day
+            ? time < freePeriodEnd.hour
+                ? 0
+                : 7
+            : 7 - day;
 
     date.setUTCDate(date.getUTCDate() + diff);
-    date.setUTCHours(18, 0, 0, 0);
+    date.setUTCHours(freePeriodEnd.hour, 0, 0, 0);
     const timeDiff = sDate
         ? date.getTime() - sDate?.getTime()
         : date.getTime() - Date.now();
@@ -31,9 +56,15 @@ export function getNextFreePeriodStart(sDate?: Date) {
     const day = date.getUTCDay();
     const time = date.getUTCHours();
     const diff =
-        day == 5 ? (time < 10 ? 0 : 7) : day > 5 ? 7 + 5 - day : 5 - day;
+        day == freePeriodStart.day
+            ? time < freePeriodStart.hour // during free period day, check hour
+                ? 0
+                : 7
+            : day > freePeriodStart.day
+            ? 7 + freePeriodStart.day - day // before free period
+            : freePeriodStart.day - day; // during free period
     date.setUTCDate(date.getUTCDate() + diff);
-    date.setUTCHours(10, 0, 0, 0);
+    date.setUTCHours(freePeriodStart.hour, 0, 0, 0);
     const timeDiff = sDate
         ? date.getTime() - sDate?.getTime()
         : date.getTime() - Date.now();
