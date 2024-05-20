@@ -78,7 +78,7 @@ export function ClientComponent({
                 variant="secondary"
                 size="sm"
                 className="flex flex-row items-center space-x-1 text-amber-400"
-                // disabled={true}
+                disabled={instance === currentInstance}
                 onClick={() => mutate({ serverId, instanceType: instance })}
             >
                 {isPending ? (

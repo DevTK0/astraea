@@ -8,8 +8,8 @@ import { SupabaseDBError } from "@/(global)/lib/exception/database";
 import { safeStop } from "@/(global)/lib/cloud-provider/server";
 import {
     addWeekdayTime,
-    getNextWeekday,
-    isWeekend,
+    getNextFreePeriodEnd,
+    isFreePeriod,
 } from "@/(global)/lib/date/utils";
 import { expireWithErrorHandling } from "@/(global)/lib/inngest/service";
 
@@ -101,8 +101,8 @@ export const weekdayAccessAutostopFn = inngest.createFunction(
         );
 
         await step.run("check-weekend", async () => {
-            if (isWeekend()) {
-                const { date: weekday } = getNextWeekday();
+            if (isFreePeriod()) {
+                const { date: weekday } = getNextFreePeriodEnd();
                 await step.sleepUntil("wait-till-weekday", weekday);
             }
         });
@@ -110,7 +110,7 @@ export const weekdayAccessAutostopFn = inngest.createFunction(
         await step.run("stop-server", async () => {
             await removeWeekdayAccess(serverId);
 
-            if (!isWeekend()) {
+            if (!isFreePeriod()) {
                 await safeStop(serverId);
             }
         });
