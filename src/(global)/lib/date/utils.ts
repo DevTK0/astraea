@@ -1,4 +1,4 @@
-export function isWeekend(date?: Date) {
+export function isFreePeriod(date?: Date) {
     date = date ? new Date(date) : new Date();
 
     // SGT time is Friday 6:00 PM to Monday 2:00 AM
@@ -10,7 +10,7 @@ export function isWeekend(date?: Date) {
     );
 }
 
-export function getNextWeekday(sDate?: Date) {
+export function getNextFreePeriodEnd(sDate?: Date) {
     // Weekday start is Monday 2:00 AM
     const date = sDate ? new Date(sDate) : new Date();
     const day = date.getUTCDay();
@@ -25,7 +25,7 @@ export function getNextWeekday(sDate?: Date) {
     return { date, diff: timeDiff };
 }
 
-export function getNextWeekend(sDate?: Date) {
+export function getNextFreePeriodStart(sDate?: Date) {
     // Weekend start is Friday 6:00 PM
     const date = sDate ? new Date(sDate) : new Date();
     const day = date.getUTCDay();
@@ -46,16 +46,16 @@ export function addWeekdayTime(days: number, curr?: Date) {
 
     // take it week by week
     while (remaining > 0) {
-        // calc diff between curr week and weekend
-        const { date: weekend, diff } = getNextWeekend(curr);
+        // calc diff between curr and free period start
+        const { date: weekend, diff } = getNextFreePeriodStart(curr);
 
         if (diff > remaining) {
-            // not enough to reach weekend; calc end date
+            // not enough to reach next free period; calc end date
             curr = new Date(curr.getTime() + remaining);
 
             remaining -= remaining;
         } else {
-            const { date: weekday } = getNextWeekday(weekend);
+            const { date: weekday } = getNextFreePeriodEnd(weekend);
             curr = weekday;
             remaining -= diff;
         }

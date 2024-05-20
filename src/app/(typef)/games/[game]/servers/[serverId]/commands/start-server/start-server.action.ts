@@ -9,7 +9,7 @@ import {
     getWeekdayAccess,
 } from "@/(global)/services/database/db-configs";
 import { ServerError } from "@/(global)/lib/exception/next-safe-action";
-import { isWeekend } from "@/(global)/lib/date/utils";
+import { isFreePeriod } from "@/(global)/lib/date/utils";
 
 const startServerSchema = z.object({
     game: z.enum(gamelist),
@@ -42,7 +42,7 @@ export const startServerAction = action(
 
 async function validate(serverId: number) {
     if (admin) return true;
-    if (isWeekend()) return true;
+    if (isFreePeriod()) return true;
 
     const weekdayAccess = await getWeekdayAccess(serverId);
 
