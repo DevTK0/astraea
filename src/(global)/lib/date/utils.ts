@@ -15,17 +15,21 @@ export function isFreePeriod(date?: Date) {
 
     if (freePeriodStart.day < freePeriodEnd.day) {
         return (
-            date.getUTCDay() >= freePeriodStart.day &&
-            date.getUTCHours() >= freePeriodStart.hour &&
-            date.getUTCDay() <= freePeriodEnd.day &&
-            date.getUTCHours() < freePeriodEnd.hour
+            (date.getUTCDay() == freePeriodStart.day &&
+                date.getUTCHours() >= freePeriodStart.hour) || // the start day itself
+            (date.getUTCDay() == freePeriodEnd.day &&
+                date.getUTCHours() < freePeriodEnd.hour) || // the end day itself
+            (date.getUTCDay() > freePeriodStart.day &&
+                date.getUTCHours() < freePeriodEnd.day) // every day in between
         );
     } else {
         return (
-            (date.getUTCDay() >= freePeriodStart.day &&
-                date.getUTCHours() >= freePeriodStart.hour) ||
-            (date.getUTCDay() <= freePeriodEnd.day &&
-                date.getUTCHours() < freePeriodEnd.hour)
+            (date.getUTCDay() == freePeriodStart.day &&
+                date.getUTCHours() >= freePeriodStart.hour) || // the start day itself
+            (date.getUTCDay() == freePeriodEnd.day &&
+                date.getUTCHours() < freePeriodEnd.hour) || // the end day itself
+            (date.getUTCDay() > freePeriodStart.day && date.getUTCDay() < 7) || // start day to end of the week
+            date.getUTCDay() < freePeriodEnd.day // start of the week to end day
         );
     }
 }
