@@ -1,0 +1,28 @@
+I'm currently working on figuring out a good git workflow.
+
+Things i'm learning:
+- [x] Rebase
+- [ ] Squashing
+- [ ] Stack Diffs
+
+Best Practices:
+- Merge vs Rebase
+
+## Rebasing
+Rebasing is when you move an entire branch to the front of your current branch.
+```git
+git rebase BRANCH-NAME
+```
+
+## Merging
+Merging is when you integrate changes from another branch to your current branch as a new commit.
+
+```git
+git merge BRANCH-NAME
+```
+
+## Rebasing vs Merging
+- Rebasing ends up with a cleaner commit history.
+- You end up with a single linear history.
+- Merging results in the merging commit having two parents.
+- Merging creates "duplicate" history through the merge commit.
