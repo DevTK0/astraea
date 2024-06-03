@@ -12,12 +12,8 @@ export default async function TypeFLayout({
     return (
         <>
             <Navbar />
-            <div className="block">
-                <div className="border-t">
-                    <div className="bg-background">
-                        <div className="px-4 py-6 prose">{children}</div>
-                    </div>
-                </div>
+            <div className="flex justify-center bg-background">
+                <div className="px-4 py-6 max-w-4xl prose">{children}</div>
             </div>
         </>
     );
