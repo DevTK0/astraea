@@ -1,8 +1,6 @@
 import Navbar from "./(local)/navbar/navbar";
 import { Toaster } from "@/(global)/components/ui/toaster";
-import { redirect } from "next/navigation";
-// import { Sidebar } from "./components/sidebar";
-// import { gamelist } from "./games/gamelist";
+import Footer from "./(local)/footer/footer";
 
 export default async function TypeFLayout({
     children,
@@ -17,6 +15,7 @@ export default async function TypeFLayout({
                     <div className="bg-background">{children}</div>
                 </div>
             </div>
+            {/* <Footer /> */}
             <Toaster />
         </>
     );
