@@ -1,0 +1,64 @@
+name: Generate Changelog
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    name: Generate and Commit Changelog
+    permissions:
+      pull-requests: write
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Generate Changelog
+        uses: smichard/conventional_changelog@2.0.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set Git User Info
+        run: |
+          git config user.name 'GitHub Actions Bot'
+          git config user.email 'actions@github.com'
+
+      - name: Commit Changelog
+        run: |
+          git add CHANGELOG.md
+          git commit -m "docs: :robot: changelog file generated" || echo "No changes to commit"
+
+      - name: "Get latest tag"
+        id: latest-tag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        with:
+          fallback: 0.4.3
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "docs: :robot: generate changelog for ${{steps.latest-tag.outputs.tag}}"
+          branch: ci/changelog
+          base: main
+          title: "docs: :robot: generate changelog for ${{steps.latest-tag.outputs.tag}}"
+          body: This changelog is automatically generated.
+
+      - uses: hmarr/auto-approve-action@v4
+        if: github.actor == 'github-actions[bot]'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          review-message: "Auto approved changelog generation"
+
+  auto-approve:
+    needs: changelog
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    if: github.actor == 'github-actions[bot]'
+    steps:
+      - uses: hmarr/auto-approve-action@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          review-message: "Auto approved changelog generation"
