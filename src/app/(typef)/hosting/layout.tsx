@@ -2,8 +2,12 @@ import ServerLayout from "@/(global)/components/server/server-layout";
 
 const routes = [
     {
-        label: "Create",
-        path: "create",
+        label: "Dashboard",
+        path: "dashboard",
+    },
+    {
+        label: "Pricing",
+        path: "pricing",
     },
 ];
 
