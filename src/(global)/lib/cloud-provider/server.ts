@@ -206,7 +206,11 @@ export async function configureAllowedIPs(
     const securityGroupRules = await getSecurityGroupRules(securityGroupId);
 
     const toRemove = securityGroupRules.SecurityGroupRules?.filter((rule) => {
-        return rule.IpProtocol === protocol && rule.FromPort === port;
+        return (
+            rule.IpProtocol === protocol &&
+            rule.FromPort === port &&
+            rule.Description == "IP Whitelist"
+        );
     });
 
     // Remove previous Ips if any
