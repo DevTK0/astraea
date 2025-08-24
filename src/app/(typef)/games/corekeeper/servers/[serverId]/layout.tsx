@@ -11,10 +11,6 @@ const routes = [
         path: "commands",
     },
     {
-        label: "Settings",
-        path: "settings",
-    },
-    {
         label: "Shop",
         path: "shop",
     },
@@ -26,7 +22,7 @@ export default function Layout({
     children: React.ReactNode;
 }>) {
     return (
-        <ServerLayout routes={routes} serverName="Astraea Palworld">
+        <ServerLayout routes={routes} serverName="Astraea Corekeeper">
             <Note type="warning">
                 Free weekend servers are only available from Friday 8:00 PM to
                 Sunday 10:00 PM.
