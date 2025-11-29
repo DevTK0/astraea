@@ -30,7 +30,7 @@ export const vrising: Game = {
 export const corekeeper: Game = {
     label: "Core Keeper",
     key: "corekeeper",
-    link: "/games/corekeeper",
+    link: "/games/corekeeper/servers/3/overview",
     thumbnail:
         "https://cdn.cloudflare.steamstatic.com/steam/apps/1621690/library_600x900_2x.jpg?t=1700216976",
     banner: "https://cdn.cloudflare.steamstatic.com/steam/apps/1621690/library_hero.jpg?t=1700216976",

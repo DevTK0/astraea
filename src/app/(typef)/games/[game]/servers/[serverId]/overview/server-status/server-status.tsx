@@ -17,7 +17,7 @@ export function ServerStatus({
     portNum,
 }: {
     className?: string;
-    portNum: number;
+    portNum?: number;
 }) {
     const { game, serverId } = usePathSegments();
 
@@ -70,7 +70,7 @@ const RenderStatus = ({
     server,
     error,
 }: {
-    portNum: number;
+    portNum?: number;
     isPending: boolean;
     isError: boolean;
     server:
@@ -118,16 +118,17 @@ const RenderStatus = ({
                     <div className="flex items-center space-x-1">
                         <p className="text-sm">
                             {`${server.ipAddress}`}
-                            <span className="font-bold">:{portNum} </span>
+                            {portNum && <span className="font-bold">:{portNum} </span>}
                         </p>
                         <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => {
                                 if (server.ipAddress === undefined) return;
-                                navigator.clipboard.writeText(
-                                    `${server.ipAddress}:${portNum}`
-                                );
+                                const copyText = portNum
+                                    ? `${server.ipAddress}:${portNum}`
+                                    : server.ipAddress;
+                                navigator.clipboard.writeText(copyText);
                                 toast({
                                     description: "Copied to clipboard.",
                                 });
